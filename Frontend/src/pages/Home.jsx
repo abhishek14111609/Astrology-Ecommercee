@@ -158,7 +158,7 @@ const Home = () => {
             </section>
 
             {/* Why Choose Us */}
-            <section className="py-20 bg-auric-gold text-white">
+            <section className="py-20 bg-auric-blush text-white">
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
                         <div className="space-y-4">
