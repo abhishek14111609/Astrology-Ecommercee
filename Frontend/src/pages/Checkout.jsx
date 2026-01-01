@@ -1,0 +1,218 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import Button from '../components/UI/Button';
+import { ShieldCheck, CreditCard, Truck, CheckCircle2, ChevronRight } from 'lucide-react';
+
+const Checkout = () => {
+    const { cartItems, cartTotal } = useCart();
+    const navigate = useNavigate();
+    const [step, setStep] = useState(1); // 1: Shipping, 2: Payment, 3: Success
+
+    const [formData, setFormData] = useState({
+        email: '',
+        firstName: '',
+        lastName: '',
+        address: '',
+        city: '',
+        pincode: '',
+        phone: ''
+    });
+
+    const handleInputChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const nextStep = (e) => {
+        e.preventDefault();
+        setStep(step + 1);
+        window.scrollTo(0, 0);
+    };
+
+    if (cartItems.length === 0 && step !== 3) {
+        return (
+            <div className="min-h-[60vh] flex flex-col items-center justify-center bg-auric-blush px-4">
+                <h1 className="font-serif text-2xl font-bold text-auric-rose mb-4">Your Cart is Empty</h1>
+                <Link to="/shop">
+                    <Button variant="primary">Return to Boutique</Button>
+                </Link>
+            </div>
+        );
+    }
+
+    return (
+        <div className="bg-auric-blush min-h-screen py-12">
+            <div className="container mx-auto px-4 max-w-6xl">
+
+                {/* Checkout Steps Indicator */}
+                <div className="flex items-center justify-center mb-12 space-x-4 md:space-x-8">
+                    <div className={`flex items-center gap-2 ${step >= 1 ? 'text-auric-rose font-bold' : 'text-gray-400'}`}>
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs ${step >= 1 ? 'bg-auric-rose text-white' : 'bg-gray-200'}`}>1</span>
+                        <span className="hidden sm:inline">Shipping</span>
+                    </div>
+                    <ChevronRight size={16} className="text-gray-300" />
+                    <div className={`flex items-center gap-2 ${step >= 2 ? 'text-auric-rose font-bold' : 'text-gray-400'}`}>
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs ${step >= 2 ? 'bg-auric-rose text-white' : 'bg-gray-200'}`}>2</span>
+                        <span className="hidden sm:inline">Payment</span>
+                    </div>
+                    <ChevronRight size={16} className="text-gray-300" />
+                    <div className={`flex items-center gap-2 ${step === 3 ? 'text-auric-rose font-bold' : 'text-gray-400'}`}>
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs ${step === 3 ? 'bg-auric-rose text-white' : 'bg-gray-200'}`}>3</span>
+                        <span className="hidden sm:inline">Confirmation</span>
+                    </div>
+                </div>
+
+                {step === 3 ? (
+                    /* Success State */
+                    <div className="max-w-xl mx-auto bg-white p-12 rounded-3xl shadow-xl border border-auric-gold/10 text-center animate-in fade-in zoom-in duration-500">
+                        <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8">
+                            <CheckCircle2 size={48} />
+                        </div>
+                        <h1 className="font-serif text-3xl font-bold text-auric-rose mb-4">Divine Order Confirmed!</h1>
+                        <p className="text-gray-600 mb-8 leading-relaxed">
+                            Thank you for your purchase. Your spiritual artifacts are being carefully prepared and energized for their journey to you.
+                        </p>
+                        <div className="bg-auric-blush/50 p-6 rounded-2xl mb-8 text-left space-y-2">
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Order Reference:</span>
+                                <span className="font-bold text-auric-rose">#AK-99215</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Expected Delivery:</span>
+                                <span className="font-bold text-auric-rose">7-8 Business Days</span>
+                            </div>
+                        </div>
+                        <Link to="/shop">
+                            <Button variant="primary" className="w-full">Continue Browsing</Button>
+                        </Link>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+
+                        {/* Form Section */}
+                        <div className="lg:col-span-8">
+                            <div className="bg-white p-8 md:p-10 rounded-2xl border border-gray-100 shadow-sm">
+                                {step === 1 ? (
+                                    <form onSubmit={nextStep}>
+                                        <h2 className="font-serif text-2xl font-bold text-auric-rose mb-8 flex items-center gap-3">
+                                            <Truck className="text-auric-gold" size={24} /> Delivery Information
+                                        </h2>
+
+                                        <div className="space-y-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-medium text-gray-700">First Name</label>
+                                                    <input required name="firstName" value={formData.firstName} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="John" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-medium text-gray-700">Last Name</label>
+                                                    <input required name="lastName" value={formData.lastName} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="Doe" />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-gray-700">Email Address</label>
+                                                <input required name="email" value={formData.email} onChange={handleInputChange} type="email" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="email@example.com" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-gray-700">Street Address</label>
+                                                <input required name="address" value={formData.address} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="House number and street name" />
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                <div className="md:col-span-2 space-y-2">
+                                                    <label className="text-sm font-medium text-gray-700">City</label>
+                                                    <input required name="city" value={formData.city} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="City" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-medium text-gray-700">Pincode</label>
+                                                    <input required name="pincode" value={formData.pincode} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="400001" />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2 pt-4">
+                                                <Button type="submit" variant="primary" className="w-full py-4">Continue to Payment</Button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    <div>
+                                        <h2 className="font-serif text-2xl font-bold text-auric-rose mb-8 flex items-center gap-3">
+                                            <CreditCard className="text-auric-gold" size={24} /> Payment Method
+                                        </h2>
+
+                                        <div className="space-y-6">
+                                            <div className="p-6 border-2 border-auric-gold bg-auric-blush/20 rounded-xl relative">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <span className="font-bold text-auric-rose">Razorpay Secure Payment</span>
+                                                    <div className="flex gap-2">
+                                                        <div className="w-8 h-5 bg-gray-200 rounded-sm"></div>
+                                                        <div className="w-8 h-5 bg-gray-200 rounded-sm"></div>
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm text-gray-600 mb-6">Redirecting to Razorpay for secure credit/debit card, UPI, or Net Banking payment.</p>
+                                                <Button onClick={() => setStep(3)} variant="primary" className="w-full py-4 uppercase tracking-widest text-xs">Complete Order</Button>
+                                            </div>
+
+                                            <div className="p-6 border border-gray-100 rounded-xl flex items-center justify-between text-gray-400 cursor-not-allowed">
+                                                <span className="text-sm font-medium">Cash on Delivery</span>
+                                                <span className="text-[0.6rem] uppercase font-bold tracking-widest">Unavailable</span>
+                                            </div>
+
+                                            <button onClick={() => setStep(1)} className="text-sm font-medium text-auric-gold hover:underline">← Edit Shipping Details</button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Order Summary Section */}
+                        <div className="lg:col-span-4">
+                            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm sticky top-28">
+                                <h3 className="font-serif text-xl font-bold text-auric-rose mb-6">Order Summary</h3>
+
+                                <div className="space-y-4 mb-8 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                                    {cartItems.map((item) => (
+                                        <div key={item.id} className="flex gap-4">
+                                            <div className="w-16 h-16 bg-auric-blush rounded-md overflow-hidden flex-shrink-0">
+                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-bold text-auric-rose truncate">{item.name}</p>
+                                                <p className="text-xs text-gray-400">Qty: {item.quantity}</p>
+                                                <p className="text-sm font-bold text-auric-gold">₹{item.price * item.quantity}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="space-y-3 pt-6 border-t border-gray-50">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-500">Subtotal</span>
+                                        <span className="font-medium text-auric-rose">₹{cartTotal}</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-500">Shipping</span>
+                                        <span className="text-green-600 font-medium">Free</span>
+                                    </div>
+                                    <div className="flex justify-between text-lg font-bold text-auric-rose pt-4 border-t border-gray-50 mt-4">
+                                        <span>Total</span>
+                                        <span>₹{cartTotal}</span>
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 p-4 bg-gray-50 rounded-xl flex items-center gap-3">
+                                    <ShieldCheck size={24} className="text-auric-gold" />
+                                    <div>
+                                        <p className="text-[0.7rem] font-bold text-gray-700 uppercase tracking-widest leading-none mb-1">Secure Payment</p>
+                                        <p className="text-[0.65rem] text-gray-400 leading-tight">Your celestial investment is protected by 256-bit encryption.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default Checkout;

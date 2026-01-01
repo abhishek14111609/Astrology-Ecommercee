@@ -4,6 +4,7 @@ import { Star, Truck, ShieldCheck, ArrowRight, Minus, Plus } from 'lucide-react'
 import { useCart } from '../context/CartContext';
 import Button from '../components/UI/Button';
 import ProductCard from '../components/UI/ProductCard';
+import { products } from '../data/products';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -11,30 +12,20 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [activeImage, setActiveImage] = useState(0);
 
-    // Mock Data for the single product (in real app, fetch based on ID)
-    const product = {
-        id: Number(id) || 1,
-        name: "Natural Red Coral (Moonga)",
-        category: "Gemstones",
-        price: 2499,
-        oldPrice: 4999,
-        rating: 4.8,
-        reviews: 128,
-        description: "Original Italian Red Coral (Moonga) gemstone certified by lab. Bringing energy, vitality, and ambition to the wearer. Beneficial for Mars (Mangal) complications.",
-        images: [
-            "",
-            "https://images.unsplash.com/photo-1596500448187-236b28328704?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1615392695503-4f107c11867c?auto=format&fit=crop&w=600&q=80"
-        ],
-        sku: "GEM-RC-001",
-        availability: "In Stock"
-    };
+    // Find product or fallback
+    const foundProduct = products.find(p => p.id === Number(id));
 
-    const relatedProducts = [
-        { id: 2, name: "Certified Rudraksha Mala", category: "Rudraksha", price: 1599, oldPrice: 2199, rating: 4, reviews: 85, image: "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=500&q=80", discount: 27 },
-        { id: 3, name: "Crystal Tortoise For Vastu", category: "Feng Shui", price: 899, oldPrice: 1299, rating: 5, reviews: 240, image: "https://images.unsplash.com/photo-1544367563-12123d8965cd?auto=format&fit=crop&w=500&q=80" },
-        { id: 4, name: "Healing Crystal Bracelet", category: "Bracelets", price: 499, oldPrice: 999, rating: 4, reviews: 45, image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=500&q=80", isNew: true },
-    ];
+    // Handle loading/not found state simply for now or fallback to first product
+    const product = foundProduct || products[0];
+
+    // Ensure images array is populated
+    const galleryImages = (product.images && product.images.length > 0)
+        ? product.images
+        : [product.image];
+
+    const relatedProducts = products
+        .filter(p => p.category === product.category && p.id !== product.id)
+        .slice(0, 4);
 
     const handleAddToCart = () => {
         // Add product multiple times based on quantity
@@ -49,26 +40,26 @@ const ProductDetail = () => {
 
                 {/* Breadcrumb */}
                 <div className="text-sm text-gray-500 mb-8">
-                    <Link to="/" className="hover:text-luxury-purple">Home</Link>
+                    <Link to="/" className="hover:text-auric-rose">Home</Link>
                     <span className="mx-2">/</span>
-                    <Link to="/shop" className="hover:text-luxury-purple">Shop</Link>
+                    <Link to="/shop" className="hover:text-auric-rose">Shop</Link>
                     <span className="mx-2">/</span>
-                    <span className="text-luxury-gold font-medium">{product.name}</span>
+                    <span className="text-auric-gold font-medium">{product.name}</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
 
                     {/* Image Gallery */}
                     <div className="space-y-4">
-                        <div className="aspect-square bg-luxury-cream rounded-lg overflow-hidden border border-gray-100">
-                            <img src={product.images[activeImage]} alt={product.name} className="w-full h-full object-cover" />
+                        <div className="aspect-square bg-auric-blush rounded-lg overflow-hidden border border-gray-100">
+                            <img src={galleryImages[activeImage]} alt={product.name} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex gap-4 overflow-x-auto">
-                            {product.images.map((img, idx) => (
+                            {galleryImages.map((img, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => setActiveImage(idx)}
-                                    className={`w-20 h-20 rounded-md overflow-hidden border-2 flex-shrink-0 transition-all ${activeImage === idx ? 'border-luxury-gold' : 'border-transparent hover:border-gray-200'}`}
+                                    className={`w-20 h-20 rounded-md overflow-hidden border-2 flex-shrink-0 transition-all ${activeImage === idx ? 'border-auric-gold' : 'border-transparent hover:border-gray-200'}`}
                                 >
                                     <img src={img} alt="" className="w-full h-full object-cover" />
                                 </button>
@@ -78,11 +69,11 @@ const ProductDetail = () => {
 
                     {/* Product Info */}
                     <div className="flex flex-col h-full">
-                        <span className="text-luxury-gold uppercase tracking-[0.2em] text-xs font-semibold mb-2">{product.category}</span>
-                        <h1 className="font-serif text-3xl md:text-4xl text-luxury-purple font-bold mb-4">{product.name}</h1>
+                        <span className="text-auric-gold uppercase tracking-[0.2em] text-xs font-semibold mb-2">{product.category}</span>
+                        <h1 className="font-serif text-3xl md:text-4xl text-auric-rose font-bold mb-4">{product.name}</h1>
 
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="flex text-luxury-gold text-sm">
+                            <div className="flex text-auric-gold text-sm">
                                 {[...Array(5)].map((_, i) => (
                                     <Star key={i} size={16} className={`${i < Math.round(product.rating) ? 'fill-current' : 'text-gray-300'}`} />
                                 ))}
@@ -92,7 +83,7 @@ const ProductDetail = () => {
                         </div>
 
                         <div className="flex items-end gap-3 mb-8">
-                            <span className="text-3xl font-bold text-luxury-purple">₹{product.price}</span>
+                            <span className="text-3xl font-bold text-auric-rose">₹{product.price}</span>
                             {product.oldPrice && <span className="text-xl text-gray-400 line-through mb-1">₹{product.oldPrice}</span>}
                         </div>
 
@@ -113,11 +104,11 @@ const ProductDetail = () => {
 
                         <div className="space-y-3 text-sm text-gray-600">
                             <div className="flex items-center gap-3">
-                                <Truck size={18} className="text-luxury-gold" />
+                                <Truck size={18} className="text-auric-gold" />
                                 <span>Free delivery on orders over ₹999</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <ShieldCheck size={18} className="text-luxury-gold" />
+                                <ShieldCheck size={18} className="text-auric-gold" />
                                 <span>100% Authentic & Lab Certified</span>
                             </div>
                             <div className="pt-4 text-xs text-gray-400">
@@ -130,7 +121,7 @@ const ProductDetail = () => {
 
                 {/* Related Products */}
                 <div>
-                    <h2 className="font-serif text-2xl font-bold text-luxury-purple mb-8">You May Also Like</h2>
+                    <h2 className="font-serif text-2xl font-bold text-auric-rose mb-8">You May Also Like</h2>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                         {relatedProducts.map(prod => (
                             <ProductCard key={prod.id} product={prod} />

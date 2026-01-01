@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { Search, User, Heart, ShoppingBag, Menu, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import logo from '../../assets/images/logo2.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,14 +20,20 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-luxury-gold/20">
+    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-auric-gold/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
 
           {/* Logo */}
-          <Link to="/" className="flex flex-col items-center">
-            <span className="font-serif text-2xl font-bold text-luxury-purple tracking-wider">ASTRO KENDRA</span>
-            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-luxury-gold">Celestial Guidance</span>
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="relative">
+              <img src={logo} alt="Auric Krystal" className="h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105" />
+              <div className="absolute -inset-1 bg-auric-gold/10 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-serif text-xl md:text-2xl font-bold text-auric-rose tracking-wider leading-none">Auric Krystal</span>
+              <span className="text-[0.6rem] uppercase tracking-[0.2em] text-auric-gold font-medium mt-1">Celestial Guidance</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -36,7 +43,7 @@ const Header = () => {
                 key={link.name}
                 to={link.path}
                 className={({ isActive }) =>
-                  `text-sm font-medium transition-colors duration-300 hover:text-luxury-gold ${isActive ? 'text-luxury-gold font-semibold' : 'text-gray-700'
+                  `text-sm font-medium transition-colors duration-300 hover:text-auric-gold ${isActive ? 'text-auric-gold font-semibold' : 'text-gray-700'
                   }`
                 }
               >
@@ -47,28 +54,28 @@ const Header = () => {
 
           {/* Icons */}
           <div className="hidden md:flex items-center space-x-6">
-            <button className="text-gray-700 hover:text-luxury-gold transition-colors">
+            <button className="text-gray-700 hover:text-auric-gold transition-colors">
               <Search size={20} />
             </button>
-            <Link to="/wishlist" className="text-gray-700 hover:text-luxury-gold transition-colors">
+            <Link to="/wishlist" className="text-gray-700 hover:text-auric-gold transition-colors">
               <Heart size={20} />
             </Link>
-            <Link to="/cart" className="relative text-gray-700 hover:text-luxury-gold transition-colors">
+            <Link to="/cart" className="relative text-gray-700 hover:text-auric-gold transition-colors">
               <ShoppingBag size={20} />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-luxury-gold text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-auric-gold text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
             </Link>
-            <Link to="/profile" className="text-gray-700 hover:text-luxury-gold transition-colors">
+            <Link to="/profile" className="text-gray-700 hover:text-auric-gold transition-colors">
               <User size={20} />
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
-            <button onClick={toggleMenu} className="text-gray-700 hover:text-luxury-gold focus:outline-none">
+            <button onClick={toggleMenu} className="text-gray-700 hover:text-auric-gold focus:outline-none">
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -86,8 +93,8 @@ const Header = () => {
                 onClick={() => setIsMenuOpen(false)}
                 className={({ isActive }) =>
                   `block px-3 py-3 text-base font-medium rounded-md transition-colors ${isActive
-                    ? 'bg-luxury-purple/5 text-luxury-gold'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-luxury-gold'
+                    ? 'bg-auric-rose/5 text-auric-gold'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-auric-gold'
                   }`
                 }
               >
@@ -95,13 +102,13 @@ const Header = () => {
               </NavLink>
             ))}
             <div className="flex items-center justify-around pt-4 border-t border-gray-100 mt-4">
-              <button className="text-gray-700 hover:text-luxury-gold"><Search size={24} /></button>
-              <Link to="/wishlist" className="text-gray-700 hover:text-luxury-gold"><Heart size={24} /></Link>
-              <Link to="/cart" className="text-gray-700 hover:text-luxury-gold relative">
+              <button className="text-gray-700 hover:text-auric-gold"><Search size={24} /></button>
+              <Link to="/wishlist" className="text-gray-700 hover:text-auric-gold"><Heart size={24} /></Link>
+              <Link to="/cart" className="text-gray-700 hover:text-auric-gold relative">
                 <ShoppingBag size={24} />
-                <span className="absolute -top-1 -right-2 bg-luxury-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                <span className="absolute -top-1 -right-2 bg-auric-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
               </Link>
-              <Link to="/profile" className="text-gray-700 hover:text-luxury-gold"><User size={24} /></Link>
+              <Link to="/profile" className="text-gray-700 hover:text-auric-gold"><User size={24} /></Link>
             </div>
           </div>
         </div>

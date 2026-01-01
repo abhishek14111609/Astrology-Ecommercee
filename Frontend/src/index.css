@@ -1,20 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  --color-luxury-purple: #2D1B4E;
-  --color-luxury-gold: #D4AF37;
-  --color-luxury-gold-hover: #B5952F;
-  --color-luxury-cream: #FDFBF7;
-  --color-luxury-text: #1A1A1A;
-  
+  --color-auric-rose: #4A3131;
+  --color-auric-gold: #C5A059;
+  --color-auric-gold-hover: #A6864A;
+  --color-auric-blush: #FDF2F0;
+  --color-auric-accent: #EAB5AD;
+  --color-auric-text: #2D1A1A;
+
   --font-serif: "Merriweather", "serif";
   --font-sans: "Inter", "sans-serif";
 }
 
 @layer base {
   body {
-    background-color: var(--color-luxury-cream);
-    color: var(--color-luxury-text);
+    background-color: var(--color-auric-blush);
+    color: var(--color-auric-text);
     font-family: var(--font-sans);
   }
 }

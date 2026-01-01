@@ -17,7 +17,7 @@ const ProductCard = ({ product }) => {
 
                 {/* badges */}
                 {product.isNew && (
-                    <span className="absolute top-3 left-3 bg-luxury-purple text-white text-[10px] uppercase font-bold px-2 py-1 rounded-sm tracking-widest">
+                    <span className="absolute top-3 left-3 bg-auric-rose text-white text-[10px] uppercase font-bold px-2 py-1 rounded-sm tracking-widest">
                         New
                     </span>
                 )}
@@ -31,11 +31,11 @@ const ProductCard = ({ product }) => {
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
                     <button
                         onClick={() => addToCart(product)}
-                        className="bg-white p-3 rounded-full text-luxury-purple hover:bg-luxury-gold hover:text-white transition-colors shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300"
+                        className="bg-white p-3 rounded-full text-auric-rose hover:bg-auric-gold hover:text-white transition-colors shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300"
                     >
                         <ShoppingBag size={20} />
                     </button>
-                    <Link to={`/product/${product.id}`} className="bg-white p-3 rounded-full text-luxury-purple hover:bg-luxury-gold hover:text-white transition-colors shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75">
+                    <Link to={`/product/${product.id}`} className="bg-white p-3 rounded-full text-auric-rose hover:bg-auric-gold hover:text-white transition-colors shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75">
                         <Eye size={20} />
                     </Link>
                 </div>
@@ -43,10 +43,10 @@ const ProductCard = ({ product }) => {
 
             {/* Content */}
             <div className="p-4 text-center">
-                <Link to={`/category/${product.category}`} className="text-xs text-gray-500 uppercase hover:text-luxury-gold transition-colors mb-1 block">
+                <Link to={`/category/${product.category}`} className="text-xs text-gray-500 uppercase hover:text-auric-gold transition-colors mb-1 block">
                     {product.category}
                 </Link>
-                <h3 className="font-serif text-lg font-medium text-luxury-purple hover:text-luxury-gold transition-colors mb-2 truncate">
+                <h3 className="font-serif text-lg font-medium text-auric-rose hover:text-auric-gold transition-colors mb-2 truncate">
                     <Link to={`/product/${product.id}`}>{product.name}</Link>
                 </h3>
 
@@ -56,7 +56,7 @@ const ProductCard = ({ product }) => {
                         <Star
                             key={i}
                             size={14}
-                            className={`${i < product.rating ? 'fill-luxury-gold text-luxury-gold' : 'text-gray-300'}`}
+                            className={`${i < product.rating ? 'fill-auric-gold text-auric-gold' : 'text-gray-300'}`}
                         />
                     ))}
                     <span className="text-xs text-gray-400 ml-1">({product.reviews})</span>
@@ -67,7 +67,7 @@ const ProductCard = ({ product }) => {
                     {product.oldPrice && (
                         <span className="text-gray-400 line-through text-sm">₹{product.oldPrice}</span>
                     )}
-                    <span className="text-luxury-purple font-semibold">₹{product.price}</span>
+                    <span className="text-auric-rose font-semibold">₹{product.price}</span>
                 </div>
             </div>
         </div>

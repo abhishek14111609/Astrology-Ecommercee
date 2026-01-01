@@ -5,6 +5,7 @@ import { ArrowRight, Star, ShieldCheck, Truck, Headphones } from 'lucide-react';
 import Button from '../components/UI/Button';
 import SectionHeading from '../components/UI/SectionHeading';
 import ProductCard from '../components/UI/ProductCard';
+import { products as allProducts } from '../data/products';
 
 const Home = () => {
     const targetRef = useRef(null);
@@ -40,68 +41,24 @@ const Home = () => {
         }
     ];
 
-    const products = [
-        {
-            id: 1,
-            name: "Natural Red Coral (Moonga)",
-            category: "Gemstones",
-            price: 2499,
-            oldPrice: 4999,
-            rating: 5,
-            reviews: 128,
-            image: "",
-            isNew: true,
-            discount: 50
-        },
-        {
-            id: 2,
-            name: "Certified Rudraksha Mala",
-            category: "Rudraksha",
-            price: 1599,
-            oldPrice: 2199,
-            rating: 4,
-            reviews: 85,
-            image: "",
-            discount: 27
-        },
-        {
-            id: 3,
-            name: "Crystal Tortoise For Vastu",
-            category: "Feng Shui",
-            price: 899,
-            oldPrice: 1299,
-            rating: 5,
-            reviews: 240,
-            image: "",
-        },
-        {
-            id: 4,
-            name: "Healing Crystal Bracelet",
-            category: "Bracelets",
-            price: 499,
-            oldPrice: 999,
-            rating: 4,
-            reviews: 45,
-            image: "",
-            isNew: true
-        }
-    ];
+    const products = allProducts.slice(0, 4);
 
     const zodiacs = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
 
     return (
-        <div className="bg-luxury-cream">
+        <div className="bg-auric-blush">
             {/* Hero Section */}
-            <section ref={targetRef} className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-luxury-purple text-center px-4">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center opacity-20"></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-luxury-purple via-transparent to-transparent"></div>
+            <section ref={targetRef} className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-white text-center px-4">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center opacity-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-auric-blush via-transparent to-white"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--color-auric-accent)_0%,_transparent_70%)] opacity-20"></div>
 
                 <div className="relative z-10 max-w-4xl mx-auto space-y-6">
                     <motion.span
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="inline-block text-luxury-gold uppercase tracking-[0.3em] text-sm font-semibold"
+                        className="inline-block text-auric-gold uppercase tracking-[0.3em] text-sm font-semibold"
                     >
                         Unlock Your Destiny
                     </motion.span>
@@ -109,15 +66,15 @@ const Home = () => {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="font-serif text-5xl md:text-7xl font-bold text-white leading-tight"
+                        className="font-serif text-5xl md:text-7xl font-bold text-auric-rose leading-tight"
                     >
-                        Ancient Wisdom for <br /> <span className="text-luxury-gold italic">Modern Life</span>
+                        Ancient Wisdom for <br /> <span className="text-auric-gold italic">Modern Life</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto"
+                        className="text-auric-rose/80 text-lg md:text-xl max-w-2xl mx-auto"
                     >
                         Get precise horoscope readings, premium gemstones, and spiritual remedies from India's most trusted astrologers.
                     </motion.p>
@@ -130,7 +87,7 @@ const Home = () => {
                         <Button variant="primary" className="mr-4">
                             Talk to Astrologer
                         </Button>
-                        <Button variant="outline" className="text-white border-white hover:bg-white hover:text-luxury-purple">
+                        <Button variant="outline" className="text-auric-rose border-auric-rose hover:bg-auric-rose hover:text-white">
                             Shop Collection
                         </Button>
                     </motion.div>
@@ -142,10 +99,10 @@ const Home = () => {
                 <div className="container mx-auto px-4 flex justify-between gap-6 min-w-max">
                     {zodiacs.map((sign, index) => (
                         <div key={index} className="flex flex-col items-center gap-2 group cursor-pointer">
-                            <div className="w-12 h-12 rounded-full bg-luxury-purple/5 flex items-center justify-center text-2xl group-hover:bg-luxury-gold group-hover:text-white transition-colors duration-300">
+                            <div className="w-12 h-12 rounded-full bg-auric-rose/5 flex items-center justify-center text-2xl group-hover:bg-auric-gold group-hover:text-white transition-colors duration-300">
                                 {sign}
                             </div>
-                            <span className="text-xs font-medium text-gray-500 group-hover:text-luxury-purple uppercase tracking-wider">Sign {index + 1}</span>
+                            <span className="text-xs font-medium text-gray-500 group-hover:text-auric-rose uppercase tracking-wider">Sign {index + 1}</span>
                         </div>
                     ))}
                 </div>
@@ -162,12 +119,12 @@ const Home = () => {
                             key={service.id}
                             className="bg-white p-8 rounded-lg shadow-sm hover:shadow-xl border border-gray-100 text-center transition-all duration-300"
                         >
-                            <div className="w-16 h-16 mx-auto bg-luxury-cream rounded-full flex items-center justify-center text-3xl mb-6">
+                            <div className="w-16 h-16 mx-auto bg-auric-blush rounded-full flex items-center justify-center text-3xl mb-6">
                                 {service.icon}
                             </div>
-                            <h3 className="font-serif text-xl font-bold text-luxury-purple mb-4">{service.title}</h3>
+                            <h3 className="font-serif text-xl font-bold text-auric-rose mb-4">{service.title}</h3>
                             <p className="text-gray-600 mb-6 leading-relaxed">{service.desc}</p>
-                            <Link to="/services" className="text-luxury-gold font-medium uppercase text-xs tracking-widest hover:text-luxury-purple flex items-center justify-center gap-2">
+                            <Link to="/services" className="text-auric-gold font-medium uppercase text-xs tracking-widest hover:text-auric-rose flex items-center justify-center gap-2">
                                 Read More <ArrowRight size={14} />
                             </Link>
                         </motion.div>
@@ -180,10 +137,10 @@ const Home = () => {
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-end mb-12">
                         <div className="text-left">
-                            <span className="text-luxury-gold uppercase tracking-[0.2em] text-xs font-semibold">Divine Collection</span>
-                            <h2 className="font-serif text-3xl md:text-4xl text-luxury-purple font-bold mt-2">Sacred Artifacts</h2>
+                            <span className="text-auric-gold uppercase tracking-[0.2em] text-xs font-semibold">Divine Collection</span>
+                            <h2 className="font-serif text-3xl md:text-4xl text-auric-rose font-bold mt-2">Sacred Artifacts</h2>
                         </div>
-                        <Link to="/shop" className="hidden md:flex items-center gap-2 text-luxury-purple font-medium hover:text-luxury-gold transition-colors">
+                        <Link to="/shop" className="hidden md:flex items-center gap-2 text-auric-rose font-medium hover:text-auric-gold transition-colors">
                             View All Products <ArrowRight size={18} />
                         </Link>
                     </div>
@@ -201,25 +158,25 @@ const Home = () => {
             </section>
 
             {/* Why Choose Us */}
-            <section className="py-20 bg-luxury-purple text-white">
+            <section className="py-20 bg-auric-rose text-white">
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
                         <div className="space-y-4">
-                            <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-luxury-gold">
+                            <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-auric-gold">
                                 <ShieldCheck size={32} />
                             </div>
                             <h3 className="font-serif text-xl font-bold">100% Authentic</h3>
                             <p className="text-white/70 text-sm leading-relaxed">All our gemstones and rudrakshas are lab certified and energized by expert pundits.</p>
                         </div>
                         <div className="space-y-4">
-                            <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-luxury-gold">
+                            <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-auric-gold">
                                 <Truck size={32} />
                             </div>
                             <h3 className="font-serif text-xl font-bold">Secure Shipping</h3>
                             <p className="text-white/70 text-sm leading-relaxed">We deliver valuable spiritual products with insured and safe packaging worldwide.</p>
                         </div>
                         <div className="space-y-4">
-                            <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-luxury-gold">
+                            <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-auric-gold">
                                 <Headphones size={32} />
                             </div>
                             <h3 className="font-serif text-xl font-bold">Expert Support</h3>
