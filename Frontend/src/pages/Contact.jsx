@@ -3,6 +3,8 @@ import SectionHeading from '../components/UI/SectionHeading';
 import Button from '../components/UI/Button';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 
+
+
 const Contact = () => {
     return (
         <div className="bg-auric-blush min-h-screen">
