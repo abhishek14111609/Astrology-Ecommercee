@@ -158,29 +158,29 @@ const Home = () => {
             </section>
 
             {/* Why Choose Us */}
-            <section className="py-20 bg-auric-rose text-white">
+            <section className="py-20 bg-auric-gold text-white">
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
                         <div className="space-y-4">
-                            <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-auric-gold">
+                            <div className="bg-auric-rose/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-auric-gold">
                                 <ShieldCheck size={32} />
                             </div>
-                            <h3 className="font-serif text-xl font-bold">100% Authentic</h3>
-                            <p className="text-white/70 text-sm leading-relaxed">All our gemstones and rudrakshas are lab certified and energized by expert pundits.</p>
+                            <h3 className="font-serif text-auric-rose text-xl font-bold">100% Authentic</h3>
+                            <p className="text-auric-rose text-sm leading-relaxed">All our gemstones and rudrakshas are lab certified and energized by expert pundits.</p>
                         </div>
                         <div className="space-y-4">
-                            <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-auric-gold">
+                            <div className="bg-auric-rose/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-auric-gold">
                                 <Truck size={32} />
                             </div>
-                            <h3 className="font-serif text-xl font-bold">Secure Shipping</h3>
-                            <p className="text-white/70 text-sm leading-relaxed">We deliver valuable spiritual products with insured and safe packaging worldwide.</p>
+                            <h3 className="font-serif text-auric-rose text-xl font-bold">Secure Shipping</h3>
+                            <p className="text-auric-rose text-sm leading-relaxed">We deliver valuable spiritual products with insured and safe packaging worldwide.</p>
                         </div>
                         <div className="space-y-4">
-                            <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-auric-gold">
+                            <div className="bg-auric-rose/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-auric-gold">
                                 <Headphones size={32} />
                             </div>
-                            <h3 className="font-serif text-xl font-bold">Expert Support</h3>
-                            <p className="text-white/70 text-sm leading-relaxed">Our support team and astrologers are available to guide you on your spiritual journey.</p>
+                            <h3 className="font-serif text-auric-rose text-xl font-bold">Expert Support</h3>
+                            <p className="text-auric-rose text-sm leading-relaxed">Our support team and astrologers are available to guide you on your spiritual journey.</p>
                         </div>
                     </div>
                 </div>

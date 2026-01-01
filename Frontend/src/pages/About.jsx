@@ -47,21 +47,21 @@ const About = () => {
             </section>
 
             {/* Values */}
-            <section className="py-20 bg-auric-rose text-white">
+            <section className="py-20 bg-auric-blush text-white">
                 <div className="container mx-auto px-4">
                     <SectionHeading title="The Pillars of Auric Krystal" subtitle="OUR VALUES" />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-                        <div className="p-8 border border-white/10 rounded-lg hover:border-auric-gold transition-colors">
+                        <div className="p-8 border border-auric-rose/10 rounded-lg hover:border-auric-gold transition-colors">
                             <h3 className="font-serif text-2xl font-bold text-auric-gold mb-4">Authenticity</h3>
-                            <p className="text-white/70">Every gemstone is lab-certified and every reading is rooted in centuries-old traditions.</p>
+                            <p className="text-auric-rose/70">Every gemstone is lab-certified and every reading is rooted in centuries-old traditions.</p>
                         </div>
-                        <div className="p-8 border border-white/10 rounded-lg hover:border-auric-gold transition-colors">
+                        <div className="p-8 border border-auric-rose/10 rounded-lg hover:border-auric-gold transition-colors">
                             <h3 className="font-serif text-2xl font-bold text-auric-gold mb-4">Elegance</h3>
-                            <p className="text-white/70">We believe spiritual growth should be accompanied by aesthetic beauty and grace.</p>
+                            <p className="text-auric-rose/70">We believe spiritual growth should be accompanied by aesthetic beauty and grace.</p>
                         </div>
-                        <div className="p-8 border border-white/10 rounded-lg hover:border-auric-gold transition-colors">
+                        <div className="p-8 border border-auric-rose/10 rounded-lg hover:border-auric-gold transition-colors">
                             <h3 className="font-serif text-2xl font-bold text-auric-gold mb-4">Guidance</h3>
-                            <p className="text-white/70">Beyond products, we offer personalized celestial coaching to illuminate your path.</p>
+                            <p className="text-auric-rose/70">Beyond products, we offer personalized celestial coaching to illuminate your path.</p>
                         </div>
                     </div>
                 </div>
