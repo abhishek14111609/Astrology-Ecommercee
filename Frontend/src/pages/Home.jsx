@@ -43,7 +43,20 @@ const Home = () => {
 
     const products = allProducts.slice(0, 4);
 
-    const zodiacs = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
+    const zodiacs = [
+        { name: "Aries", icon: "♈" },
+        { name: "Taurus", icon: "♉" },
+        { name: "Gemini", icon: "♊" },
+        { name: "Cancer", icon: "♋" },
+        { name: "Leo", icon: "♌" },
+        { name: "Virgo", icon: "♍" },
+        { name: "Libra", icon: "♎" },
+        { name: "Scorpio", icon: "♏" },
+        { name: "Sagittarius", icon: "♐" },
+        { name: "Capricorn", icon: "♑" },
+        { name: "Aquarius", icon: "♒" },
+        { name: "Pisces", icon: "♓" }
+    ];
 
     return (
         <div className="bg-auric-blush">
@@ -95,16 +108,18 @@ const Home = () => {
             </section>
 
             {/* Daily Horoscope Strip */}
-            <div className="bg-white border-b border-gray-100 py-6 overflow-x-auto">
-                <div className="container mx-auto px-4 flex justify-between gap-6 min-w-max">
-                    {zodiacs.map((sign, index) => (
-                        <div key={index} className="flex flex-col items-center gap-2 group cursor-pointer">
-                            <div className="w-12 h-12 rounded-full bg-auric-rose/5 flex items-center justify-center text-2xl group-hover:bg-auric-gold group-hover:text-white transition-colors duration-300">
-                                {sign}
+            <div className="bg-white border-b border-gray-100 py-12">
+                <div className="container mx-auto px-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                        {zodiacs.map((sign, index) => (
+                            <div key={index} className="flex flex-col items-center gap-3 group cursor-pointer p-4 rounded-xl hover:bg-auric-blush/30 transition-all duration-300">
+                                <div className="w-16 h-16 rounded-full bg-auric-rose/5 flex items-center justify-center text-3xl group-hover:bg-auric-gold group-hover:text-white transition-colors duration-300 shadow-sm group-hover:shadow-md">
+                                    {sign.icon}
+                                </div>
+                                <span className="text-sm font-semibold text-gray-700 group-hover:text-auric-rose uppercase tracking-widest">{sign.name}</span>
                             </div>
-                            <span className="text-xs font-medium text-gray-500 group-hover:text-auric-rose uppercase tracking-wider">Sign {index + 1}</span>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -137,8 +152,8 @@ const Home = () => {
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-end mb-12">
                         <div className="text-left">
-                            <span className="text-auric-gold uppercase tracking-[0.2em] text-xs font-semibold">Divine Collection</span>
-                            <h2 className="font-serif text-3xl md:text-4xl text-auric-rose font-bold mt-2">Sacred Artifacts</h2>
+                            <span className="text-auric-gold uppercase tracking-[0.2em] text-xs font-semibold">Premium Collection</span>
+                            <h2 className="font-serif text-3xl md:text-4xl text-auric-rose font-bold mt-2">Bestselling Products</h2>
                         </div>
                         <Link to="/shop" className="hidden md:flex items-center gap-2 text-auric-rose font-medium hover:text-auric-gold transition-colors">
                             View All Products <ArrowRight size={18} />
@@ -151,7 +166,7 @@ const Home = () => {
                         ))}
                     </div>
 
-                    <div className="mt-12 text-center md:hidden">
+                    <div className="mt-12 text-center lg:hidden">
                         <Button variant="outline">View All Products</Button>
                     </div>
                 </div>
