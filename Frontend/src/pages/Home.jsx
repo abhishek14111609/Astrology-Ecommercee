@@ -14,7 +14,39 @@ const Home = () => {
         offset: ["start end", "end start"]
     });
 
+    const [bestSellers, setBestSellers] = React.useState([]);
+    const [zodiacProducts, setZodiacProducts] = React.useState([]);
+    const [selectedZodiac, setSelectedZodiac] = React.useState('Aries');
+
     const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+
+    // Fetch Bestsellers
+    React.useEffect(() => {
+        const fetchBestsellers = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/api/products?is_bestseller=1');
+                const data = await res.json();
+                setBestSellers(data.length > 0 ? data.slice(0, 4) : allProducts.slice(0, 4));
+            } catch (err) {
+                setBestSellers(allProducts.slice(0, 4));
+            }
+        };
+        fetchBestsellers();
+    }, []);
+
+    // Fetch Zodiac Specific Products
+    React.useEffect(() => {
+        const fetchZodiacProducts = async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/api/products?zodiac=${selectedZodiac}`);
+                const data = await res.json();
+                setZodiacProducts(data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchZodiacProducts();
+    }, [selectedZodiac]);
 
     // Mock Data
     const services = [
@@ -110,18 +142,64 @@ const Home = () => {
             {/* Daily Horoscope Strip */}
             <div className="bg-white border-b border-gray-100 py-12">
                 <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div className="text-center mb-10">
+                        <span className="text-auric-gold uppercase tracking-[0.2em] text-xs font-semibold">Celestial Insights</span>
+                        <h2 className="font-serif text-3xl text-auric-rose font-bold mt-2">Daily Horoscopes</h2>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
                         {zodiacs.map((sign, index) => (
-                            <div key={index} className="flex flex-col items-center gap-3 group cursor-pointer p-4 rounded-xl hover:bg-auric-blush/30 transition-all duration-300">
-                                <div className="w-16 h-16 rounded-full bg-auric-rose/5 flex items-center justify-center text-3xl group-hover:bg-auric-gold group-hover:text-white transition-colors duration-300 shadow-sm group-hover:shadow-md">
+                            <div
+                                key={index}
+                                onClick={() => setSelectedZodiac(sign.name)}
+                                className={`flex flex-col items-center gap-3 group cursor-pointer p-4 rounded-xl transition-all duration-300 ${selectedZodiac === sign.name ? 'bg-auric-blush shadow-inner' : 'hover:bg-auric-blush/30'}`}
+                            >
+                                <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl transition-colors duration-300 shadow-sm ${selectedZodiac === sign.name ? 'bg-auric-gold text-white' : 'bg-auric-rose/5 group-hover:bg-auric-gold group-hover:text-white'}`}>
                                     {sign.icon}
                                 </div>
-                                <span className="text-sm font-semibold text-gray-700 group-hover:text-auric-rose uppercase tracking-widest">{sign.name}</span>
+                                <span className={`text-sm font-semibold uppercase tracking-widest ${selectedZodiac === sign.name ? 'text-auric-rose' : 'text-gray-700 group-hover:text-auric-rose'}`}>{sign.name}</span>
                             </div>
                         ))}
                     </div>
+
+                    {/* Zodiac Suggestions */}
+                    {zodiacProducts.length > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-16 p-8 bg-auric-blush/20 rounded-3xl border border-auric-blush"
+                        >
+                            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                                <h3 className="font-serif text-2xl text-auric-rose font-bold">Recommended for {selectedZodiac}</h3>
+                                <Link to={`/shop?zodiac=${selectedZodiac}`} className="text-auric-gold text-sm font-bold uppercase tracking-widest hover:text-auric-rose">View All {selectedZodiac} Items</Link>
+                            </div>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                                {zodiacProducts.slice(0, 4).map((product) => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
                 </div>
             </div>
+
+            {/* Gemstone Finder CTA */}
+            <section className="py-20 bg-gradient-to-r from-auric-rose to-[#5c1a2e] text-white overflow-hidden relative">
+                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="max-w-3xl mx-auto text-center space-y-8">
+                        <span className="text-auric-gold uppercase tracking-[0.3em] text-sm font-bold">AI Gemstone Recommendation</span>
+                        <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight">Can't decide which stone <br /> resonates with you?</h2>
+                        <p className="text-lg text-white/80">Take our cosmic quiz. Our engine analyzes your energy patterns to suggest the perfect sacred artifact for your current path.</p>
+                        <div className="pt-4">
+                            <Link to="/gemstone-finder">
+                                <Button className="bg-auric-gold hover:bg-white hover:text-auric-rose border-none text-white px-10 py-4 text-lg">
+                                    Start Celestial Quiz
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* Services Section */}
             <section className="py-20 container mx-auto px-4">
@@ -161,7 +239,7 @@ const Home = () => {
                     </div>
 
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                        {products.map((product) => (
+                        {bestSellers.map((product) => (
                             <ProductCard key={product.id} product={product} />
                         ))}
                     </div>

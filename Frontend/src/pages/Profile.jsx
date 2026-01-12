@@ -4,12 +4,28 @@ import Button from '../components/UI/Button';
 import SectionHeading from '../components/UI/SectionHeading';
 
 const Profile = () => {
-    // Mock user data
+    const navigate = require('react-router-dom').useNavigate();
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+
+    if (!storedUser) {
+        React.useEffect(() => {
+            navigate('/login');
+        }, [navigate]);
+        return null;
+    }
+
     const user = {
-        name: "Aman Sharma",
-        email: "aman.spiritual@example.com",
+        name: storedUser.name || "Seeker",
+        email: storedUser.email || "",
         joined: "January 2026",
+        zodiac: storedUser.zodiac_sign || "",
         avatar: null
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/login');
     };
 
     const recentOrders = [
@@ -38,8 +54,9 @@ const Profile = () => {
                             </div>
                             <h3 className="font-serif text-2xl font-bold text-auric-rose">{user.name}</h3>
                             <p className="text-gray-500 text-sm mb-6">{user.email}</p>
-                            <div className="pt-6 border-t border-gray-50">
+                            <div className="pt-6 border-t border-gray-50 flex flex-col gap-2">
                                 <span className="text-[0.6rem] uppercase tracking-widest text-gray-400">Seeking since {user.joined}</span>
+                                {user.zodiac && <span className="text-auric-gold text-xs font-bold uppercase tracking-widest">Sign: {user.zodiac}</span>}
                             </div>
                         </div>
 
@@ -56,7 +73,7 @@ const Profile = () => {
                                     <ChevronRight size={16} className="text-gray-300 group-hover:text-auric-gold transition-colors" />
                                 </button>
                             ))}
-                            <button className="w-full flex items-center gap-4 p-5 text-red-400 hover:bg-red-50 transition-colors">
+                            <button onClick={handleLogout} className="w-full flex items-center gap-4 p-5 text-red-400 hover:bg-red-50 transition-colors">
                                 <LogOut size={20} />
                                 <span className="text-sm font-bold">Sign Out</span>
                             </button>

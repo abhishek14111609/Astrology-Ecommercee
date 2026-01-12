@@ -18,6 +18,9 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import TrackOrder from './pages/TrackOrder';
 import Checkout from './pages/Checkout';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import GemstoneFinder from './pages/GemstoneFinder';
 import ScrollToTop from './components/Layout/ScrollToTop';
 
 const App = () => {
@@ -44,6 +47,9 @@ const App = () => {
             <Route path="terms" element={<Terms />} />
             <Route path="track-order" element={<TrackOrder />} />
             <Route path="checkout" element={<Checkout />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="gemstone-finder" element={<GemstoneFinder />} />
             <Route path="*" element={<div className="p-10 text-center">404 - Page Not Found</div>} />
           </Route>
         </Routes>
