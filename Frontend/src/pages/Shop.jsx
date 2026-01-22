@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Filter, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Filter, ChevronDown, ChevronUp, X, Search } from 'lucide-react';
 import ProductCard from '../components/UI/ProductCard';
 import { products, categories } from '../data/products';
 
@@ -8,14 +8,14 @@ const Shop = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [priceRange, setPriceRange] = useState(5000);
     const [sortBy, setSortBy] = useState('newest');
-
-
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Filter Logic
     const filteredProducts = products.filter(product => {
         const categoryMatch = selectedCategory === 'All' || product.category === selectedCategory;
         const priceMatch = product.price <= priceRange;
-        return categoryMatch && priceMatch;
+        const searchMatch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+        return categoryMatch && priceMatch && searchMatch;
     });
 
     // Sort Logic
@@ -36,7 +36,7 @@ const Shop = () => {
                         <p className="text-gray-500 text-sm mt-1">Explore our collection of {sortedProducts.length} spiritual artifacts</p>
                     </div>
 
-                    <div className="flex items-center gap-4 mt-4 md:mt-0">
+                    <div className="flex items-center gap-4 mt-4 md:mt-0 flex-wrap">
                         <button
                             className="md:hidden flex items-center gap-2 text-auric-rose font-medium"
                             onClick={() => setIsFilterOpen(true)}
@@ -44,12 +44,36 @@ const Shop = () => {
                             <Filter size={20} /> Filters
                         </button>
 
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="bg-gray-50 border border-gray-200 rounded pl-10 pr-3 py-1 text-sm focus:outline-none focus:border-auric-gold w-48"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <span className="text-gray-500 text-sm">Category:</span>
+                            <select
+                                value={selectedCategory}
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                className="bg-gray-50 border border-gray-200 rounded px-3 py-1 text-sm focus:outline-none focus:border-auric-gold"
+                            >
+                                {categories.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className="flex items-center gap-2">
                             <span className="text-gray-500 text-sm">Sort By:</span>
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
-                                className="bg-gray-50 border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-auric-gold"
+                                className="bg-gray-50 border border-gray-200 rounded px-3 py-1 text-sm focus:outline-none focus:border-auric-gold"
                             >
                                 <option value="newest">Newest Arrivals</option>
                                 <option value="price-low">Price: Low to High</option>
@@ -66,27 +90,6 @@ const Shop = () => {
                         <div className="md:hidden flex justify-between items-center mb-6">
                             <h2 className="font-serif text-xl font-bold text-auric-rose">Filters</h2>
                             <button onClick={() => setIsFilterOpen(false)}><X size={24} /></button>
-                        </div>
-
-                        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
-                            <h3 className="font-serif text-lg font-semibold text-auric-rose mb-4 border-b border-gray-100 pb-2">Categories</h3>
-                            <div className="space-y-2">
-                                {categories.map(cat => (
-                                    <label key={cat} className="flex items-center gap-2 cursor-pointer group">
-                                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${selectedCategory === cat ? 'border-auric-gold' : 'border-gray-300'}`}>
-                                            {selectedCategory === cat && <div className="w-2 h-2 rounded-full bg-auric-gold"></div>}
-                                        </div>
-                                        <input
-                                            type="radio"
-                                            name="category"
-                                            className="hidden"
-                                            checked={selectedCategory === cat}
-                                            onChange={() => setSelectedCategory(cat)}
-                                        />
-                                        <span className={`text-sm group-hover:text-auric-gold transition-colors ${selectedCategory === cat ? 'text-auric-rose font-medium' : 'text-gray-600'}`}>{cat}</span>
-                                    </label>
-                                ))}
-                            </div>
                         </div>
 
                         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
@@ -121,7 +124,7 @@ const Shop = () => {
                             <div className="text-center py-20 bg-white rounded-lg border border-gray-100 border-dashed">
                                 <p className="text-gray-500 text-lg">No products found matching your filters.</p>
                                 <button
-                                    onClick={() => { setSelectedCategory('All'); setPriceRange(5000); }}
+                                    onClick={() => { setSelectedCategory('All'); setPriceRange(5000); setSearchQuery(''); }}
                                     className="mt-4 text-auric-gold font-medium hover:underline"
                                 >
                                     Clear all filters

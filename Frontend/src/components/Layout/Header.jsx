@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Search, User, Heart, ShoppingBag, Menu, X } from 'lucide-react';
+import { User, Heart, ShoppingBag, Menu, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import logo from '../../assets/images/Auric_Logo.png';
 
@@ -54,12 +54,9 @@ const Header = () => {
 
           {/* Icons */}
           <div className="hidden md:flex items-center space-x-6">
-            <button className="text-gray-700 hover:text-auric-gold transition-colors">
-              <Search size={20} />
-            </button>
-            <Link to="/wishlist" className="text-gray-700 hover:text-auric-gold transition-colors">
+            {/* <Link to="/wishlist" className="text-gray-700 hover:text-auric-gold transition-colors">
               <Heart size={20} />
-            </Link>
+            </Link> */}
             <Link to="/cart" className="relative text-gray-700 hover:text-auric-gold transition-colors">
               <ShoppingBag size={20} />
               {cartCount > 0 && (
@@ -102,8 +99,7 @@ const Header = () => {
               </NavLink>
             ))}
             <div className="flex items-center justify-around pt-4 border-t border-gray-100 mt-4">
-              <button className="text-gray-700 hover:text-auric-gold"><Search size={24} /></button>
-              <Link to="/wishlist" className="text-gray-700 hover:text-auric-gold"><Heart size={24} /></Link>
+              {/* <Link to="/wishlist" className="text-gray-700 hover:text-auric-gold"><Heart size={24} /></Link> */}
               <Link to="/cart" className="text-gray-700 hover:text-auric-gold relative">
                 <ShoppingBag size={24} />
                 <span className="absolute -top-1 -right-2 bg-auric-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
