@@ -42,7 +42,7 @@ const Customers = () => {
                         limit: pagination.limit,
                         search: searchQuery
                     },
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
                 });
                 if (isMounted) {
                     setCustomers(response.data.customers);
@@ -61,7 +61,7 @@ const Customers = () => {
         };
 
         const debounce = setTimeout(fetchCustomers, 300);
-        
+
         return () => {
             isMounted = false;
             clearTimeout(debounce);
@@ -71,7 +71,7 @@ const Customers = () => {
     const viewCustomerDetails = async (customerId) => {
         try {
             const response = await axios.get(`${API_BASE}/admin/customers/${customerId}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
             });
             setSelectedCustomer(response.data);
         } catch (err) {
@@ -330,12 +330,11 @@ const Customers = () => {
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="font-semibold">₹{order.total_amount?.toLocaleString('en-IN')}</p>
-                                                    <span className={`badge ${
-                                                        order.status === 'delivered' ? 'badge-success' :
-                                                        order.status === 'processing' ? 'badge-info' :
-                                                        order.status === 'cancelled' ? 'badge-error' :
-                                                        'badge-warning'
-                                                    } text-xs`}>
+                                                    <span className={`badge ${order.status === 'delivered' ? 'badge-success' :
+                                                            order.status === 'processing' ? 'badge-info' :
+                                                                order.status === 'cancelled' ? 'badge-error' :
+                                                                    'badge-warning'
+                                                        } text-xs`}>
                                                         {order.status}
                                                     </span>
                                                 </div>

@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import { mongoose, connect } from './db.js';
 
@@ -7,8 +8,13 @@ const app = express();
 const PORT = process.env.PORT;
 import authRoutes from './routes/auth.js';
 
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:5173', 'http://localhost:5174'], // Frontend and Admin ports
+    credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
+app.use('/uploads', express.static('uploads'));
 
 // Routes
 import productRoutes from './routes/products.js';
@@ -16,12 +22,19 @@ import adminRoutes from './routes/admin.js';
 import setupRoutes from './routes/setup.js';
 import seedRoutes from './routes/seed.js';
 import dashboardRoutes from './routes/dashboard.js';
+import orderRoutes from './routes/orders.js';
+import contactRoutes from './routes/contact.js';
+import settingsRoutes from './routes/settings.js';
+
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/setup', setupRoutes);
 app.use('/api/seed', seedRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

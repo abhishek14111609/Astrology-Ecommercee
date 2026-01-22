@@ -55,8 +55,16 @@ router.post('/login', async (req, res) => {
             { expiresIn: '24h' }
         );
 
+        // Set Cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // true in production
+            sameSite: 'lax', // or 'none' if cross-site in prod
+            maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        });
+
         res.json({
-            token,
+            message: 'Login successful',
             user: {
                 id: user.id,
                 name: user.name,
@@ -67,6 +75,36 @@ router.post('/login', async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ message: 'Login failed', error: error.message });
+    }
+});
+
+// Logout
+router.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.json({ message: 'Logged out successfully' });
+});
+
+// Get Current User (Session Check)
+router.get('/me', async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) return res.status(401).json({ message: 'Not authenticated' });
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+        await connect();
+        const user = await User.findOne({ id: decoded.id }).select('-password').lean();
+
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        res.json({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            zodiac_sign: user.zodiac_sign
+        });
+    } catch (error) {
+        res.status(401).json({ message: 'Invalid token' });
     }
 });
 

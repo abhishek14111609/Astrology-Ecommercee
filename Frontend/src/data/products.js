@@ -20,11 +20,10 @@ export const products = [
         oldPrice: 1999,
         rating: 4.8,
         reviews: 215,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108",
+        image: "https://images.unsplash.com/photo-1617050541961-949243bf794d?auto=format&fit=crop&w=800&q=80",
         description: "A beautifully accumulated brass pooja thali set including diya, agarbatti stand, and roli chawal katori. Perfect for daily worship and festive occasions.",
         images: [
-            "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108",
-            "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108"
+            "https://images.unsplash.com/photo-1617050541961-949243bf794d?auto=format&fit=crop&w=800&q=80"
         ],
         sku: "PE-BPT-001",
         availability: "In Stock"
@@ -37,7 +36,7 @@ export const products = [
         oldPrice: 450,
         rating: 4.9,
         reviews: 120,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108",
+        image: "https://images.unsplash.com/photo-1602405389670-3d843da5259c?auto=format&fit=crop&w=800&q=80",
         description: "100% pure camphor tablets for your daily pooja. Burns completely without leaving any residue.",
         images: [],
         sku: "PE-CAM-002",
@@ -51,7 +50,7 @@ export const products = [
         oldPrice: 299,
         rating: 4.5,
         reviews: 85,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108", // Placeholder
+        image: "https://images.unsplash.com/photo-1608552684807-681e59265f24?auto=format&fit=crop&w=800&q=80",
         description: "Hand-rolled natural incense sticks with a soothing rose fragrance. Creates a divine atmosphere.",
         images: [],
         sku: "PE-INC-003",
@@ -66,12 +65,11 @@ export const products = [
         price: 1899,
         rating: 4.9,
         reviews: 142,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108",
+        image: "https://images.unsplash.com/photo-1567645169542-d6aee70af43f?auto=format&fit=crop&w=800&q=80",
         isNew: true,
         description: "A stunning natural Amethyst cluster known for its spiritual protection and purification properties.",
         images: [
-            "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108",
-            "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108"
+            "https://images.unsplash.com/photo-1567645169542-d6aee70af43f?auto=format&fit=crop&w=800&q=80"
         ],
         sku: "HC-AME-004",
         availability: "In Stock"
@@ -84,7 +82,7 @@ export const products = [
         oldPrice: 999,
         rating: 4.7,
         reviews: 98,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108",
+        image: "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?auto=format&fit=crop&w=800&q=80",
         description: "Authentic Rose Quartz bracelet promoting love, self-love, and friendship.",
         images: [],
         sku: "HC-RQB-005",
@@ -98,7 +96,7 @@ export const products = [
         oldPrice: 3500,
         rating: 4.8,
         reviews: 56,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108", // Placeholder
+        image: "https://images.unsplash.com/photo-1610375461369-d612b729f3d9?auto=format&fit=crop&w=800&q=80",
         discount: 28,
         description: "Set of 7 crystal pyramids balancing your chakras and energy flow.",
         images: [],
@@ -115,7 +113,7 @@ export const products = [
         oldPrice: 4200,
         rating: 5.0,
         reviews: 180,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108",
+        image: "https://images.unsplash.com/photo-1567591414240-e1758c978051?auto=format&fit=crop&w=800&q=80",
         description: "Exquisitely crafted brass Ganesha idol for your home temple or decor.",
         images: [],
         sku: "GI-GAN-007",
@@ -129,7 +127,7 @@ export const products = [
         oldPrice: 7000,
         rating: 4.9,
         reviews: 45,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108", // Placeholder
+        image: "https://images.unsplash.com/photo-1608092806283-29a3a98555e6?auto=format&fit=crop&w=800&q=80",
         isNew: true,
         description: "Hand-carved white marble Krishna statue with gold painting work.",
         images: [],
@@ -146,7 +144,7 @@ export const products = [
         oldPrice: 2800,
         rating: 4.6,
         reviews: 78,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108", // Placeholder
+        image: "https://images.unsplash.com/photo-1605650172600-e792c306cd10?auto=format&fit=crop&w=800&q=80",
         description: "Beautiful brass Urli for floating flowers and candles, adding a traditional touch to your home.",
         images: [],
         sku: "HD-URL-009",
@@ -160,7 +158,7 @@ export const products = [
         oldPrice: 1599,
         rating: 4.8,
         reviews: 310,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108", // Placeholder - look for salt lamp
+        image: "https://images.unsplash.com/photo-1515696955266-4f67e13219a8?auto=format&fit=crop&w=800&q=80",
         description: "Natural Himalayan Pink Salt Lamp that purifies the air and creates a warm ambiance.",
         images: [],
         sku: "HD-HSL-010",
@@ -176,12 +174,12 @@ export const products = [
         oldPrice: 4999,
         rating: 5,
         reviews: 128,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108",
+        image: "https://images.unsplash.com/photo-1589903308904-1010c2294adc?auto=format&fit=crop&w=800&q=80",
         isNew: true,
         discount: 50,
         description: "Original Italian Red Coral (Moonga) gemstone certified by lab. Bringing energy, vitality, and ambition to the wearer.",
         images: [
-            "https://www.mypoojabox.in/cdn/shop/products/DSC_5029_900x.jpg?v=1596549393"
+            "https://images.unsplash.com/photo-1589903308904-1010c2294adc?auto=format&fit=crop&w=800&q=80"
         ],
         sku: "GEM-RC-011",
         availability: "In Stock"
@@ -196,7 +194,7 @@ export const products = [
         oldPrice: 2199,
         rating: 4,
         reviews: 85,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108",
+        image: "https://images.unsplash.com/photo-1615655406736-b37c4d898e6f?auto=format&fit=crop&w=800&q=80",
         discount: 27,
         description: "Authentic 5 Mukhi Rudraksha mala for meditation and chanting.",
         images: [],
@@ -213,7 +211,7 @@ export const products = [
         oldPrice: 799,
         rating: 4.5,
         reviews: 56,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108", // Diwali-ish
+        image: "https://images.unsplash.com/photo-1510375971434-2e8c287bd5b7?auto=format&fit=crop&w=800&q=80",
         description: "Handcrafted terracotta diyas for Diwali and other festivals.",
         images: [],
         sku: "FD-Diy-013",
@@ -227,7 +225,7 @@ export const products = [
         oldPrice: 999,
         rating: 4.8,
         reviews: 134,
-        image: "https://www.mypoojabox.in/cdn/shop/files/DSC00067_copy_ad351095-1d93-46d8-8f08-a7b85739ab79_713x.jpg?v=1767083108", // Placeholder
+        image: "https://images.unsplash.com/photo-1586523098522-82ab78775438?auto=format&fit=crop&w=800&q=80",
         description: "Protective Evil Eye wall hanging to ward off negative energy.",
         images: [],
         sku: "HD-EE-014",

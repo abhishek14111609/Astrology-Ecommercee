@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
     Plus,
@@ -19,11 +20,22 @@ import {
 } from 'lucide-react';
 
 const ProductManagement = () => {
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [form, setForm] = useState({
-        name: '', slug: '', description: '', price: '', category_id: '', zodiac_sign: 'Aries', is_bestseller: false, tags: []
+        name: '',
+        slug: '',
+        description: '',
+        price: '',
+        category_id: '',
+        sub_category_id: '',
+        image_url: '',
+        zodiac_sign: 'Aries',
+        is_bestseller: false,
+        tags: []
     });
+    const [editingProduct, setEditingProduct] = useState(null);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -49,21 +61,83 @@ const ProductManagement = () => {
         setFetching(false);
     };
 
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await axios.post('http://localhost:5000/api/admin/upload-image', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setForm(prev => ({ ...prev, image_url: response.data.imageUrl }));
+        } catch (err) {
+            console.error(err);
+            alert('Failed to upload image');
+        }
+    };
+
+    const resetForm = () => {
+        setForm({
+            name: '',
+            slug: '',
+            description: '',
+            price: '',
+            category_id: '',
+            sub_category_id: '',
+            image_url: '',
+            zodiac_sign: 'Aries',
+            is_bestseller: false,
+            tags: []
+        });
+        setEditingProduct(null);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/admin/products', form, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            if (editingProduct) {
+                await axios.put(`http://localhost:5000/api/admin/products/${editingProduct.id}`, form);
+            } else {
+                await axios.post('http://localhost:5000/api/admin/products', form);
+            }
             fetchInitialData();
-            setForm({ name: '', slug: '', description: '', price: '', category_id: '', zodiac_sign: 'Aries', is_bestseller: false, tags: [] });
-            alert('Divine product manifested successfully!');
+            resetForm();
+            alert(`Product ${editingProduct ? 'updated' : 'created'} successfully!`);
         } catch (err) {
-            alert('Failed to manifest. Check connection.');
+            alert('Operation failed. Check connection.');
         }
         setLoading(false);
+    };
+
+    const handleEdit = (product) => {
+        setEditingProduct(product);
+        setForm({
+            name: product.name,
+            slug: product.slug,
+            description: product.description || '',
+            price: product.price,
+            category_id: product.category_id || '',
+            sub_category_id: product.sub_category_id || '',
+            image_url: product.image_url || product.image || '',
+            zodiac_sign: product.zodiac_sign || 'Aries',
+            is_bestseller: product.is_bestseller || false,
+            tags: product.tags || []
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this product?')) return;
+        try {
+            await axios.delete(`http://localhost:5000/api/admin/products/${id}`);
+            setProducts(prev => prev.filter(p => p.id !== id));
+        } catch (err) {
+            alert('Failed to delete product');
+        }
     };
 
     const handleExcelUpload = async () => {
@@ -85,7 +159,6 @@ const ProductManagement = () => {
                 formData,
                 {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'
                     }
                 }
@@ -95,7 +168,13 @@ const ProductManagement = () => {
             fetchInitialData();
             setUploadFile(null);
         } catch (err) {
-            alert('Failed to upload Excel file: ' + (err.response?.data?.message || err.message));
+            console.error('Upload Error:', err);
+            if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+                alert('Session expired. Please login again.');
+                navigate('/login');
+            } else {
+                alert('Failed to upload Excel file: ' + (err.response?.data?.message || err.message));
+            }
         }
 
         setUploading(false);
@@ -237,7 +316,7 @@ const ProductManagement = () => {
                             <div className="border-2 border-dashed border-neutral-200 rounded-xl p-8 text-center hover:border-auric-purple transition-colors">
                                 <input
                                     type="file"
-                                    accept=".xlsx,.xls"
+                                    accept=".xlsx,.xls,.csv"
                                     onChange={(e) => setUploadFile(e.target.files[0])}
                                     className="hidden"
                                     id="excel-upload"
@@ -247,9 +326,9 @@ const ProductManagement = () => {
                                         <FileSpreadsheet size={32} className="text-neutral-400" />
                                     </div>
                                     <p className="text-neutral-900 font-semibold mb-1">
-                                        {uploadFile ? uploadFile.name : 'Click to select Excel file'}
+                                        {uploadFile ? uploadFile.name : 'Click to select Excel/CSV file'}
                                     </p>
-                                    <p className="text-sm text-neutral-500">Supports .xlsx and .xls formats</p>
+                                    <p className="text-sm text-neutral-500">Supports .xlsx, .xls and .csv formats</p>
                                 </label>
                             </div>
 
@@ -305,10 +384,14 @@ const ProductManagement = () => {
                 <aside className="xl:col-span-4 space-y-6">
                     <div className="card p-6 sticky top-6">
                         <div className="inline-flex p-3 rounded-xl bg-auric-purple/10 mb-4">
-                            <Plus size={24} className="text-auric-purple" />
+                            {editingProduct ? <Edit size={24} className="text-auric-purple" /> : <Plus size={24} className="text-auric-purple" />}
                         </div>
-                        <h2 className="text-2xl font-bold text-neutral-900 mb-2">Add New Product</h2>
-                        <p className="text-neutral-500 text-sm mb-6">Create a new product in your inventory</p>
+                        <h2 className="text-2xl font-bold text-neutral-900 mb-2">
+                            {editingProduct ? 'Edit Product' : 'Add New Product'}
+                        </h2>
+                        <p className="text-neutral-500 text-sm mb-6">
+                            {editingProduct ? 'Update product details' : 'Create a new product in your inventory'}
+                        </p>
 
                         <form className="space-y-5" onSubmit={handleSubmit}>
                             <div className="space-y-4">
@@ -340,13 +423,58 @@ const ProductManagement = () => {
                                         <select
                                             className="input-ghost"
                                             value={form.category_id}
-                                            onChange={e => setForm({ ...form, category_id: e.target.value })}
+                                            onChange={e => setForm({ ...form, category_id: e.target.value, sub_category_id: '' })}
                                             required
                                         >
                                             <option value="">Select Category</option>
                                             {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                         </select>
                                     </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-semibold text-neutral-700">Sub-Category</label>
+                                        <select
+                                            className="input-ghost"
+                                            value={form.sub_category_id}
+                                            onChange={e => setForm({ ...form, sub_category_id: e.target.value })}
+                                            disabled={!form.category_id}
+                                        >
+                                            <option value="">Select Sub-Category</option>
+                                            {form.category_id && categories.find(c => c.id == form.category_id)?.subcategories?.map(sc => (
+                                                <option key={sc.id} value={sc.id}>{sc.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold text-neutral-700">Product Image</label>
+                                    <div className="relative border-2 border-dashed border-neutral-200 rounded-xl p-4 hover:border-auric-purple transition-colors bg-neutral-50/50">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        />
+                                        <div className="flex flex-col items-center justify-center text-center">
+                                            <div className="w-10 h-10 bg-auric-purple/10 rounded-full flex items-center justify-center mb-2">
+                                                <Upload size={18} className="text-auric-purple" />
+                                            </div>
+                                            <p className="text-xs font-medium text-neutral-900">Click to upload image</p>
+                                            <p className="text-[10px] text-neutral-500 mt-1">PNG, JPG up to 5MB</p>
+                                        </div>
+                                    </div>
+                                    {form.image_url && (
+                                        <div className="mt-3 relative w-full h-48 rounded-lg overflow-hidden border border-neutral-200 group">
+                                            <img src={form.image_url} alt="Preview" className="h-full w-full object-cover" />
+                                            <button
+                                                type="button"
+                                                onClick={() => setForm(prev => ({ ...prev, image_url: '' }))}
+                                                className="absolute top-2 right-2 p-1.5 bg-white/80 rounded-full text-red-500 hover:text-red-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-all"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -390,13 +518,25 @@ const ProductManagement = () => {
                                 <label htmlFor="bestseller-check" className="text-sm font-semibold text-neutral-700 cursor-pointer">Mark as Bestseller</label>
                             </div>
 
-                            <button
-                                disabled={loading}
-                                className="btn-primary w-full py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {loading && <Loader2 className="animate-spin" size={18} />}
-                                {loading ? 'Creating...' : 'Create Product'}
-                            </button>
+                            <div className="flex gap-3 pt-2">
+                                {editingProduct && (
+                                    <button
+                                        type="button"
+                                        onClick={resetForm}
+                                        className="btn-secondary flex-1 py-3.5"
+                                    >
+                                        Cancel
+                                    </button>
+                                )}
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="btn-primary flex-1 py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {loading && <Loader2 className="animate-spin" size={18} />}
+                                    {loading ? (editingProduct ? 'Updating...' : 'Creating...') : (editingProduct ? 'Update Product' : 'Create Product')}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </aside>
@@ -413,14 +553,24 @@ const ProductManagement = () => {
                             {filteredProducts.map(p => (
                                 <div key={p.id} className="card-hover p-6 group relative overflow-hidden">
                                     <div className="flex justify-between items-start mb-4">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-auric-purple/10 to-auric-purple/5 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
-                                            🕉️
+                                        <div className="w-14 h-14 bg-gradient-to-br from-auric-purple/10 to-auric-purple/5 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                                            {p.image_url || p.image ? (
+                                                <img src={p.image_url || p.image} alt={p.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                '🕉️'
+                                            )}
                                         </div>
                                         <div className="flex gap-2">
-                                            <button className="p-2 text-neutral-400 hover:text-auric-purple hover:bg-auric-purple/10 rounded-lg transition-all">
+                                            <button
+                                                onClick={() => handleEdit(p)}
+                                                className="p-2 text-neutral-400 hover:text-auric-purple hover:bg-auric-purple/10 rounded-lg transition-all"
+                                            >
                                                 <Edit size={16} />
                                             </button>
-                                            <button className="p-2 text-neutral-400 hover:text-auric-crimson hover:bg-red-50 rounded-lg transition-all">
+                                            <button
+                                                onClick={() => handleDelete(p.id)}
+                                                className="p-2 text-neutral-400 hover:text-auric-crimson hover:bg-red-50 rounded-lg transition-all"
+                                            >
                                                 <Trash2 size={16} />
                                             </button>
                                         </div>

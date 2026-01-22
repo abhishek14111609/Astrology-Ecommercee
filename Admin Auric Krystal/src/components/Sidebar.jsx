@@ -10,9 +10,14 @@ import {
     X,
     Sparkles,
     Package,
+    GitBranch,
+    MessageSquare,
+    Settings
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
+    const { user, logout } = useAuth();
     const menuItems = [
         {
             name: 'Overview',
@@ -33,6 +38,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             badge: null
         },
         {
+            name: 'Sub-Categories',
+            path: '/subcategories',
+            icon: GitBranch,
+            badge: null
+        },
+        {
             name: 'Orders',
             path: '/orders',
             icon: Package,
@@ -42,6 +53,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             name: 'Customers',
             path: '/customers',
             icon: Users,
+            badge: null
+        },
+        {
+            name: 'Inquiries',
+            path: '/inquiries',
+            icon: MessageSquare,
             badge: null
         },
         {
@@ -143,25 +160,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     </div>
 
                     {/* Settings Section */}
-                    {/* <div className="mt-8 pt-6 border-t border-neutral-100">
+                    <div className="mt-8 pt-6 border-t border-neutral-100">
                         <div className="px-3 mb-3">
                             <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
                                 System
                             </p>
                         </div>
-                        <NavLink
-                            to="/database-setup"
-                            onClick={() => setIsOpen(false)}
-                            className={({ isActive }) =>
-                                `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${isActive
-                                    ? 'bg-gradient-to-r from-auric-purple to-auric-purple-dark text-white shadow-lg shadow-auric-purple/20'
-                                    : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
-                                }`
-                            }
-                        >
-                            <Database size={20} className="text-neutral-500 group-hover:scale-110 transition-transform" />
-                            <span className="text-sm font-semibold">Database Setup</span>
-                        </NavLink>
                         <NavLink
                             to="/settings"
                             onClick={() => setIsOpen(false)}
@@ -175,32 +179,38 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                             <Settings size={20} className="text-neutral-500 group-hover:rotate-90 transition-transform duration-300" />
                             <span className="text-sm font-semibold">Settings</span>
                         </NavLink>
-                    </div> */}
+                    </div>
                 </nav>
 
-                 {/* Footer - User Info & Logout */}
+                {/* Footer - User Info & Logout */}
                 <div className="p-4 border-t border-neutral-100 space-y-3">
-                    {/* User Card 
+                    {/* User Info */}
                     <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
                         <div className="w-10 h-10 bg-gradient-to-br from-auric-gold to-auric-accent rounded-lg flex items-center justify-center text-white font-bold shadow-md">
-                            A
+                            {user?.name?.charAt(0).toUpperCase() || 'A'}
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-neutral-900 truncate">
-                                Admin User
+                                {user?.name || 'Admin User'}
                             </p>
                             <p className="text-xs text-neutral-500 truncate">
-                                admin@auric.com
+                                {user?.email || 'admin@auric.com'}
                             </p>
                         </div>
                     </div>
 
                     {/* Logout Button */}
-                    <button className="flex items-center gap-3 px-4 py-3 w-full text-neutral-600 hover:text-auric-crimson hover:bg-red-50 rounded-xl transition-all duration-200 group">
+                    <button
+                        onClick={async () => {
+                            await logout();
+                            window.location.href = '/login';
+                        }}
+                        className="flex items-center gap-3 px-4 py-3 w-full text-neutral-600 hover:text-auric-crimson hover:bg-red-50 rounded-xl transition-all duration-200 group"
+                    >
                         <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
                         <span className="text-sm font-semibold">Sign Out</span>
                     </button>
-                </div> 
+                </div>
             </aside>
         </>
     );

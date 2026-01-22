@@ -52,7 +52,7 @@ const Orders = () => {
                         page: pagination.page,
                         limit: pagination.limit
                     },
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
                 });
                 if (isMounted) {
                     setOrders(response.data.orders);
@@ -82,7 +82,7 @@ const Orders = () => {
             await axios.put(
                 `${API_BASE}/admin/orders/${orderId}/status`,
                 { status: newStatus },
-                { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
+                {}
             );
             setOrders(prev => prev.map(order =>
                 order.id === orderId ? { ...order, status: newStatus } : order

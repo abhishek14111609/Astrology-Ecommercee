@@ -59,6 +59,25 @@ router.get('/categories', async (req, res) => {
     }
 });
 
+// Get Single Product
+router.get('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await connect();
+        const product = await Product.findOne({ id: parseInt(id) }).lean();
+
+        if (!product) return res.status(404).json({ message: 'Product not found' });
+
+        // Enrich with category name
+        const cat = await Category.findOne({ id: product.category_id }).lean();
+        if (cat) product.category_name = cat.name;
+
+        res.json(product);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching product', error: error.message });
+    }
+});
+
 // Product Suggestion Logic (Quiz Answer -> Tags)
 router.post('/suggest', async (req, res) => {
     try {
