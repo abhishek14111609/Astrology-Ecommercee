@@ -3,7 +3,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import ProductManagement from './pages/ProductManagement';
-import DatabaseSetup from './pages/DatabaseSetup';
+import Categories from './pages/Categories';
+import Orders from './pages/Orders';
+import Customers from './pages/Customers';
+import QuizConfig from './pages/QuizConfig';
 
 function App() {
   return (
@@ -12,11 +15,10 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<ProductManagement />} />
-          <Route path="database-setup" element={<DatabaseSetup />} />
-          <Route path="categories" element={<div className="text-center py-20 text-neutral-400">Categories page coming soon...</div>} />
-          <Route path="orders" element={<div className="text-center py-20 text-neutral-400">Orders page coming soon...</div>} />
-          <Route path="customers" element={<div className="text-center py-20 text-neutral-400">Customers page coming soon...</div>} />
-          <Route path="quiz" element={<div className="text-center py-20 text-neutral-400">Quiz Config page coming soon...</div>} />
+          <Route path="categories" element={<Categories />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="customers" element={<Customers />} />
+          <Route path="quiz" element={<QuizConfig />} />
           <Route path="analytics" element={<div className="text-center py-20 text-neutral-400">Analytics page coming soon...</div>} />
           <Route path="settings" element={<div className="text-center py-20 text-neutral-400">Settings page coming soon...</div>} />
           <Route path="*" element={<div className="text-center py-20 text-neutral-400">Page not found</div>} />

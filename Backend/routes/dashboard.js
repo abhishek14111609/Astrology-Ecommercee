@@ -1,50 +1,35 @@
-const express = require('express');
-const db = require('../db');
+import express from 'express';
+import { connect } from '../db.js';
+import Order from '../models/Order.js';
+import Product from '../models/Product.js';
+import User from '../models/User.js';
 const router = express.Router();
 
 // Get Dashboard Statistics
 router.get('/stats', async (req, res) => {
     try {
-        // Get total revenue from completed orders
-        const [revenueResult] = await db.query(
-            `SELECT COALESCE(SUM(total_amount), 0) as total_revenue, 
-             COUNT(*) as total_orders 
-             FROM orders 
-             WHERE status = 'completed'`
-        );
+        await connect();
+        const now = new Date();
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-        // Get total products count
-        const [productsResult] = await db.query(
-            'SELECT COUNT(*) as total_products FROM products'
-        );
+        const revAgg = await Order.aggregate([
+            { $match: { status: 'completed' } },
+            { $group: { _id: null, total_revenue: { $sum: '$total_amount' }, total_orders: { $sum: 1 } } }
+        ]);
+        const currentRevenue = parseFloat((revAgg[0]?.total_revenue || 0));
 
-        // Get active orders count (pending + processing)
-        const [activeOrdersResult] = await db.query(
-            `SELECT COUNT(*) as active_orders 
-             FROM orders 
-             WHERE status IN ('pending', 'processing')`
-        );
-
-        // Get total customers count
-        const [customersResult] = await db.query(
-            `SELECT COUNT(*) as total_customers 
-             FROM users 
-             WHERE role = 'user'`
-        );
-
-        // Calculate revenue change (compare with previous period - simplified)
-        const [previousRevenue] = await db.query(
-            `SELECT COALESCE(SUM(total_amount), 0) as prev_revenue 
-             FROM orders 
-             WHERE status = 'completed' 
-             AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)`
-        );
-
-        const currentRevenue = parseFloat(revenueResult[0].total_revenue);
-        const prevRevenue = parseFloat(previousRevenue[0].prev_revenue);
+        const prevAgg = await Order.aggregate([
+            { $match: { status: 'completed', created_at: { $lt: sevenDaysAgo } } },
+            { $group: { _id: null, prev_revenue: { $sum: '$total_amount' } } }
+        ]);
+        const prevRevenue = parseFloat((prevAgg[0]?.prev_revenue || 0));
         const revenueChange = prevRevenue > 0
             ? ((currentRevenue - prevRevenue) / prevRevenue * 100).toFixed(1)
             : 0;
+
+        const totalProducts = await Product.countDocuments();
+        const activeOrders = await Order.countDocuments({ status: { $in: ['pending', 'processing'] } });
+        const totalCustomers = await User.countDocuments({ role: 'user' });
 
         res.json({
             revenue: {
@@ -53,17 +38,17 @@ router.get('/stats', async (req, res) => {
                 trend: revenueChange >= 0 ? 'up' : 'down'
             },
             products: {
-                value: productsResult[0].total_products,
+                value: totalProducts,
                 change: '+8', // Can be calculated based on historical data
                 trend: 'up'
             },
             activeOrders: {
-                value: activeOrdersResult[0].active_orders,
+                value: activeOrders,
                 change: '+23', // Can be calculated based on historical data
                 trend: 'up'
             },
             customers: {
-                value: customersResult[0].total_customers,
+                value: totalCustomers,
                 change: '-3.2', // Can be calculated based on historical data
                 trend: 'down'
             }
@@ -76,27 +61,10 @@ router.get('/stats', async (req, res) => {
 // Get Recent Orders
 router.get('/recent-orders', async (req, res) => {
     try {
-        const limit = req.query.limit || 5;
+        const limit = parseInt(req.query.limit || 5);
+        await connect();
+        const orders = await Order.find({}).sort({ created_at: -1 }).limit(limit).lean();
 
-        const [orders] = await db.query(
-            `SELECT 
-                o.id,
-                o.order_number,
-                o.customer_name,
-                o.total_amount,
-                o.status,
-                o.created_at,
-                GROUP_CONCAT(p.name SEPARATOR ', ') as products
-             FROM orders o
-             LEFT JOIN order_items oi ON o.id = oi.order_id
-             LEFT JOIN products p ON oi.product_id = p.id
-             GROUP BY o.id
-             ORDER BY o.created_at DESC
-             LIMIT ?`,
-            [parseInt(limit)]
-        );
-
-        // Format the response
         const formattedOrders = orders.map(order => {
             const now = new Date();
             const orderDate = new Date(order.created_at);
@@ -117,8 +85,8 @@ router.get('/recent-orders', async (req, res) => {
             return {
                 id: order.order_number,
                 customer: order.customer_name,
-                product: order.products || 'No items',
-                amount: `₹${parseFloat(order.total_amount).toLocaleString('en-IN')}`,
+                product: (order.items || []).map(i => i.product_name).join(', ') || 'No items',
+                amount: `₹${parseFloat(order.total_amount || 0).toLocaleString('en-IN')}`,
                 status: order.status.charAt(0).toUpperCase() + order.status.slice(1),
                 time: timeAgo
             };
@@ -133,54 +101,37 @@ router.get('/recent-orders', async (req, res) => {
 // Get Top Products
 router.get('/top-products', async (req, res) => {
     try {
-        const limit = req.query.limit || 4;
+        const limit = parseInt(req.query.limit || 4);
+        await connect();
 
-        const [products] = await db.query(
-            `SELECT 
-                p.id,
-                p.name,
-                COUNT(oi.id) as sales,
-                SUM(oi.subtotal) as revenue,
-                4.5 + (RAND() * 0.5) as rating
-             FROM products p
-             LEFT JOIN order_items oi ON p.id = oi.product_id
-             LEFT JOIN orders o ON oi.order_id = o.id AND o.status = 'completed'
-             GROUP BY p.id
-             ORDER BY sales DESC, revenue DESC
-             LIMIT ?`,
-            [parseInt(limit)]
-        );
+        // Aggregate order items across orders
+        const agg = await Order.aggregate([
+            { $match: { status: 'completed' } },
+            { $unwind: '$items' },
+            { $group: { _id: '$items.product_id', sales: { $sum: '$items.quantity' }, revenue: { $sum: '$items.subtotal' } } },
+            { $sort: { sales: -1, revenue: -1 } },
+            { $limit: limit }
+        ]);
 
-        // If no products with sales, get bestsellers
-        if (products.length === 0 || products[0].sales === 0) {
-            const [bestsellers] = await db.query(
-                `SELECT 
-                    id,
-                    name,
-                    0 as sales,
-                    0 as revenue,
-                    4.5 + (RAND() * 0.5) as rating
-                 FROM products
-                 WHERE is_bestseller = TRUE
-                 LIMIT ?`,
-                [parseInt(limit)]
-            );
-
+        if (!agg.length) {
+            const bestsellers = await Product.find({ is_bestseller: true }).limit(limit).lean();
             const formattedBestsellers = bestsellers.map(product => ({
                 name: product.name,
                 sales: 0,
                 revenue: '₹0',
-                rating: parseFloat(product.rating).toFixed(1)
+                rating: (4.5 + Math.random() * 0.5).toFixed(1)
             }));
-
             return res.json(formattedBestsellers);
         }
 
-        const formattedProducts = products.map(product => ({
-            name: product.name,
-            sales: product.sales || 0,
-            revenue: `₹${parseFloat(product.revenue || 0).toLocaleString('en-IN')}`,
-            rating: parseFloat(product.rating).toFixed(1)
+        const productIds = agg.map(a => a._id);
+        const products = await Product.find({ id: { $in: productIds } }).lean();
+        const map = Object.fromEntries(products.map(p => [p.id, p.name]));
+        const formattedProducts = agg.map(a => ({
+            name: map[a._id] || `Product ${a._id}`,
+            sales: a.sales || 0,
+            revenue: `₹${parseFloat(a.revenue || 0).toLocaleString('en-IN')}`,
+            rating: (4.5 + Math.random() * 0.5).toFixed(1)
         }));
 
         res.json(formattedProducts);
@@ -189,4 +140,4 @@ router.get('/top-products', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

@@ -1,10 +1,16 @@
-const express = require('express');
-const db = require('../db');
+import express from 'express';
+import { connect } from '../db.js';
+import { getNextSequence } from '../models/Counter.js';
+import Category from '../models/Category.js';
+import Product from '../models/Product.js';
+import User from '../models/User.js';
+import Order from '../models/Order.js';
 const router = express.Router();
 
 // Seed initial data
 router.post('/seed-data', async (req, res) => {
     try {
+        await connect();
         const results = [];
 
         // Seed Categories
@@ -16,22 +22,23 @@ router.post('/seed-data', async (req, res) => {
             { name: 'Incense & Oils', slug: 'incense-oils', image_url: '/images/categories/incense.jpg' }
         ];
 
+        // Upsert categories and build slug->id map
+        const catMap = {};
         for (const cat of categories) {
             try {
-                await db.query(
-                    'INSERT INTO categories (name, slug, image_url) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name=name',
-                    [cat.name, cat.slug, cat.image_url]
-                );
+                let existing = await Category.findOne({ slug: cat.slug }).lean();
+                if (!existing) {
+                    const id = await getNextSequence('categories');
+                    const created = await Category.create({ id, ...cat });
+                    catMap[cat.slug] = created.id;
+                } else {
+                    catMap[cat.slug] = existing.id;
+                }
                 results.push({ type: 'category', name: cat.name, success: true });
             } catch (err) {
                 results.push({ type: 'category', name: cat.name, success: false, error: err.message });
             }
         }
-
-        // Get category IDs
-        const [catRows] = await db.query('SELECT id, slug FROM categories');
-        const catMap = {};
-        catRows.forEach(row => catMap[row.slug] = row.id);
 
         // Seed Products
         const products = [
@@ -119,10 +126,16 @@ router.post('/seed-data', async (req, res) => {
 
         for (const product of products) {
             try {
-                await db.query(
-                    'INSERT INTO products (name, slug, description, price, category_id, zodiac_sign, is_bestseller, tags, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name=name',
-                    [product.name, product.slug, product.description, product.price, product.category_id, product.zodiac_sign, product.is_bestseller, product.tags, 50]
-                );
+                const existing = await Product.findOne({ slug: product.slug }).lean();
+                if (!existing) {
+                    const id = await getNextSequence('products');
+                    await Product.create({
+                        id,
+                        ...product,
+                        tags: JSON.parse(product.tags),
+                        stock: 50,
+                    });
+                }
                 results.push({ type: 'product', name: product.name, success: true });
             } catch (err) {
                 results.push({ type: 'product', name: product.name, success: false, error: err.message });
@@ -133,10 +146,11 @@ router.post('/seed-data', async (req, res) => {
         const bcrypt = require('bcryptjs');
         const hashedPassword = await bcrypt.hash('admin123', 10);
         try {
-            await db.query(
-                'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name=name',
-                ['Admin User', 'admin@aurickrystal.com', hashedPassword, 'admin']
-            );
+            const existingAdmin = await User.findOne({ email: 'admin@aurickrystal.com' }).lean();
+            if (!existingAdmin) {
+                const id = await getNextSequence('users');
+                await User.create({ id, name: 'Admin User', email: 'admin@aurickrystal.com', password: hashedPassword, role: 'admin' });
+            }
             results.push({ type: 'user', name: 'Admin User', success: true });
         } catch (err) {
             results.push({ type: 'user', name: 'Admin User', success: false, error: err.message });
@@ -154,10 +168,11 @@ router.post('/seed-data', async (req, res) => {
 
         for (const customer of customers) {
             try {
-                await db.query(
-                    'INSERT INTO users (name, email, password, role, zodiac_sign) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name=name',
-                    [customer.name, customer.email, customerPassword, 'user', customer.zodiac_sign]
-                );
+                const existing = await User.findOne({ email: customer.email }).lean();
+                if (!existing) {
+                    const id = await getNextSequence('users');
+                    await User.create({ id, name: customer.name, email: customer.email, password: customerPassword, role: 'user', zodiac_sign: customer.zodiac_sign });
+                }
                 results.push({ type: 'customer', name: customer.name, success: true });
             } catch (err) {
                 results.push({ type: 'customer', name: customer.name, success: false, error: err.message });
@@ -165,8 +180,8 @@ router.post('/seed-data', async (req, res) => {
         }
 
         // Get product and user IDs for orders
-        const [productRows] = await db.query('SELECT id, name, price FROM products LIMIT 8');
-        const [userRows] = await db.query('SELECT id, name, email FROM users WHERE role = "user"');
+        const productRows = await Product.find({}).limit(8).lean();
+        const userRows = await User.find({ role: 'user' }).lean();
 
         // Seed sample orders
         if (productRows.length > 0 && userRows.length > 0) {
@@ -221,22 +236,24 @@ router.post('/seed-data', async (req, res) => {
             for (const order of orders) {
                 try {
                     const totalAmount = order.products.reduce((sum, p) => sum + (p.price * p.quantity), 0);
-
-                    const [orderResult] = await db.query(
-                        'INSERT INTO orders (user_id, order_number, customer_name, customer_email, total_amount, status, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE order_number=order_number',
-                        [order.user_id, order.order_number, order.customer_name, order.customer_email, totalAmount, order.status, order.payment_status]
-                    );
-
-                    const orderId = orderResult.insertId;
-
-                    // Insert order items
-                    for (const product of order.products) {
-                        await db.query(
-                            'INSERT INTO order_items (order_id, product_id, product_name, quantity, price, subtotal) VALUES (?, ?, ?, ?, ?, ?)',
-                            [orderId, product.id, product.name, product.quantity, product.price, product.price * product.quantity]
-                        );
-                    }
-
+                    const id = await getNextSequence('orders');
+                    await Order.create({
+                        id,
+                        user_id: order.user_id,
+                        order_number: order.order_number,
+                        customer_name: order.customer_name,
+                        customer_email: order.customer_email,
+                        total_amount: totalAmount,
+                        status: order.status,
+                        payment_status: order.payment_status,
+                        items: order.products.map(p => ({
+                            product_id: p.id,
+                            product_name: p.name,
+                            quantity: p.quantity,
+                            price: p.price,
+                            subtotal: p.price * p.quantity,
+                        })),
+                    });
                     results.push({ type: 'order', name: order.order_number, success: true });
                 } catch (err) {
                     results.push({ type: 'order', name: order.order_number, success: false, error: err.message });
@@ -260,4 +277,4 @@ router.post('/seed-data', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

@@ -1,0 +1,6 @@
+name,price,description,zodiac_sign,is_bestseller,tags,stock,category_id
+"Amethyst Cluster","2499.00","Natural amethyst for spiritual healing","Pisces","TRUE","Healing, Meditation, Peace","50","1"
+"Rose Quartz Heart","1299.00","Heart-shaped rose quartz for love","Taurus","TRUE","Love, Healing, Relationships","45","1"
+"Citrine Point","899.00","Prosperity and success stone","Leo","TRUE","Success, Abundance","100","1"
+"Black Tourmaline","1299.00","Protective grounding stone","Capricorn","FALSE","Protection, Grounding","75","1"
+"Clear Quartz Wand","799.00","Master healer crystal wand","Aries","FALSE","Healing, Energy, Clarity","120","1"

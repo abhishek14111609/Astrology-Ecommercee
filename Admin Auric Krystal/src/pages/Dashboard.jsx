@@ -6,7 +6,7 @@ import {
     ShoppingBag,
     Users,
     Package,
-    DollarSign,
+    IndianRupee,
     ArrowUpRight,
     ArrowDownRight,
     MoreVertical,
@@ -23,10 +23,6 @@ const Dashboard = () => {
     const [error, setError] = useState(null);
 
     const API_BASE = 'http://localhost:5000/api';
-
-    useEffect(() => {
-        fetchDashboardData();
-    }, []);
 
     const fetchDashboardData = async () => {
         setLoading(true);
@@ -46,7 +42,7 @@ const Dashboard = () => {
                     value: `₹${parseFloat(statsRes.data.revenue.value).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
                     change: `${statsRes.data.revenue.change}%`,
                     trend: statsRes.data.revenue.trend,
-                    icon: DollarSign,
+                    icon: IndianRupee,
                     color: 'from-auric-purple to-auric-purple-dark',
                     iconBg: 'bg-auric-purple/10',
                     iconColor: 'text-auric-purple'
@@ -93,6 +89,22 @@ const Dashboard = () => {
         setLoading(false);
     };
 
+    useEffect(() => {
+        let isMounted = true;
+
+        const loadData = async () => {
+            await fetchDashboardData();
+        };
+
+        if (isMounted) {
+            loadData();
+        }
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
     const getStatusColor = (status) => {
         switch (status) {
             case 'Completed':
@@ -119,14 +131,6 @@ const Dashboard = () => {
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button
-                        onClick={fetchDashboardData}
-                        disabled={loading}
-                        className="btn-ghost text-sm"
-                    >
-                        {loading ? <Loader2 className="animate-spin" size={16} /> : '🔄'}
-                        Refresh
-                    </button>
                     <select className="input-ghost text-sm">
                         <option>Last 7 days</option>
                         <option>Last 30 days</option>

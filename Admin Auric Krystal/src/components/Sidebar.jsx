@@ -10,9 +10,6 @@ import {
     X,
     Sparkles,
     Package,
-    TrendingUp,
-    Settings,
-    Database
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -39,7 +36,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             name: 'Orders',
             path: '/orders',
             icon: Package,
-            badge: '12'
+            badge: null
         },
         {
             name: 'Customers',
@@ -51,12 +48,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             name: 'Quiz Config',
             path: '/quiz',
             icon: HelpCircle,
-            badge: null
-        },
-        {
-            name: 'Analytics',
-            path: '/analytics',
-            icon: TrendingUp,
             badge: null
         },
     ];
@@ -152,7 +143,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     </div>
 
                     {/* Settings Section */}
-                    <div className="mt-8 pt-6 border-t border-neutral-100">
+                    {/* <div className="mt-8 pt-6 border-t border-neutral-100">
                         <div className="px-3 mb-3">
                             <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
                                 System
@@ -184,12 +175,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                             <Settings size={20} className="text-neutral-500 group-hover:rotate-90 transition-transform duration-300" />
                             <span className="text-sm font-semibold">Settings</span>
                         </NavLink>
-                    </div>
+                    </div> */}
                 </nav>
 
-                {/* Footer - User Info & Logout */}
+                 {/* Footer - User Info & Logout */}
                 <div className="p-4 border-t border-neutral-100 space-y-3">
-                    {/* User Card */}
+                    {/* User Card 
                     <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
                         <div className="w-10 h-10 bg-gradient-to-br from-auric-gold to-auric-accent rounded-lg flex items-center justify-center text-white font-bold shadow-md">
                             A
@@ -209,7 +200,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                         <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
                         <span className="text-sm font-semibold">Sign Out</span>
                     </button>
-                </div>
+                </div> 
             </aside>
         </>
     );

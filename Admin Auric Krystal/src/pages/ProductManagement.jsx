@@ -11,7 +11,11 @@ import {
     // ZodiacAries, // Note: using placeholders or icons
     LayoutGrid,
     MoreVertical,
-    CheckCircle2
+    CheckCircle2,
+    Upload,
+    FileSpreadsheet,
+    Download,
+    AlertCircle
 } from 'lucide-react';
 
 const ProductManagement = () => {
@@ -23,6 +27,10 @@ const ProductManagement = () => {
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [uploadFile, setUploadFile] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadResult, setUploadResult] = useState(null);
+    const [showUploadModal, setShowUploadModal] = useState(false);
 
     useEffect(() => {
         fetchInitialData();
@@ -58,6 +66,92 @@ const ProductManagement = () => {
         setLoading(false);
     };
 
+    const handleExcelUpload = async () => {
+        if (!uploadFile) {
+            alert('Please select an Excel file');
+            return;
+        }
+
+        setUploading(true);
+        setUploadResult(null);
+
+        try {
+            const token = localStorage.getItem('token');
+            const formData = new FormData();
+            formData.append('file', uploadFile);
+
+            const response = await axios.post(
+                'http://localhost:5000/api/admin/products/upload-excel',
+                formData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+
+            setUploadResult(response.data.results);
+            fetchInitialData();
+            setUploadFile(null);
+        } catch (err) {
+            alert('Failed to upload Excel file: ' + (err.response?.data?.message || err.message));
+        }
+
+        setUploading(false);
+    };
+
+    const downloadTemplate = () => {
+        // Create sample Excel data
+        const sampleData = [
+            {
+                name: 'Sample Product',
+                price: 1999.00,
+                description: 'Product description here',
+                zodiac_sign: 'Aries',
+                is_bestseller: 'FALSE',
+                tags: 'Healing, Meditation',
+                stock: 50
+            }
+        ];
+
+        // Create worksheet
+        const ws = document.createElement('table');
+        ws.innerHTML = `
+            <thead>
+                <tr>
+                    <th>name</th>
+                    <th>price</th>
+                    <th>description</th>
+                    <th>zodiac_sign</th>
+                    <th>is_bestseller</th>
+                    <th>tags</th>
+                    <th>stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Sample Product</td>
+                    <td>1999.00</td>
+                    <td>Product description here</td>
+                    <td>Aries</td>
+                    <td>FALSE</td>
+                    <td>Healing, Meditation</td>
+                    <td>50</td>
+                </tr>
+            </tbody>
+        `;
+
+        // Convert to CSV for simplicity
+        const csv = 'name,price,description,zodiac_sign,is_bestseller,tags,stock\nSample Product,1999.00,Product description here,Aries,FALSE,"Healing, Meditation",50\n';
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'products_template.csv';
+        a.click();
+    };
+
     const filteredProducts = products.filter(p =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -72,6 +166,13 @@ const ProductManagement = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+                    <button
+                        onClick={() => setShowUploadModal(true)}
+                        className="btn-secondary flex items-center gap-2 whitespace-nowrap"
+                    >
+                        <Upload size={18} />
+                        Bulk Upload
+                    </button>
                     <div className="relative w-full sm:w-80 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-300 group-focus-within:text-auric-purple transition-colors" size={18} />
                         <input
@@ -84,6 +185,120 @@ const ProductManagement = () => {
                     </div>
                 </div>
             </header>
+
+            {/* Excel Upload Modal */}
+            {showUploadModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl max-w-2xl w-full p-8 shadow-2xl">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-3 bg-auric-purple/10 rounded-xl">
+                                    <FileSpreadsheet className="text-auric-purple" size={24} />
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-bold text-neutral-900">Bulk Upload Products</h2>
+                                    <p className="text-sm text-neutral-500">Upload Excel file to add multiple products</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    setShowUploadModal(false);
+                                    setUploadResult(null);
+                                    setUploadFile(null);
+                                }}
+                                className="text-neutral-400 hover:text-neutral-600"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div className="space-y-6">
+                            {/* Template Download */}
+                            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                <div className="flex items-start gap-3">
+                                    <AlertCircle className="text-blue-600 flex-shrink-0 mt-0.5" size={20} />
+                                    <div className="flex-1">
+                                        <h3 className="font-semibold text-blue-900 mb-1">Need a template?</h3>
+                                        <p className="text-sm text-blue-700 mb-3">
+                                            Download our Excel template with sample data and column format.
+                                        </p>
+                                        <button
+                                            onClick={downloadTemplate}
+                                            className="btn-ghost text-blue-600 hover:bg-blue-100 flex items-center gap-2 text-sm"
+                                        >
+                                            <Download size={16} />
+                                            Download Template (CSV)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* File Upload */}
+                            <div className="border-2 border-dashed border-neutral-200 rounded-xl p-8 text-center hover:border-auric-purple transition-colors">
+                                <input
+                                    type="file"
+                                    accept=".xlsx,.xls"
+                                    onChange={(e) => setUploadFile(e.target.files[0])}
+                                    className="hidden"
+                                    id="excel-upload"
+                                />
+                                <label htmlFor="excel-upload" className="cursor-pointer">
+                                    <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <FileSpreadsheet size={32} className="text-neutral-400" />
+                                    </div>
+                                    <p className="text-neutral-900 font-semibold mb-1">
+                                        {uploadFile ? uploadFile.name : 'Click to select Excel file'}
+                                    </p>
+                                    <p className="text-sm text-neutral-500">Supports .xlsx and .xls formats</p>
+                                </label>
+                            </div>
+
+                            {/* Upload Button */}
+                            <button
+                                onClick={handleExcelUpload}
+                                disabled={!uploadFile || uploading}
+                                className="btn-primary w-full py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {uploading && <Loader2 className="animate-spin" size={18} />}
+                                {uploading ? 'Uploading...' : 'Upload Products'}
+                            </button>
+
+                            {/* Results */}
+                            {uploadResult && (
+                                <div className="space-y-4 mt-6">
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="bg-neutral-50 rounded-xl p-4 text-center">
+                                            <p className="text-2xl font-bold text-neutral-900">{uploadResult.total}</p>
+                                            <p className="text-xs text-neutral-500 mt-1">Total Rows</p>
+                                        </div>
+                                        <div className="bg-green-50 rounded-xl p-4 text-center">
+                                            <p className="text-2xl font-bold text-green-600">{uploadResult.successful}</p>
+                                            <p className="text-xs text-green-600 mt-1">Successful</p>
+                                        </div>
+                                        <div className="bg-red-50 rounded-xl p-4 text-center">
+                                            <p className="text-2xl font-bold text-red-600">{uploadResult.failed}</p>
+                                            <p className="text-xs text-red-600 mt-1">Failed</p>
+                                        </div>
+                                    </div>
+
+                                    {uploadResult.failedList && uploadResult.failedList.length > 0 && (
+                                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 max-h-48 overflow-y-auto">
+                                            <h4 className="font-semibold text-red-900 mb-2">Failed Items:</h4>
+                                            <ul className="space-y-2 text-sm">
+                                                {uploadResult.failedList.map((item, idx) => (
+                                                    <li key={idx} className="text-red-700">
+                                                        <span className="font-medium">{item.row.name || 'Unknown'}:</span> {item.error}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                 {/* Form Section - Modern Card */}

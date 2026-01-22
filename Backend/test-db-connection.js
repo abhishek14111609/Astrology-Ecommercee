@@ -1,4 +1,4 @@
-const http = require('http');
+import http from 'http';
 
 function makeRequest(path, method = 'GET', data = null) {
     return new Promise((resolve, reject) => {
@@ -132,8 +132,8 @@ async function testDatabaseConnection() {
         console.log('✅ ALL TESTS COMPLETED SUCCESSFULLY!');
         console.log('='.repeat(60));
         console.log('');
-        console.log('✅ Backend is properly connected to MySQL database');
-        console.log('✅ All tables are created');
+        console.log('✅ Backend is properly connected to MongoDB');
+        console.log('✅ Collections are initialized as needed');
         console.log('✅ Sample data is loaded');
         console.log('');
         console.log('🚀 You can now use the Admin Panel at: http://localhost:5174');
@@ -144,10 +144,10 @@ async function testDatabaseConnection() {
         console.error('❌ ERROR:', error.message);
         console.error('');
         console.error('Make sure:');
-        console.error('1. MySQL is running');
+        console.error('1. MongoDB is running');
         console.error('2. Backend server is running (npm run dev)');
-        console.error('3. Database credentials are correct');
-        console.error('4. Database "auric_krystal" exists');
+        console.error('3. MONGO_URI is correct (or uses default)');
+        console.error('4. Database "auric_krystal" will be created automatically');
         process.exit(1);
     }
 }

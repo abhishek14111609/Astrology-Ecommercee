@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Bell, Search, User, Settings } from 'lucide-react';
+import { Menu, Bell, Search, User } from 'lucide-react';
 
 const Header = ({ onMenuClick }) => {
     return (
@@ -16,7 +16,7 @@ const Header = ({ onMenuClick }) => {
                     </button>
 
                     {/* Search Bar */}
-                    <div className="hidden md:flex items-center gap-3 bg-neutral-50 px-4 py-2 rounded-xl border border-neutral-100 focus-within:border-auric-purple/30 focus-within:bg-white transition-all group w-80">
+                    {/* <div className="hidden md:flex items-center gap-3 bg-neutral-50 px-4 py-2 rounded-xl border border-neutral-100 focus-within:border-auric-purple/30 focus-within:bg-white transition-all group w-80">
                         <Search size={18} className="text-neutral-400 group-focus-within:text-auric-purple transition-colors" />
                         <input
                             type="text"
@@ -26,7 +26,7 @@ const Header = ({ onMenuClick }) => {
                         <kbd className="hidden lg:inline-flex items-center px-2 py-0.5 text-xs font-semibold text-neutral-500 bg-white border border-neutral-200 rounded">
                             ⌘K
                         </kbd>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Right Section */}
@@ -40,11 +40,6 @@ const Header = ({ onMenuClick }) => {
                     <button className="relative p-2 text-neutral-600 hover:bg-neutral-100 rounded-xl transition-colors group">
                         <Bell size={20} />
                         <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-auric-crimson rounded-full border-2 border-white animate-pulse"></span>
-                    </button>
-
-                    {/* Settings */}
-                    <button className="hidden sm:flex p-2 text-neutral-600 hover:bg-neutral-100 rounded-xl transition-colors">
-                        <Settings size={20} />
                     </button>
 
                     {/* User Profile */}

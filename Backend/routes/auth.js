@@ -1,7 +1,9 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const db = require('../db');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { connect } from '../db.js';
+import User from '../models/User.js';
+import { getNextSequence } from '../models/Counter.js';
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'auric_krystal_secret_key_2026';
@@ -11,22 +13,19 @@ router.post('/register', async (req, res) => {
     try {
         const { name, email, password, zodiac_sign } = req.body;
 
-        // Check if user exists
-        const [existing] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
-        if (existing.length > 0) {
+        await connect();
+
+        const existing = await User.findOne({ email }).lean();
+        if (existing) {
             return res.status(400).json({ message: 'User already exists' });
         }
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Insert User
-        const [result] = await db.query(
-            'INSERT INTO users (name, email, password, zodiac_sign) VALUES (?, ?, ?, ?)',
-            [name, email, hashedPassword, zodiac_sign]
-        );
-
-        res.status(201).json({ message: 'User registered successfully', userId: result.insertId });
+        const id = await getNextSequence('users');
+        const user = await User.create({ id, name, email, password: hashedPassword, zodiac_sign });
+        res.status(201).json({ message: 'User registered successfully', userId: user.id });
     } catch (error) {
         res.status(500).json({ message: 'Registration failed', error: error.message });
     }
@@ -37,13 +36,11 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Find user
-        const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
-        if (users.length === 0) {
+        await connect();
+        const user = await User.findOne({ email }).lean();
+        if (!user) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
-
-        const user = users[0];
 
         // Check password
         const isMatch = await bcrypt.compare(password, user.password);
@@ -73,4 +70,4 @@ router.post('/login', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
