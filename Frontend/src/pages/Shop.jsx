@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Filter, ChevronDown, ChevronUp, X, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Filter, ChevronDown, ChevronUp, X, Search, Loader2 } from 'lucide-react';
 import ProductCard from '../components/UI/ProductCard';
 
 const Shop = () => {
@@ -7,9 +7,32 @@ const Shop = () => {
     const [loading, setLoading] = useState(true);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [priceRange, setPriceRange] = useState(5000);
+    const [categories, setCategories] = useState(['All']);
+    const [priceRange, setPriceRange] = useState(50000);
     const [sortBy, setSortBy] = useState('newest');
     const [searchQuery, setSearchQuery] = useState('');
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                // Fetch products
+                const prodRes = await fetch('http://localhost:5000/api/products');
+                const prodData = await prodRes.json();
+                setProducts(prodData);
+
+                // Extract or fetch categories
+                const uniqueCats = ['All', ...new Set(prodData.map(p => p.category_name).filter(Boolean))];
+                setCategories(uniqueCats);
+
+            } catch (err) {
+                console.error("Failed to fetch shop data", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     // Filter Logic
     const filteredProducts = products.filter(product => {
