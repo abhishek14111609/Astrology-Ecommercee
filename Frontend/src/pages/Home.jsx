@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Star, ShieldCheck, Truck, Headphones } from 'lucide-react';
+import { ArrowRight, Star, ShieldCheck, Truck, Headphones, Compass, Heart, Gem } from 'lucide-react';
 import Button from '../components/UI/Button';
 import SectionHeading from '../components/UI/SectionHeading';
 import ProductCard from '../components/UI/ProductCard';
@@ -51,25 +51,25 @@ const Home = () => {
     // Mock Data
     const services = [
         {
-            id: 1,
-            title: "Janam Kundali",
-            icon: "🕉️",
-            desc: "Get detailed insights into your life path with our premium Kundali service.",
-            color: "bg-purple-100"
+            title: "Celestial Birth Chart",
+            subtitle: "KUNDALI ANALYSIS",
+            desc: "A deep dive into your unique planetary alignment at the moment of birth. Discover your life purpose, hidden talents, and cosmic destiny.",
+            icon: <Compass size={32} />,
+            price: "₹1,499"
         },
         {
-            id: 2,
-            title: "Love Matching",
-            icon: "❤️",
-            desc: "Find your perfect celestial match with detailed Guna Milan reports.",
-            color: "bg-red-100"
+            title: "Vedic Love Sync",
+            subtitle: "RELATIONSHIP MATCHING",
+            desc: "Understand the soul-level compatibility between you and your partner using ancient Guna Milan techniques for a harmonious future.",
+            icon: <Heart size={32} />,
+            price: "₹999"
         },
         {
-            id: 3,
-            title: "Gemstone Suggestion",
-            icon: "💎",
-            desc: "Discover the lucky stone that can change your fortune and brings positivity.",
-            color: "bg-blue-100"
+            title: "Gemstone Prescription",
+            subtitle: "ENERGY HEALING",
+            desc: "Personalized recommendations for crystals and gemstones that resonate with your aura to attract abundance and ward off negativity.",
+            icon: <Gem size={32} />,
+            price: "₹499"
         }
     ];
 
@@ -121,7 +121,7 @@ const Home = () => {
                         transition={{ duration: 0.8, delay: 0.4 }}
                         className="text-auric-rose/80 text-lg md:text-xl max-w-2xl mx-auto"
                     >
-                        Get precise horoscope readings, premium gemstones, and spiritual remedies from India's most trusted astrologers.
+                        Get precise horoscope readings, premium crystal and gemstones spiritual remedies from India's most trusted astrologers.
                     </motion.p>
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -129,12 +129,20 @@ const Home = () => {
                         transition={{ duration: 0.8, delay: 0.6 }}
                         className="pt-6"
                     >
-                        <Button variant="primary" className="mr-4">
-                            Talk to Astrologer
-                        </Button>
-                        <Button variant="outline" className="text-auric-rose border-auric-rose hover:bg-auric-rose hover:text-white">
-                            Shop Collection
-                        </Button>
+                        <a 
+                            href="https://wa.me/917043216616?text=Hello%2C%20I%20would%20like%20to%20consult%20with%20an%20astrologer%20regarding%20my%20birth%20chart%20and%20future%20predictions.%20Please%20guide%20me."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Button variant="primary" className="mr-4">
+                                Talk to Astrologer
+                            </Button>
+                        </a>
+                        <Link to="/shop">
+                            <Button variant="outline" className="text-auric-rose border-auric-rose hover:bg-auric-rose hover:text-white">
+                                Shop Collection
+                            </Button>
+                        </Link>
                     </motion.div>
                 </div>
             </section>
@@ -187,7 +195,7 @@ const Home = () => {
                 <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-3xl mx-auto text-center space-y-8">
-                        <span className="text-auric-gold uppercase tracking-[0.3em] text-sm font-bold">AI Gemstone Recommendation</span>
+                        <span className="text-auric-gold uppercase tracking-[0.3em] text-sm font-bold">Gemstone Recommendation</span>
                         <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight">Can't decide which stone <br /> resonates with you?</h2>
                         <p className="text-lg text-white/80">Take our cosmic quiz. Our engine analyzes your energy patterns to suggest the perfect sacred artifact for your current path.</p>
                         <div className="pt-4">
@@ -205,22 +213,20 @@ const Home = () => {
             <section className="py-20 container mx-auto px-4">
                 <SectionHeading title="Our Premium Services" subtitle="COSMIC SOLUTIONS" />
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {services.map((service) => (
-                        <motion.div
-                            whileHover={{ y: -10 }}
-                            key={service.id}
-                            className="bg-white p-8 rounded-lg shadow-sm hover:shadow-xl border border-gray-100 text-center transition-all duration-300"
-                        >
-                            <div className="w-16 h-16 mx-auto bg-auric-blush rounded-full flex items-center justify-center text-3xl mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {services.map((service, index) => (
+                        <div key={index} className="bg-white p-10 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group">
+                            <div className="w-16 h-16 bg-auric-blush text-auric-rose rounded-xl flex items-center justify-center mb-8 group-hover:bg-auric-gold group-hover:text-white transition-colors duration-500">
                                 {service.icon}
                             </div>
-                            <h3 className="font-serif text-xl font-bold text-auric-rose mb-4">{service.title}</h3>
-                            <p className="text-gray-600 mb-6 leading-relaxed">{service.desc}</p>
-                            <Link to="/services" className="text-auric-gold font-medium uppercase text-xs tracking-widest hover:text-auric-rose flex items-center justify-center gap-2">
-                                Read More <ArrowRight size={14} />
-                            </Link>
-                        </motion.div>
+                            <span className="text-auric-gold uppercase tracking-widest text-xs font-bold mb-3 block">{service.subtitle}</span>
+                            <h3 className="font-serif text-2xl font-bold text-auric-rose mb-4">{service.title}</h3>
+                            <p className="text-gray-600 leading-relaxed mb-8">{service.desc}</p>
+                            <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-50">
+                                <span className="text-2xl font-serif font-bold text-auric-rose">{service.price}</span>
+                                <Button variant="outline" className="text-xs px-4 py-2 border-auric-gold text-auric-gold hover:bg-auric-gold hover:text-white">Book Session</Button>
+                            </div>
+                        </div>
                     ))}
                 </div>
             </section>
