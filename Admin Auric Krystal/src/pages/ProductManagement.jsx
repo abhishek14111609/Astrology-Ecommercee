@@ -236,7 +236,7 @@ const ProductManagement = () => {
     );
 
     return (
-        <div className="space-y-6">
+        <div className="h-[calc(100vh-8rem)] flex flex-col gap-6">
             {/* Header Section */}
             <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div>
@@ -379,10 +379,11 @@ const ProductManagement = () => {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-                {/* Form Section - Modern Card */}
-                <aside className="xl:col-span-4 space-y-6">
-                    <div className="card p-6 sticky top-6">
+            {/* Main Content Area - Split View */}
+            <div className="flex-1 min-h-0 grid grid-cols-1 xl:grid-cols-12 gap-6">
+                {/* Form Section - Scrollable Panel */}
+                <aside className="xl:col-span-4 overflow-y-auto pr-2 no-scrollbar">
+                    <div className="card p-6">
                         <div className="inline-flex p-3 rounded-xl bg-auric-purple/10 mb-4">
                             {editingProduct ? <Edit size={24} className="text-auric-purple" /> : <Plus size={24} className="text-auric-purple" />}
                         </div>
@@ -541,8 +542,8 @@ const ProductManagement = () => {
                     </div>
                 </aside>
 
-                {/* Main Content - Grid View for modern look */}
-                <div className="xl:col-span-8">
+                {/* Product List - Scrollable Panel */}
+                <div className="xl:col-span-8 overflow-y-auto pr-2 no-scrollbar">
                     {fetching ? (
                         <div className="flex flex-col items-center justify-center py-32">
                             <div className="w-16 h-16 border-4 border-neutral-200 border-t-auric-purple rounded-full animate-spin mb-4"></div>

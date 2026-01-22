@@ -121,4 +121,13 @@
   .glass-dark {
     @apply bg-neutral-900/80 backdrop-blur-xl border border-white/10;
   }
+
+  /* Hide Scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
