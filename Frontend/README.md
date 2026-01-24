@@ -1,11 +1,42 @@
-# React + Vite
+# Auric Krystal Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for the Auric Krystal Astrology E-commerce platform built with React + Vite.
 
-Currently, two official plugins are available:
+## Environment Configuration
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The application uses a centralized API configuration. To configure the backend API URL:
+
+1. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Update the `VITE_API_URL` in `.env`:
+   ```env
+   VITE_API_URL=http://localhost:5000
+   ```
+
+For production, update this to your production backend URL.
+
+### API Configuration
+
+All API calls use the centralized configuration in `src/config/api.js`. This allows you to:
+- Change the API URL in one place (via environment variable)
+- Avoid hardcoding URLs throughout the application
+- Easy switching between development and production environments
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
 
 ## React Compiler
 

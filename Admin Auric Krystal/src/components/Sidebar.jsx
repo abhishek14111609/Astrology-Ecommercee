@@ -12,7 +12,8 @@ import {
     Package,
     GitBranch,
     MessageSquare,
-    Settings
+    Settings,
+    CreditCard
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -65,6 +66,18 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             name: 'Quiz Config',
             path: '/quiz',
             icon: HelpCircle,
+            badge: null
+        },
+        {
+            name: 'Payment Verification',
+            path: '/payments',
+            icon: CreditCard,
+            badge: null
+        },
+        {
+            name: 'Payment Settings',
+            path: '/payment-settings',
+            icon: Settings,
             badge: null
         },
     ];
@@ -160,7 +173,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     </div>
 
                     {/* Settings Section */}
-                    <div className="mt-8 pt-6 border-t border-neutral-100">
+                    {/* <div className="mt-8 pt-6 border-t border-neutral-100">
                         <div className="px-3 mb-3">
                             <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
                                 System
@@ -179,13 +192,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                             <Settings size={20} className="text-neutral-500 group-hover:rotate-90 transition-transform duration-300" />
                             <span className="text-sm font-semibold">Settings</span>
                         </NavLink>
-                    </div>
+                    </div> */}
                 </nav>
 
                 {/* Footer - User Info & Logout */}
                 <div className="p-4 border-t border-neutral-100 space-y-3">
                     {/* User Info */}
-                    <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
+                    {/* <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
                         <div className="w-10 h-10 bg-gradient-to-br from-auric-gold to-auric-accent rounded-lg flex items-center justify-center text-white font-bold shadow-md">
                             {user?.name?.charAt(0).toUpperCase() || 'A'}
                         </div>
@@ -197,7 +210,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                                 {user?.email || 'admin@auric.com'}
                             </p>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Logout Button */}
                     <button

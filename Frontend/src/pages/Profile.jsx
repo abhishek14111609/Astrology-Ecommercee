@@ -5,6 +5,7 @@ import SectionHeading from '../components/UI/SectionHeading';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ const Profile = () => {
             if (!user) return;
             setLoading(true);
             try {
-                const res = await axios.get('http://localhost:5000/api/orders/myorders');
+                const res = await axios.get(`${API_BASE_URL}/api/orders/myorders`);
                 setOrders(res.data);
             } catch (err) {
                 console.error('Failed to fetch orders', err);
@@ -127,7 +128,13 @@ const Profile = () => {
                                                     <span className={`px-3 py-1 text-[0.6rem] font-bold rounded-full uppercase tracking-widest ${order.status === 'delivered' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                                                         {order.status}
                                                     </span>
-                                                    <Button variant="outline" className="text-[0.6rem] py-1 px-3 border-auric-gold text-auric-gold">View Details</Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        className="text-[0.6rem] py-1 px-3 border-auric-gold text-auric-gold"
+                                                        onClick={() => navigate(`/order-details/${order.order_number}`)}
+                                                    >
+                                                        View Details
+                                                    </Button>
                                                 </div>
                                             </div>
                                         </div>
@@ -143,7 +150,7 @@ const Profile = () => {
                         </div>
 
                         {/* Recommendation Banner */}
-                        <div className="bg-auric-rose rounded-2xl p-8 text-white relative overflow-hidden">
+                        {/* <div className="bg-auric-rose rounded-2xl p-8 text-white relative overflow-hidden">
                             <div className="relative z-10 max-w-md">
                                 <h3 className="font-serif text-2xl font-bold mb-4">Complete Your Aura</h3>
                                 <p className="text-white/70 text-sm mb-6 leading-relaxed">
@@ -155,7 +162,7 @@ const Profile = () => {
                             <div className="absolute top-1/2 -right-12 transform -translate-y-1/2 opacity-20 rotate-12">
                                 <User size={160} />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                 </div>

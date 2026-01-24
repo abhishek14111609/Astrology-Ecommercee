@@ -5,12 +5,13 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/UI/Button';
 import { ShieldCheck, CreditCard, Truck, CheckCircle2, ChevronRight, Loader2 } from 'lucide-react';
+import API_BASE_URL from '../config/api';
 
 const Checkout = () => {
     const { cartItems, cartTotal, clearCart } = useCart();
     const { user, loading: authLoading } = useAuth();
     const navigate = useNavigate();
-    const [step, setStep] = useState(1); // 1: Shipping, 2: Payment, 3: Success
+    const [step, setStep] = useState(1); // 1: Shipping, 2: Payment
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -18,7 +19,6 @@ const Checkout = () => {
         }
     }, [authLoading, user, navigate]);
 
-    if (authLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-auric-gold" /></div>;
     const [loading, setLoading] = useState(false);
     const [orderInfo, setOrderInfo] = useState(null);
 
@@ -31,6 +31,23 @@ const Checkout = () => {
         pincode: '',
         phone: ''
     });
+
+    // Auto-fill shipping form with logged-in user details
+    useEffect(() => {
+        if (user) {
+            const fullName = user.name || '';
+            const parts = fullName.trim().split(' ');
+            const firstName = parts[0] || '';
+            const lastName = parts.slice(1).join(' ') || '';
+
+            setFormData(prev => ({
+                ...prev,
+                email: user.email || prev.email,
+                firstName: firstName || prev.firstName,
+                lastName: lastName || prev.lastName
+            }));
+        }
+    }, [user]);
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -45,35 +62,37 @@ const Checkout = () => {
     const handlePlaceOrder = async () => {
         setLoading(true);
         try {
-            // Check if user is logged in
-            const user_id = user ? user.id : null;
-
-            const orderPayload = {
-                items: cartItems.map(item => ({ id: item.id, quantity: item.quantity })),
-                customer_details: formData,
-                user_id: user_id
-            };
-
-            const response = await axios.post('http://localhost:5000/api/orders', orderPayload);
-
-            if (response.status === 201) {
-                setOrderInfo(response.data.order);
-                clearCart();
-                setStep(3);
-                window.scrollTo(0, 0);
-            } else {
-                alert('Order Failed: ' + response.data.message);
-            }
-
+            // Instead of creating order now, pass shipping details to payment page via state
+            // Clear cart and navigate to payment page with shipping data
+            clearCart();
+            
+            // Pass shipping form data and cart items via navigation state
+            navigate(`/payment`, {
+                state: {
+                    shippingData: formData,
+                    cartItems: cartItems,
+                    userId: user?.id || null,
+                    cartTotal: cartTotal
+                }
+            });
         } catch (error) {
             console.error("Order error", error);
-            alert("Something went wrong while placing order.");
+            alert("Something went wrong.");
         } finally {
             setLoading(false);
         }
     };
 
-    if (cartItems.length === 0 && step !== 3) {
+    // Show loader once hooks are declared to avoid hook order issues
+    if (authLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="animate-spin text-auric-gold" />
+            </div>
+        );
+    }
+
+    if (cartItems.length === 0) {
         return (
             <div className="min-h-[60vh] flex flex-col items-center justify-center bg-auric-blush px-4">
                 <h1 className="font-serif text-2xl font-bold text-auric-rose mb-4">Your Cart is Empty</h1>
@@ -88,7 +107,7 @@ const Checkout = () => {
         <div className="bg-auric-blush min-h-screen py-12">
             <div className="container mx-auto px-4 max-w-6xl">
 
-                {/* Checkout Steps Indicator */}
+                {/* Checkout Steps Indicator (2 steps) */}
                 <div className="flex items-center justify-center mb-12 space-x-4 md:space-x-8">
                     <div className={`flex items-center gap-2 ${step >= 1 ? 'text-auric-rose font-bold' : 'text-gray-400'}`}>
                         <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs ${step >= 1 ? 'bg-auric-rose text-white' : 'bg-gray-200'}`}>1</span>
@@ -99,39 +118,9 @@ const Checkout = () => {
                         <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs ${step >= 2 ? 'bg-auric-rose text-white' : 'bg-gray-200'}`}>2</span>
                         <span className="hidden sm:inline">Payment</span>
                     </div>
-                    <ChevronRight size={16} className="text-gray-300" />
-                    <div className={`flex items-center gap-2 ${step === 3 ? 'text-auric-rose font-bold' : 'text-gray-400'}`}>
-                        <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs ${step === 3 ? 'bg-auric-rose text-white' : 'bg-gray-200'}`}>3</span>
-                        <span className="hidden sm:inline">Confirmation</span>
-                    </div>
                 </div>
 
-                {step === 3 ? (
-                    /* Success State */
-                    <div className="max-w-xl mx-auto bg-white p-12 rounded-3xl shadow-xl border border-auric-gold/10 text-center animate-in fade-in zoom-in duration-500">
-                        <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8">
-                            <CheckCircle2 size={48} />
-                        </div>
-                        <h1 className="font-serif text-3xl font-bold text-auric-rose mb-4">Divine Order Confirmed!</h1>
-                        <p className="text-gray-600 mb-8 leading-relaxed">
-                            Thank you for your purchase. Your spiritual artifacts are being carefully prepared and energized for their journey to you.
-                        </p>
-                        <div className="bg-auric-blush/50 p-6 rounded-2xl mb-8 text-left space-y-2">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">Order Reference:</span>
-                                <span className="font-bold text-auric-rose">{orderInfo?.order_number || '#AK------'}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">Expected Delivery:</span>
-                                <span className="font-bold text-auric-rose">7-8 Business Days</span>
-                            </div>
-                        </div>
-                        <Link to="/shop">
-                            <Button variant="primary" className="w-full">Continue Browsing</Button>
-                        </Link>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
                         {/* Form Section */}
                         <div className="lg:col-span-8">
@@ -185,13 +174,9 @@ const Checkout = () => {
                                         <div className="space-y-6">
                                             <div className="p-6 border-2 border-auric-gold bg-auric-blush/20 rounded-xl relative">
                                                 <div className="flex items-center justify-between mb-4">
-                                                    <span className="font-bold text-auric-rose">Razorpay Secure Payment</span>
-                                                    <div className="flex gap-2">
-                                                        <div className="w-8 h-5 bg-gray-200 rounded-sm"></div>
-                                                        <div className="w-8 h-5 bg-gray-200 rounded-sm"></div>
-                                                    </div>
+                                                    <span className="font-bold text-auric-rose">UPI Payment (GPay, PhonePe, etc.)</span>
                                                 </div>
-                                                <p className="text-sm text-gray-600 mb-6">Redirecting to Razorpay for secure credit/debit card, UPI, or Net Banking payment.</p>
+                                                <p className="text-sm text-gray-600 mb-6">Pay securely using UPI apps. You'll receive payment instructions on the next page including QR code and UPI ID.</p>
                                                 <Button
                                                     onClick={handlePlaceOrder}
                                                     disabled={loading}
@@ -202,13 +187,8 @@ const Checkout = () => {
                                                         <>
                                                             <Loader2 className="animate-spin" size={16} /> Processing...
                                                         </>
-                                                    ) : 'Complete Order'}
+                                                    ) : 'Proceed to Payment'}
                                                 </Button>
-                                            </div>
-
-                                            <div className="p-6 border border-gray-100 rounded-xl flex items-center justify-between text-gray-400 cursor-not-allowed">
-                                                <span className="text-sm font-medium">Cash on Delivery</span>
-                                                <span className="text-[0.6rem] uppercase font-bold tracking-widest">Unavailable</span>
                                             </div>
 
                                             <button onClick={() => setStep(1)} className="text-sm font-medium text-auric-gold hover:underline">← Edit Shipping Details</button>
@@ -265,7 +245,6 @@ const Checkout = () => {
                         </div>
 
                     </div>
-                )}
             </div>
         </div>
     );

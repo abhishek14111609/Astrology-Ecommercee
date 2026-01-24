@@ -19,6 +19,7 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import TrackOrder from './pages/TrackOrder';
 import Checkout from './pages/Checkout';
+import PaymentPage from './pages/PaymentPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import GemstoneFinder from './pages/GemstoneFinder';
@@ -43,12 +44,14 @@ const App = () => {
               <Route path="horoscope" element={<Horoscope />} />
               <Route path="wishlist" element={<Wishlist />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="order-details/:orderId" element={<TrackOrder />} />
               <Route path="faq" element={<FAQ />} />
               <Route path="shipping" element={<Shipping />} />
               <Route path="privacy" element={<Privacy />} />
               <Route path="terms" element={<Terms />} />
               <Route path="track-order" element={<TrackOrder />} />
               <Route path="checkout" element={<Checkout />} />
+              <Route path="payment" element={<PaymentPage />} />
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
               <Route path="gemstone-finder" element={<GemstoneFinder />} />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 import {
     TrendingUp,
     TrendingDown,
@@ -22,17 +23,15 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const API_BASE = 'http://localhost:5000/api';
-
     const fetchDashboardData = async () => {
         setLoading(true);
         setError(null);
         try {
             // Fetch all dashboard data in parallel
             const [statsRes, ordersRes, productsRes] = await Promise.all([
-                axios.get(`${API_BASE}/dashboard/stats`),
-                axios.get(`${API_BASE}/dashboard/recent-orders?limit=5`),
-                axios.get(`${API_BASE}/dashboard/top-products?limit=4`)
+                axios.get(`${API_BASE_URL}/dashboard/stats`),
+                axios.get(`${API_BASE_URL}/dashboard/recent-orders?limit=5`),
+                axios.get(`${API_BASE_URL}/dashboard/top-products?limit=4`)
             ]);
 
             // Format stats data
@@ -106,16 +105,23 @@ const Dashboard = () => {
     }, []);
 
     const getStatusColor = (status) => {
-        switch (status) {
-            case 'Completed':
-                return 'badge-success';
-            case 'Processing':
-                return 'badge-info';
-            case 'Pending':
-                return 'badge-warning';
-            default:
-                return 'badge-error';
+        const normalizedStatus = status?.toLowerCase() || '';
+        
+        // Order statuses
+        if (normalizedStatus === 'delivered' || normalizedStatus === 'completed' || normalizedStatus === 'confirmed') {
+            return 'badge-success';
         }
+        if (normalizedStatus === 'shipped' || normalizedStatus === 'processing' || normalizedStatus === 'processed') {
+            return 'badge-info';
+        }
+        if (normalizedStatus === 'pending' || normalizedStatus === 'pending_approval') {
+            return 'badge-warning';
+        }
+        if (normalizedStatus === 'payment_rejected' || normalizedStatus === 'rejected' || normalizedStatus === 'cancelled') {
+            return 'badge-error';
+        }
+        
+        return 'badge-neutral';
     };
 
     return (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Filter, ChevronDown, ChevronUp, X, Search, Loader2 } from 'lucide-react';
 import ProductCard from '../components/UI/ProductCard';
+import API_BASE_URL from '../config/api';
 
 const Shop = () => {
     const [products, setProducts] = useState([]);
@@ -17,16 +18,28 @@ const Shop = () => {
             setLoading(true);
             try {
                 // Fetch products
-                const prodRes = await fetch('http://localhost:5000/api/products');
-                const prodData = await prodRes.json();
-                setProducts(prodData);
-
-                // Extract or fetch categories
-                const uniqueCats = ['All', ...new Set(prodData.map(p => p.category_name).filter(Boolean))];
-                setCategories(uniqueCats);
+                const prodRes = await fetch(`${API_BASE_URL}/api/products`);
+                const response = await prodRes.json();
+                
+                // Check if response has the expected structure
+                const prodData = response.data?.products || response.products || response;
+                
+                // Check if response is an array
+                if (Array.isArray(prodData)) {
+                    setProducts(prodData);
+                    // Extract or fetch categories
+                    const uniqueCats = ['All', ...new Set(prodData.map(p => p.category?.name || p.category_name).filter(Boolean))];
+                    setCategories(uniqueCats);
+                } else {
+                    console.error("Expected array from API, got:", response);
+                    setProducts([]);
+                    setCategories(['All']);
+                }
 
             } catch (err) {
                 console.error("Failed to fetch shop data", err);
+                setProducts([]);
+                setCategories(['All']);
             } finally {
                 setLoading(false);
             }
@@ -36,17 +49,25 @@ const Shop = () => {
 
     // Filter Logic
     const filteredProducts = products.filter(product => {
-        const categoryMatch = selectedCategory === 'All' || product.category_name === selectedCategory || product.category === selectedCategory; // Handle both potential backend response structures
-        // Backend stores price as number, so clean comparison
-        const priceMatch = product.price <= priceRange;
+        // Handle nested category structure
+        const categoryName = product.category?.name || product.category_name || product.category;
+        const categoryMatch = selectedCategory === 'All' || categoryName === selectedCategory;
+        
+        // Get price from variants or direct price field
+        const productPrice = product.variants?.[0]?.price || product.price || 0;
+        const priceMatch = productPrice <= priceRange;
+        
         const searchMatch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
         return categoryMatch && priceMatch && searchMatch;
     });
 
     // Sort Logic
     const sortedProducts = [...filteredProducts].sort((a, b) => {
-        if (sortBy === 'price-low') return a.price - b.price;
-        if (sortBy === 'price-high') return b.price - a.price;
+        const priceA = a.variants?.[0]?.price || a.price || 0;
+        const priceB = b.variants?.[0]?.price || b.price || 0;
+        
+        if (sortBy === 'price-low') return priceA - priceB;
+        if (sortBy === 'price-high') return priceB - priceA;
         return 0; // Default (newest/id)
     });
 
@@ -146,7 +167,7 @@ const Shop = () => {
                         ) : sortedProducts.length > 0 ? (
                             <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                                 {sortedProducts.map(product => (
-                                    <ProductCard key={product.id} product={product} />
+                                    <ProductCard key={product._id || product.id} product={product} />
                                 ))}
                             </div>
                         ) : (

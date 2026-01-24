@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 import {
     Package,
     Search,
@@ -29,7 +30,7 @@ const Orders = () => {
         pages: 0
     });
 
-    const API_BASE = 'http://localhost:5000/api';
+    const API_BASE = API_BASE_URL;
 
     const statusOptions = [
         { value: 'all', label: 'All Orders' },

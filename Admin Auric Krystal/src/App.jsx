@@ -12,7 +12,8 @@ import Orders from './pages/Orders';
 import Customers from './pages/Customers';
 import QuizConfig from './pages/QuizConfig';
 import Inquiries from './pages/Inquiries';
-import Settings from './pages/Settings';
+import PaymentManagement from './pages/PaymentManagement';
+import PaymentSettings from './pages/PaymentSettings';
 import Login from './pages/Login';
 
 import { AuthProvider } from './context/AuthContext';
@@ -32,8 +33,9 @@ function App() {
             <Route path="customers" element={<Customers />} />
             <Route path="inquiries" element={<Inquiries />} />
             <Route path="quiz" element={<QuizConfig />} />
+            <Route path="payments" element={<PaymentManagement />} />
+            <Route path="payment-settings" element={<PaymentSettings />} />
             <Route path="analytics" element={<div className="text-center py-20 text-neutral-400">Analytics page coming soon...</div>} />
-            <Route path="settings" element={<Settings />} />
             <Route path="*" element={<div className="text-center py-20 text-neutral-400">Page not found</div>} />
           </Route>
         </Routes>

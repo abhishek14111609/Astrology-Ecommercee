@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const AuthContext = createContext();
 
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('http://localhost:5000/api/auth/me');
+            const res = await axios.get(`${API_BASE_URL}/auth/me`);
             setUser(res.data);
             localStorage.setItem('user', JSON.stringify(res.data)); // Keep local copy for non-critical UI if needed, but rely on cookie
         } catch (error) {
@@ -31,14 +32,14 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+        const res = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
         setUser(res.data.user);
         return res.data;
     };
 
     const logout = async () => {
         try {
-            await axios.post('http://localhost:5000/api/auth/logout');
+            await axios.post(`${API_BASE_URL}/auth/logout`);
             setUser(null);
             localStorage.removeItem('user');
         } catch (error) {

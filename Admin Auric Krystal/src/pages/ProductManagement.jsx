@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 import {
     Plus,
     Trash2,
@@ -52,8 +53,8 @@ const ProductManagement = () => {
         setFetching(true);
         try {
             const [prodRes, catRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/products'),
-                axios.get('http://localhost:5000/api/products/categories')
+                axios.get(`${API_BASE_URL}/products`),
+                axios.get(`${API_BASE_URL}/admin/categories`)
             ]);
             setProducts(prodRes.data);
             setCategories(catRes.data);
@@ -69,7 +70,7 @@ const ProductManagement = () => {
         formData.append('image', file);
 
         try {
-            const response = await axios.post('http://localhost:5000/api/admin/upload-image', formData, {
+            const response = await axios.post(`${API_BASE_URL}/api/admin/upload-image`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             setForm(prev => ({ ...prev, image_url: response.data.imageUrl }));
@@ -100,9 +101,9 @@ const ProductManagement = () => {
         setLoading(true);
         try {
             if (editingProduct) {
-                await axios.put(`http://localhost:5000/api/admin/products/${editingProduct.id}`, form);
+                await axios.put(`${API_BASE_URL}/api/admin/products/${editingProduct.id}`, form);
             } else {
-                await axios.post('http://localhost:5000/api/admin/products', form);
+                await axios.post(`${API_BASE_URL}/api/admin/products`, form);
             }
             fetchInitialData();
             resetForm();
@@ -133,7 +134,7 @@ const ProductManagement = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this product?')) return;
         try {
-            await axios.delete(`http://localhost:5000/api/admin/products/${id}`);
+            await axios.delete(`${API_BASE_URL}/api/admin/products/${id}`);
             setProducts(prev => prev.filter(p => p.id !== id));
         } catch (err) {
             alert('Failed to delete product');
@@ -155,7 +156,7 @@ const ProductManagement = () => {
             formData.append('file', uploadFile);
 
             const response = await axios.post(
-                'http://localhost:5000/api/admin/products/upload-excel',
+                `${API_BASE_URL}/api/admin/products/upload-excel`,
                 formData,
                 {
                     headers: {

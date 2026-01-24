@@ -19,7 +19,7 @@ const Login = () => {
         try {
             const data = await login(email, password); // Use context login
 
-            if (data.user.role !== 'admin') {
+            if (!data?.user || data.user.role !== 'admin') {
                 setError('Access Denied: Admin privileges required.');
                 await logout();
                 setLoading(false);

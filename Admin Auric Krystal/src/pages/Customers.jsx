@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 import {
     Users,
     Search,
@@ -28,7 +29,7 @@ const Customers = () => {
         pages: 0
     });
 
-    const API_BASE = 'http://localhost:5000/api';
+    const API_BASE = API_BASE_URL;
 
     useEffect(() => {
         let isMounted = true;
@@ -45,7 +46,9 @@ const Customers = () => {
 
                 });
                 if (isMounted) {
-                    setCustomers(response.data.customers);
+                    // Filter out admin users, show only regular users
+                    const regularUsers = response.data.customers.filter(customer => customer.role !== 'admin');
+                    setCustomers(regularUsers);
                     setPagination(prev => ({ ...prev, ...response.data.pagination }));
                     setError(null);
                 }

@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import Button from '../components/UI/Button';
 // import { products } from '../data/products'; // REMOVED
 import ProductCard from '../components/UI/ProductCard';
+import API_BASE_URL from '../config/api';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -19,7 +20,7 @@ const ProductDetail = () => {
         const fetchProduct = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`http://localhost:5000/api/products/${id}`);
+                const res = await fetch(`${API_BASE_URL}/api/products/${id}`);
                 const data = await res.json();
 
                 if (res.ok) {
@@ -34,7 +35,7 @@ const ProductDetail = () => {
                             const query = data.category_id ? `category_id=${data.category_id}` : `category=${data.category_name}`;
                             // Since our backend takes 'category' slug, we might need slug.
                             // Let's just fetch all and filter for related for now to be safe, or optimize later
-                            const relRes = await fetch(`http://localhost:5000/api/products?category=${data.category_name}`); // Assuming category_name matches slug or backend handles it
+                            const relRes = await fetch(`${API_BASE_URL}/api/products?category=${data.category_name}`); // Assuming category_name matches slug or backend handles it
                             if (relRes.ok) {
                                 const relData = await relRes.json();
                                 setRelatedProducts(relData.filter(p => p.id !== data.id).slice(0, 4));

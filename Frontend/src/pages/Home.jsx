@@ -6,6 +6,7 @@ import Button from '../components/UI/Button';
 import SectionHeading from '../components/UI/SectionHeading';
 import ProductCard from '../components/UI/ProductCard';
 import { products as allProducts } from '../data/products';
+import API_BASE_URL from '../config/api';
 
 const Home = () => {
     const targetRef = useRef(null);
@@ -24,7 +25,7 @@ const Home = () => {
     React.useEffect(() => {
         const fetchBestsellers = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/products?is_bestseller=1');
+                const res = await fetch(`${API_BASE_URL}/api/products?is_bestseller=1`);
                 const data = await res.json();
                 setBestSellers(data.length > 0 ? data.slice(0, 4) : allProducts.slice(0, 4));
             } catch (err) {
@@ -38,7 +39,7 @@ const Home = () => {
     React.useEffect(() => {
         const fetchZodiacProducts = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/products?zodiac=${selectedZodiac}`);
+                const res = await fetch(`${API_BASE_URL}/api/products?zodiac=${selectedZodiac}`);
                 const data = await res.json();
                 setZodiacProducts(data);
             } catch (err) {

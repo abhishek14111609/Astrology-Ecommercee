@@ -25,6 +25,8 @@ import dashboardRoutes from './routes/dashboard.js';
 import orderRoutes from './routes/orders.js';
 import contactRoutes from './routes/contact.js';
 import settingsRoutes from './routes/settings.js';
+import paymentRoutes from './routes/payment.js';
+import adminPaymentRoutes from './routes/admin-payments.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
@@ -35,6 +37,8 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/payment', paymentRoutes);
+app.use('/api/admin/payments', adminPaymentRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

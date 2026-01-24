@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 import {
     Plus,
     Edit2,
@@ -24,7 +25,7 @@ const QuizConfig = () => {
         step_order: 1
     });
 
-    const API_BASE = 'http://localhost:5000/api';
+    const API_BASE = API_BASE_URL;
 
     useEffect(() => {
         let isMounted = true;
