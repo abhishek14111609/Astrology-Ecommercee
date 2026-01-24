@@ -33,8 +33,8 @@ const Cart = () => {
                     <div className="lg:w-2/3 space-y-4">
                         {cartItems.map((item, index) => (
                             <div key={`${item.id}-${index}`} className="bg-white p-4 rounded-lg shadow-sm flex gap-4 border border-gray-100 items-center">
-                                <div className="w-20 h-20 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
-                                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                <div className="w-20 h-20 bg-gray-100 rounded-md shrink-0 overflow-hidden">
+                                    <img src={item.image_url || item.image} alt={item.name} className="w-full h-full object-cover" />
                                 </div>
 
                                 <div className="flex-1">

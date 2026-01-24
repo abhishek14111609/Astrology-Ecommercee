@@ -1,37 +1,56 @@
-import React from 'react';
-import { User, Package, MapPin, Settings, LogOut, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, Package, MapPin, Settings, LogOut, ChevronRight, Loader2 } from 'lucide-react';
 import Button from '../components/UI/Button';
 import SectionHeading from '../components/UI/SectionHeading';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 const Profile = () => {
-    const navigate = require('react-router-dom').useNavigate();
-    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const navigate = useNavigate();
+    const { user, logout, loading: authLoading } = useAuth();
 
-    if (!storedUser) {
-        React.useEffect(() => {
+    // State for orders
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!authLoading && !user) {
             navigate('/login');
-        }, [navigate]);
-        return null;
-    }
+            return; // Important: exit early
+        }
 
-    const user = {
-        name: storedUser.name || "Seeker",
-        email: storedUser.email || "",
+        const fetchOrders = async () => {
+            if (!user) return;
+            setLoading(true);
+            try {
+                const res = await axios.get('http://localhost:5000/api/orders/myorders');
+                setOrders(res.data);
+            } catch (err) {
+                console.error('Failed to fetch orders', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (user) fetchOrders();
+
+    }, [user, authLoading, navigate]);
+
+    if (authLoading || !user) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-auric-gold" /></div>;
+
+    const displayUser = {
+        name: user.name || "Seeker",
+        email: user.email || "",
         joined: "January 2026",
-        zodiac: storedUser.zodiac_sign || "",
+        zodiac: user.zodiac_sign || "",
         avatar: null
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+    const handleLogout = async () => {
+        await logout();
         navigate('/login');
     };
-
-    const recentOrders = [
-        { id: "#AK-88210", date: "Dec 28, 2025", status: "Delivered", total: "₹2,499" },
-        { id: "#AK-88154", date: "Dec 15, 2025", status: "Delivered", total: "₹1,200" }
-    ];
 
     const menuItems = [
         { icon: <Package size={20} />, label: "My Orders", desc: "Track, return or buy again" },
@@ -52,11 +71,11 @@ const Profile = () => {
                             <div className="w-24 h-24 bg-auric-blush rounded-full mx-auto flex items-center justify-center text-auric-rose mb-4 border-2 border-auric-gold/20">
                                 <User size={48} />
                             </div>
-                            <h3 className="font-serif text-2xl font-bold text-auric-rose">{user.name}</h3>
-                            <p className="text-gray-500 text-sm mb-6">{user.email}</p>
+                            <h3 className="font-serif text-2xl font-bold text-auric-rose">{displayUser.name}</h3>
+                            <p className="text-gray-500 text-sm mb-6">{displayUser.email}</p>
                             <div className="pt-6 border-t border-gray-50 flex flex-col gap-2">
-                                <span className="text-[0.6rem] uppercase tracking-widest text-gray-400">Seeking since {user.joined}</span>
-                                {user.zodiac && <span className="text-auric-gold text-xs font-bold uppercase tracking-widest">Sign: {user.zodiac}</span>}
+                                <span className="text-[0.6rem] uppercase tracking-widest text-gray-400">Seeking since {displayUser.joined}</span>
+                                {displayUser.zodiac && <span className="text-auric-gold text-xs font-bold uppercase tracking-widest">Sign: {displayUser.zodiac}</span>}
                             </div>
                         </div>
 
@@ -86,29 +105,41 @@ const Profile = () => {
                             <h3 className="font-serif text-xl font-bold text-auric-rose mb-6 flex items-center gap-2">
                                 <Package className="text-auric-gold" size={20} /> Recent Orders
                             </h3>
-                            <div className="space-y-4">
-                                {recentOrders.map((order) => (
-                                    <div key={order.id} className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-xl border border-gray-100 hover:border-auric-gold/30 transition-colors bg-gray-50/50">
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-bold text-auric-gold mb-1">{order.id}</span>
-                                            <span className="text-sm font-medium text-auric-rose">{order.date}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between mt-4 md:mt-0 gap-8">
-                                            <div className="flex flex-col items-end">
-                                                <span className="text-[0.6rem] uppercase tracking-widest text-gray-400">Total</span>
-                                                <span className="text-sm font-bold text-auric-rose">{order.total}</span>
+
+                            {loading ? (
+                                <div className="flex justify-center py-10">
+                                    <Loader2 className="animate-spin text-auric-gold" />
+                                </div>
+                            ) : orders.length > 0 ? (
+                                <div className="space-y-4">
+                                    {orders.map((order) => (
+                                        <div key={order.order_number} className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-xl border border-gray-100 hover:border-auric-gold/30 transition-colors bg-gray-50/50">
+                                            <div className="flex flex-col">
+                                                <span className="text-xs font-bold text-auric-gold mb-1">{order.order_number}</span>
+                                                <span className="text-sm font-medium text-auric-rose">{new Date(order.created_at).toLocaleDateString()}</span>
                                             </div>
-                                            <div className="flex items-center gap-3">
-                                                <span className="px-3 py-1 bg-green-100 text-green-700 text-[0.6rem] font-bold rounded-full uppercase tracking-widest">
-                                                    {order.status}
-                                                </span>
-                                                <Button variant="outline" className="text-[0.6rem] py-1 px-3 border-auric-gold text-auric-gold">View Details</Button>
+                                            <div className="flex items-center justify-between mt-4 md:mt-0 gap-8">
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-[0.6rem] uppercase tracking-widest text-gray-400">Total</span>
+                                                    <span className="text-sm font-bold text-auric-rose">₹{order.total_amount}</span>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className={`px-3 py-1 text-[0.6rem] font-bold rounded-full uppercase tracking-widest ${order.status === 'delivered' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                                        {order.status}
+                                                    </span>
+                                                    <Button variant="outline" className="text-[0.6rem] py-1 px-3 border-auric-gold text-auric-gold">View Details</Button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <button className="w-full text-center mt-6 text-sm font-bold text-auric-gold hover:underline">View All Orders</button>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-center text-gray-500 py-6">No orders found.</p>
+                            )}
+
+                            {orders.length > 5 && (
+                                <button className="w-full text-center mt-6 text-sm font-bold text-auric-gold hover:underline">View All Orders</button>
+                            )}
                         </div>
 
                         {/* Recommendation Banner */}
@@ -116,7 +147,7 @@ const Profile = () => {
                             <div className="relative z-10 max-w-md">
                                 <h3 className="font-serif text-2xl font-bold mb-4">Complete Your Aura</h3>
                                 <p className="text-white/70 text-sm mb-6 leading-relaxed">
-                                    Based on your last purchase of the Amitabha Buddha, we suggest looking at our newly arrived Citrine clusters for abundance.
+                                    Based on your recent journey, we suggest exploring our collection for spiritual harmony.
                                 </p>
                                 <Button variant="primary" className="text-xs py-2 px-6">Explore Recommendations</Button>
                             </div>

@@ -33,7 +33,7 @@ const QuizConfig = () => {
             try {
                 setLoading(true);
                 const response = await axios.get(`${API_BASE}/admin/quiz/questions`, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
                 });
                 if (isMounted) {
                     setQuestions(response.data);
@@ -69,20 +69,20 @@ const QuizConfig = () => {
                 await axios.put(
                     `${API_BASE}/admin/quiz/questions/${editingQuestion.id}`,
                     formData,
-                    { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
+                    {}
                 );
-                setQuestions(prev => prev.map(q => 
+                setQuestions(prev => prev.map(q =>
                     q.id === editingQuestion.id ? { ...q, ...formData } : q
                 ).sort((a, b) => a.step_order - b.step_order));
             } else {
                 const response = await axios.post(
                     `${API_BASE}/admin/quiz/questions`,
                     formData,
-                    { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
+                    {}
                 );
                 // Refetch to get the new question with ID
                 const updatedQuestions = await axios.get(`${API_BASE}/admin/quiz/questions`, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
                 });
                 setQuestions(updatedQuestions.data);
             }
@@ -94,10 +94,10 @@ const QuizConfig = () => {
 
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this question?')) return;
-        
+
         try {
             await axios.delete(`${API_BASE}/admin/quiz/questions/${id}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
             });
             setQuestions(prev => prev.filter(q => q.id !== id));
         } catch (err) {
@@ -126,12 +126,12 @@ const QuizConfig = () => {
                 axios.put(
                     `${API_BASE}/admin/quiz/questions/${newQuestions[currentIndex].id}`,
                     { ...newQuestions[currentIndex], step_order: currentIndex + 1 },
-                    { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
+                    {}
                 ),
                 axios.put(
                     `${API_BASE}/admin/quiz/questions/${newQuestions[newIndex].id}`,
                     { ...newQuestions[newIndex], step_order: newIndex + 1 },
-                    { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
+                    {}
                 )
             ]);
 
@@ -201,7 +201,7 @@ const QuizConfig = () => {
                     <div>
                         <h3 className="font-semibold text-neutral-900 mb-2">About Quiz Questions</h3>
                         <p className="text-sm text-neutral-600">
-                            These questions help customers find the perfect gemstone based on their preferences. 
+                            These questions help customers find the perfect gemstone based on their preferences.
                             Questions are displayed in order (step 1, 2, 3...) during the quiz flow.
                         </p>
                     </div>

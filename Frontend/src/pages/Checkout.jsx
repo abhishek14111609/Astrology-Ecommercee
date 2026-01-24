@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import Button from '../components/UI/Button';
-import { ShieldCheck, CreditCard, Truck, CheckCircle2, ChevronRight } from 'lucide-react';
+import { ShieldCheck, CreditCard, Truck, CheckCircle2, ChevronRight, Loader2 } from 'lucide-react';
 
 const Checkout = () => {
-    const { cartItems, cartTotal } = useCart();
+    const { cartItems, cartTotal, clearCart } = useCart();
+    const { user, loading: authLoading } = useAuth();
     const navigate = useNavigate();
     const [step, setStep] = useState(1); // 1: Shipping, 2: Payment, 3: Success
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            navigate('/login');
+        }
+    }, [authLoading, user, navigate]);
+
+    if (authLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-auric-gold" /></div>;
+    const [loading, setLoading] = useState(false);
+    const [orderInfo, setOrderInfo] = useState(null);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -24,9 +37,40 @@ const Checkout = () => {
     };
 
     const nextStep = (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         setStep(step + 1);
         window.scrollTo(0, 0);
+    };
+
+    const handlePlaceOrder = async () => {
+        setLoading(true);
+        try {
+            // Check if user is logged in
+            const user_id = user ? user.id : null;
+
+            const orderPayload = {
+                items: cartItems.map(item => ({ id: item.id, quantity: item.quantity })),
+                customer_details: formData,
+                user_id: user_id
+            };
+
+            const response = await axios.post('http://localhost:5000/api/orders', orderPayload);
+
+            if (response.status === 201) {
+                setOrderInfo(response.data.order);
+                clearCart();
+                setStep(3);
+                window.scrollTo(0, 0);
+            } else {
+                alert('Order Failed: ' + response.data.message);
+            }
+
+        } catch (error) {
+            console.error("Order error", error);
+            alert("Something went wrong while placing order.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (cartItems.length === 0 && step !== 3) {
@@ -75,7 +119,7 @@ const Checkout = () => {
                         <div className="bg-auric-blush/50 p-6 rounded-2xl mb-8 text-left space-y-2">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-500">Order Reference:</span>
-                                <span className="font-bold text-auric-rose">#AK-99215</span>
+                                <span className="font-bold text-auric-rose">{orderInfo?.order_number || '#AK------'}</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-500">Expected Delivery:</span>
@@ -148,7 +192,18 @@ const Checkout = () => {
                                                     </div>
                                                 </div>
                                                 <p className="text-sm text-gray-600 mb-6">Redirecting to Razorpay for secure credit/debit card, UPI, or Net Banking payment.</p>
-                                                <Button onClick={() => setStep(3)} variant="primary" className="w-full py-4 uppercase tracking-widest text-xs">Complete Order</Button>
+                                                <Button
+                                                    onClick={handlePlaceOrder}
+                                                    disabled={loading}
+                                                    variant="primary"
+                                                    className="w-full py-4 uppercase tracking-widest text-xs flex justify-center items-center gap-2"
+                                                >
+                                                    {loading ? (
+                                                        <>
+                                                            <Loader2 className="animate-spin" size={16} /> Processing...
+                                                        </>
+                                                    ) : 'Complete Order'}
+                                                </Button>
                                             </div>
 
                                             <div className="p-6 border border-gray-100 rounded-xl flex items-center justify-between text-gray-400 cursor-not-allowed">
@@ -165,14 +220,15 @@ const Checkout = () => {
 
                         {/* Order Summary Section */}
                         <div className="lg:col-span-4">
+                            {/* Summary Content same as before */}
                             <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm sticky top-28">
                                 <h3 className="font-serif text-xl font-bold text-auric-rose mb-6">Order Summary</h3>
 
                                 <div className="space-y-4 mb-8 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {cartItems.map((item) => (
                                         <div key={item.id} className="flex gap-4">
-                                            <div className="w-16 h-16 bg-auric-blush rounded-md overflow-hidden flex-shrink-0">
-                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                            <div className="w-16 h-16 bg-auric-blush rounded-md overflow-hidden shrink-0">
+                                                <img src={item.image_url || item.image} alt={item.name} className="w-full h-full object-cover" />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-bold text-auric-rose truncate">{item.name}</p>

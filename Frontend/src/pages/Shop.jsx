@@ -1,18 +1,43 @@
-import React, { useState } from 'react';
-import { Filter, ChevronDown, ChevronUp, X, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Filter, ChevronDown, ChevronUp, X, Search, Loader2 } from 'lucide-react';
 import ProductCard from '../components/UI/ProductCard';
-import { products, categories } from '../data/products';
 
 const Shop = () => {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [priceRange, setPriceRange] = useState(5000);
+    const [categories, setCategories] = useState(['All']);
+    const [priceRange, setPriceRange] = useState(50000);
     const [sortBy, setSortBy] = useState('newest');
     const [searchQuery, setSearchQuery] = useState('');
 
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                // Fetch products
+                const prodRes = await fetch('http://localhost:5000/api/products');
+                const prodData = await prodRes.json();
+                setProducts(prodData);
+
+                // Extract or fetch categories
+                const uniqueCats = ['All', ...new Set(prodData.map(p => p.category_name).filter(Boolean))];
+                setCategories(uniqueCats);
+
+            } catch (err) {
+                console.error("Failed to fetch shop data", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
     // Filter Logic
     const filteredProducts = products.filter(product => {
-        const categoryMatch = selectedCategory === 'All' || product.category === selectedCategory;
+        const categoryMatch = selectedCategory === 'All' || product.category_name === selectedCategory || product.category === selectedCategory; // Handle both potential backend response structures
+        // Backend stores price as number, so clean comparison
         const priceMatch = product.price <= priceRange;
         const searchMatch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
         return categoryMatch && priceMatch && searchMatch;
@@ -22,7 +47,7 @@ const Shop = () => {
     const sortedProducts = [...filteredProducts].sort((a, b) => {
         if (sortBy === 'price-low') return a.price - b.price;
         if (sortBy === 'price-high') return b.price - a.price;
-        return 0; // Default (newest logic omitted for static mock)
+        return 0; // Default (newest/id)
     });
 
     return (
@@ -98,8 +123,8 @@ const Shop = () => {
                                 <input
                                     type="range"
                                     min="0"
-                                    max="5000"
-                                    step="100"
+                                    max="50000"
+                                    step="1000"
                                     value={priceRange}
                                     onChange={(e) => setPriceRange(Number(e.target.value))}
                                     className="w-full accent-auric-gold h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
@@ -114,7 +139,11 @@ const Shop = () => {
 
                     {/* Product Grid */}
                     <main className="md:w-3/4">
-                        {sortedProducts.length > 0 ? (
+                        {loading ? (
+                            <div className="flex justify-center py-20">
+                                <Loader2 className="w-10 h-10 text-auric-gold animate-spin" />
+                            </div>
+                        ) : sortedProducts.length > 0 ? (
                             <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                                 {sortedProducts.map(product => (
                                     <ProductCard key={product.id} product={product} />

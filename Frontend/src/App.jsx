@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 import MasterLayout from './components/Layout/MasterLayout';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
@@ -25,36 +26,38 @@ import ScrollToTop from './components/Layout/ScrollToTop';
 
 const App = () => {
   return (
-    <CartProvider>
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<MasterLayout />}>
-            <Route index element={<Home />} />
-            <Route path="shop" element={<Shop />} />
-            <Route path="category/:categoryName" element={<Shop />} />
-            <Route path="product/:id" element={<ProductDetail />} />
-            <Route path="cart" element={<Cart />} />
-            <Route path="about" element={<About />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="services" element={<Services />} />
-            <Route path="horoscope" element={<Horoscope />} />
-            <Route path="wishlist" element={<Wishlist />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="faq" element={<FAQ />} />
-            <Route path="shipping" element={<Shipping />} />
-            <Route path="privacy" element={<Privacy />} />
-            <Route path="terms" element={<Terms />} />
-            <Route path="track-order" element={<TrackOrder />} />
-            <Route path="checkout" element={<Checkout />} />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route path="gemstone-finder" element={<GemstoneFinder />} />
-            <Route path="*" element={<div className="p-10 text-center">404 - Page Not Found</div>} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<MasterLayout />}>
+              <Route index element={<Home />} />
+              <Route path="shop" element={<Shop />} />
+              <Route path="category/:categoryName" element={<Shop />} />
+              <Route path="product/:id" element={<ProductDetail />} />
+              <Route path="cart" element={<Cart />} />
+              <Route path="about" element={<About />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="services" element={<Services />} />
+              <Route path="horoscope" element={<Horoscope />} />
+              <Route path="wishlist" element={<Wishlist />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="faq" element={<FAQ />} />
+              <Route path="shipping" element={<Shipping />} />
+              <Route path="privacy" element={<Privacy />} />
+              <Route path="terms" element={<Terms />} />
+              <Route path="track-order" element={<TrackOrder />} />
+              <Route path="checkout" element={<Checkout />} />
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
+              <Route path="gemstone-finder" element={<GemstoneFinder />} />
+              <Route path="*" element={<div className="p-10 text-center">404 - Page Not Found</div>} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

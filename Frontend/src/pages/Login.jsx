@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/UI/Button';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ const Login = () => {
         password: ''
     });
     const [error, setError] = useState('');
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -18,21 +20,10 @@ const Login = () => {
         e.preventDefault();
         setError('');
         try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
-            const data = await response.json();
-            if (response.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
-                navigate('/profile');
-            } else {
-                setError(data.message || 'Login failed');
-            }
+            await login(formData.email, formData.password);
+            navigate('/profile');
         } catch (err) {
-            setError('Connection error. Is the backend running?');
+            setError(err.response?.data?.message || 'Login failed');
         }
     };
 

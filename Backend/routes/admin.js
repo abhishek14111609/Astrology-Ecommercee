@@ -9,13 +9,15 @@ import Order from '../models/Order.js';
 import User from '../models/User.js';
 import multer from 'multer';
 import xlsx from 'xlsx';
+import fs from 'fs';
+import path from 'path';
 const router = express.Router();
 
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 
-// Configure multer for file upload
+// Configure multer for file upload (Excel - Memory)
 const storage = multer.memoryStorage();
-const upload = multer({ 
+const upload = multer({
     storage,
     fileFilter: (req, file, cb) => {
         const allowedMimetypes = [
@@ -29,6 +31,43 @@ const upload = multer({
         } else {
             cb(new Error('Only Excel (.xlsx, .xls) and CSV files are allowed'));
         }
+    }
+});
+
+// Configure multer for Image Upload (Disk)
+const storageDisk = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadDir = 'uploads/';
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'product-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const uploadImageMiddleware = multer({
+    storage: storageDisk,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only images are allowed'));
+        }
+    }
+});
+
+// Image Upload Route
+router.post('/upload-image', authenticateToken, isAdmin, uploadImageMiddleware.single('image'), (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ message: 'No image uploaded' });
+        const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+        res.json({ imageUrl });
+    } catch (error) {
+        res.status(500).json({ message: 'Error uploading image', error: error.message });
     }
 });
 
@@ -57,6 +96,37 @@ router.post('/products', authenticateToken, isAdmin, async (req, res) => {
     }
 });
 
+router.put('/products/:id', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        const { name, slug, description, price, category_id, sub_category_id, zodiac_sign, image_url, is_bestseller, tags } = req.body;
+        await connect();
+        const updated = await Product.findOneAndUpdate(
+            { id: parseInt(req.params.id) },
+            {
+                name, slug, description, price, category_id, sub_category_id, zodiac_sign, image_url,
+                is_bestseller: !!is_bestseller,
+                tags: Array.isArray(tags) ? tags : []
+            },
+            { new: true }
+        );
+        if (!updated) return res.status(404).json({ message: 'Product not found' });
+        res.json({ message: 'Product updated', data: updated });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating product', error: error.message });
+    }
+});
+
+router.delete('/products/:id', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        await connect();
+        const deleted = await Product.findOneAndDelete({ id: parseInt(req.params.id) });
+        if (!deleted) return res.status(404).json({ message: 'Product not found' });
+        res.json({ message: 'Product deleted' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting product', error: error.message });
+    }
+});
+
 // --- Category Management ---
 router.post('/categories', authenticateToken, isAdmin, async (req, res) => {
     try {
@@ -80,6 +150,72 @@ router.post('/subcategories', authenticateToken, isAdmin, async (req, res) => {
         res.status(201).json({ message: 'Sub-category created', id: created.id });
     } catch (error) {
         res.status(500).json({ message: 'Error creating sub-category', error: error.message });
+    }
+});
+
+// --- Get All Sub-categories ---
+router.get('/subcategories', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        await connect();
+        // Join with Category to get parent name
+        const subcategories = await SubCategory.aggregate([
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "category_id",
+                    foreignField: "id",
+                    as: "category"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$category",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    id: 1,
+                    name: 1,
+                    slug: 1,
+                    category_id: 1,
+                    category_name: "$category.name"
+                }
+            },
+            { $sort: { id: 1 } }
+        ]);
+        res.json(subcategories);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching sub-categories', error: error.message });
+    }
+});
+
+// --- Update Sub-category ---
+router.put('/subcategories/:id', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        const { category_id, name, slug } = req.body;
+        await connect();
+        const updated = await SubCategory.findOneAndUpdate(
+            { id: parseInt(req.params.id) },
+            { category_id, name, slug },
+            { new: true }
+        );
+        if (!updated) return res.status(404).json({ message: 'Sub-category not found' });
+        res.json({ message: 'Sub-category updated', data: updated });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating sub-category', error: error.message });
+    }
+});
+
+// --- Delete Sub-category ---
+router.delete('/subcategories/:id', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        await connect();
+        const deleted = await SubCategory.findOneAndDelete({ id: parseInt(req.params.id) });
+        if (!deleted) return res.status(404).json({ message: 'Sub-category not found' });
+        res.json({ message: 'Sub-category deleted' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting sub-category', error: error.message });
     }
 });
 
@@ -179,15 +315,15 @@ router.get('/orders', authenticateToken, isAdmin, async (req, res) => {
         await connect();
         const { status, page = 1, limit = 20 } = req.query;
         const query = status && status !== 'all' ? { status } : {};
-        
+
         const orders = await Order.find(query)
             .sort({ created_at: -1 })
             .limit(parseInt(limit))
             .skip((parseInt(page) - 1) * parseInt(limit))
             .lean();
-        
+
         const total = await Order.countDocuments(query);
-        
+
         res.json({
             orders,
             pagination: {
@@ -234,23 +370,23 @@ router.get('/customers', authenticateToken, isAdmin, async (req, res) => {
     try {
         await connect();
         const { page = 1, limit = 20, search = '' } = req.query;
-        
+
         const query = search ? {
             $or: [
                 { name: { $regex: search, $options: 'i' } },
                 { email: { $regex: search, $options: 'i' } }
             ]
         } : {};
-        
+
         const customers = await User.find(query)
             .select('-password')
             .sort({ created_at: -1 })
             .limit(parseInt(limit))
             .skip((parseInt(page) - 1) * parseInt(limit))
             .lean();
-        
+
         const total = await User.countDocuments(query);
-        
+
         res.json({
             customers,
             pagination: {
@@ -270,12 +406,12 @@ router.get('/customers/:id', authenticateToken, isAdmin, async (req, res) => {
         await connect();
         const customer = await User.findOne({ id: parseInt(req.params.id) }).select('-password').lean();
         if (!customer) return res.status(404).json({ message: 'Customer not found' });
-        
+
         // Get customer orders
         const orders = await Order.find({ user_id: parseInt(req.params.id) })
             .sort({ created_at: -1 })
             .lean();
-        
+
         res.json({ ...customer, orders });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching customer', error: error.message });
@@ -291,33 +427,15 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
 
         await connect();
 
-        // Parse Excel or CSV file
+        // Parse Excel or CSV file (xlsx library handles CSVs too)
         let data = [];
-        const isCSV = req.file.originalname.endsWith('.csv');
-        
-        if (isCSV) {
-            // Parse CSV file
-            const csvText = req.file.buffer.toString('utf-8');
-            const lines = csvText.trim().split('\n');
-            if (lines.length < 2) {
-                return res.status(400).json({ message: 'CSV file is empty' });
-            }
-            
-            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-            for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
-                const obj = {};
-                headers.forEach((header, index) => {
-                    obj[header] = values[index] || '';
-                });
-                data.push(obj);
-            }
-        } else {
-            // Parse Excel file
+        try {
             const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
             data = xlsx.utils.sheet_to_json(sheet);
+        } catch (parseError) {
+            return res.status(400).json({ message: 'Failed to parse file. Ensure it is a valid Excel or CSV file.', error: parseError.message });
         }
 
         if (!data || data.length === 0) {

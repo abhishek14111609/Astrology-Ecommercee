@@ -1,7 +1,9 @@
 import React from 'react';
 import { Menu, Bell, Search, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Header = ({ onMenuClick }) => {
+    const { user } = useAuth();
     return (
         <header className="fixed top-0 right-0 left-0 lg:left-72 h-16 bg-white/80 backdrop-blur-xl border-b border-neutral-100 z-40 transition-all duration-300">
             <div className="h-full px-4 md:px-6 lg:px-8 flex items-center justify-between">
@@ -45,11 +47,11 @@ const Header = ({ onMenuClick }) => {
                     {/* User Profile */}
                     <div className="flex items-center gap-3 ml-2 pl-2 border-l border-neutral-200">
                         <div className="hidden lg:block text-right">
-                            <p className="text-sm font-semibold text-neutral-900">Admin User</p>
-                            <p className="text-xs text-neutral-500">admin@auric.com</p>
+                            <p className="text-sm font-semibold text-neutral-900">{user?.name || 'Admin'}</p>
+                            <p className="text-xs text-neutral-500">{user?.email || 'admin@auric.com'}</p>
                         </div>
                         <div className="w-10 h-10 bg-gradient-to-br from-auric-purple to-auric-purple-dark rounded-xl flex items-center justify-center text-white font-semibold shadow-lg shadow-auric-purple/20 cursor-pointer hover:scale-105 transition-transform">
-                            <User size={18} />
+                            {user?.name?.charAt(0).toUpperCase() || <User size={18} />}
                         </div>
                     </div>
                 </div>

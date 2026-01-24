@@ -49,7 +49,7 @@ const Contact = () => {
                                 <h3 className="font-serif text-2xl font-bold mb-6">Visit Our Sanctuary</h3>
                                 <div className="space-y-4">
                                     <div className="flex items-start gap-4">
-                                        <MapPin className="text-auric-gold mt-1 flex-shrink-0" size={20} />
+                                        <MapPin className="text-auric-gold mt-1 shrink-0" size={20} />
                                         <p className="text-white/80 leading-relaxed text-lg">
                                             108 Celestial Grove, <br />
                                             Zenith Towers, Floor 7, <br />
@@ -65,20 +65,49 @@ const Contact = () => {
                     {/* Contact Form */}
                     <div className="bg-white p-10 rounded-xl shadow-lg border border-gray-100">
                         <h3 className="font-serif text-2xl font-bold text-auric-rose mb-8 text-center">Send an Inquiry</h3>
-                        <form className="space-y-6">
+                        <form onSubmit={async (e) => {
+                            e.preventDefault();
+                            const formData = new FormData(e.target);
+                            const data = Object.fromEntries(formData.entries());
+
+                            try {
+                                const button = e.target.querySelector('button');
+                                const originalText = button.innerHTML;
+                                button.disabled = true;
+                                button.innerHTML = 'Sending...';
+
+                                const res = await fetch('http://localhost:5000/api/contact', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(data)
+                                });
+
+                                if (res.ok) {
+                                    alert('Message sent successfully!');
+                                    e.target.reset();
+                                } else {
+                                    alert('Failed to send message. Please try again.');
+                                }
+                                button.innerHTML = originalText;
+                                button.disabled = false;
+                            } catch (err) {
+                                console.error(err);
+                                alert('An error occurred.');
+                            }
+                        }} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-700">Full Name</label>
-                                    <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="Enter your name" />
+                                    <input name="name" required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="Enter your name" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-700">Email Address</label>
-                                    <input type="email" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="Enter your email" />
+                                    <input name="email" required type="email" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="Enter your email" />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Subject</label>
-                                <select className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors appearance-none capitalize">
+                                <select name="subject" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors appearance-none capitalize">
                                     <option>General Inquiry</option>
                                     <option>Crystal Consultation</option>
                                     <option>Astrology Service</option>
@@ -87,7 +116,7 @@ const Contact = () => {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Your Message</label>
-                                <textarea rows="5" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="How can we illuminate your path?"></textarea>
+                                <textarea name="message" required rows="5" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="How can we illuminate your path?"></textarea>
                             </div>
                             <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-700">Phone Number</label>
