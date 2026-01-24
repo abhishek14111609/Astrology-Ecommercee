@@ -9,11 +9,13 @@ const ProductCard = ({ product }) => {
         <div className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
             {/* Image Container */}
             <div className="relative overflow-hidden aspect-[4/5] bg-gray-100">
-                <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                <Link to={`/product/${product.id}`} className="block h-full">
+                    <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                </Link>
 
                 {/* badges */}
                 {product.isNew && (

@@ -89,6 +89,10 @@ const Contact = () => {
                                 <label className="text-sm font-medium text-gray-700">Your Message</label>
                                 <textarea rows="5" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="How can we illuminate your path?"></textarea>
                             </div>
+                            <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">Phone Number</label>
+                                    <input type="email" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="Enter your Phone Number" />
+                                </div>
                             <Button variant="primary" className="w-full py-4 gap-2">
                                 <Send size={18} /> Send Message
                             </Button>

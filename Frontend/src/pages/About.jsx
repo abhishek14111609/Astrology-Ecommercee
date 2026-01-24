@@ -25,13 +25,16 @@ const About = () => {
                         <SectionHeading title="Ancient Roots, Modern Soul" subtitle="OUR ORIGIN" center={false} />
                         <div className="space-y-6 text-gray-700 leading-relaxed">
                             <p>
-                                Auric Krystal was born from a profound respect for the celestial arts and a desire to bring the luminous energy of crystals into contemporary life. Our journey began with a simple belief: that every soul deserves a touch of divine harmony.
+                                Auric Krystals was born from a simple belief — that crystals are not just beautiful objects, but living carriers of energy, intention, and ancient wisdom. Every crystal we offer is carefully chosen, not by appearance alone, but by its vibration, origin, and purity. We deal only in pure, original, and certified crystals and gemstones, because authenticity is the foundation of true healing.
                             </p>
                             <p>
-                                We meticulously source our crystals and artifacts from across the globe, ensuring each piece resonates with the highest vibrational frequency. Our master astrologers and energy healers work in unison to energize every product, bridging the gap between ancient wisdom and the modern seeker.
+                                At Auric Krystals, quality is never compromised. Each gemstone and crystal product goes through a mindful selection process, ensuring it is natural, energetically sound, and worthy of becoming a part of your journey. From spiritual tools to gemstone creations, every piece reflects our commitment to truth, transparency, and trust.
                             </p>
                             <p>
-                                Today, Auric Krystal stands as a sanctuary for those seeking spiritual elevation, offering not just products, but a pathway to personal enlightenment and cosmic alignment.
+                                But we believe a crystal’s journey doesn’t end at delivery — it begins there. That’s why every Auric Krystals product comes with a certification of authenticity and a special crystal charging bag, so your crystal remains protected and energetically aligned. More importantly, each crystal is energetically cleansed and charged with intention, based on the purpose for which you are welcoming it into your life — whether it’s healing, protection, abundance, peace, or spiritual growth.
+                            </p>
+                            <p>
+                                Auric Krystals is not just about selling crystals; it’s about creating a soulful connection between you and the energy you choose to carry. When a crystal reaches you, it carries care, consciousness, and a silent blessing — reminding you that the universe always supports those who seek with purity of heart.
                             </p>
                         </div>
                     </div>
