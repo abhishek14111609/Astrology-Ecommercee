@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
 
 axios.defaults.withCredentials = true;
 import Dashboard from './pages/Dashboard';
@@ -24,7 +25,14 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Layout />}>
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Dashboard />} />
             <Route path="products" element={<ProductManagement />} />
             <Route path="categories" element={<Categories />} />
