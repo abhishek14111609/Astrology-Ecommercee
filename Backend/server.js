@@ -9,7 +9,7 @@ const PORT = process.env.PORT;
 import authRoutes from './routes/auth.js';
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'], // Frontend and Admin ports
+    origin: ['http://localhost:5173', 'http://localhost:5175'], // Frontend and Admin ports
     credentials: true
 }));
 app.use(express.json());

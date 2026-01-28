@@ -8,6 +8,11 @@ import ProductCard from '../components/UI/ProductCard';
 import { products as allProducts } from '../data/products';
 import API_BASE_URL from '../config/api';
 
+import HeroSlider from '../components/UI/HeroSlider';
+import slider1 from '../assets/images/slider1.jpeg';
+import slider2 from '../assets/images/slider2.jpeg';
+import slider3 from '../assets/images/slider3.jpeg';
+
 const Home = () => {
     const targetRef = useRef(null);
     const { scrollYProgress } = useScroll({
@@ -91,61 +96,52 @@ const Home = () => {
         { name: "Pisces", icon: "♓" }
     ];
 
+    const slides = [
+        {
+            image: slider1,
+            subtitle: "Unlock Your Destiny",
+            title: "Ancient Wisdom for Modern Life",
+            desc: "Get precise horoscope readings, premium crystal and gemstones spiritual remedies from India's most trusted astrologers."
+        },
+        {
+            image: slider2,
+            subtitle: "Healing Crystals",
+            title: "Energize Your Soul",
+            desc: "Discover our exclusive collection of energized gemstones and crystals to bring balance and harmony to your life."
+        },
+        {
+            image: slider3,
+            subtitle: "Expert Consultation",
+            title: "Guidance from the Stars",
+            desc: "Connect with our experienced astrologers for personalized readings and finding your true path."
+        }
+    ];
+
     return (
         <div className="bg-auric-blush">
             {/* Hero Section */}
-            <section ref={targetRef} className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-white text-center px-4">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center opacity-10"></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-auric-blush via-transparent to-white"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--color-auric-accent)_0%,_transparent_70%)] opacity-20"></div>
-
-                <div className="relative z-10 max-w-4xl mx-auto space-y-6">
-                    <motion.span
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="inline-block text-auric-gold uppercase tracking-[0.3em] text-sm font-semibold"
-                    >
-                        Unlock Your Destiny
-                    </motion.span>
-                    <motion.h1
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="font-serif text-5xl md:text-7xl font-bold text-auric-rose leading-tight"
-                    >
-                        Ancient Wisdom for <br /> <span className="text-auric-gold italic">Modern Life</span>
-                    </motion.h1>
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-auric-rose/80 text-lg md:text-xl max-w-2xl mx-auto"
-                    >
-                        Get precise horoscope readings, premium crystal and gemstones spiritual remedies from India's most trusted astrologers.
-                    </motion.p>
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.6 }}
-                        className="pt-6"
-                    >
-                        <a 
+            <section ref={targetRef} className="relative h-screen flex items-center justify-center overflow-hidden bg-white text-center px-4">
+                <HeroSlider slides={slides}>
+                    <div className="flex flex-wrap justify-center gap-4">
+                        <a
                             href="https://wa.me/917043216616?text=Hello%2C%20I%20would%20like%20to%20consult%20with%20an%20astrologer%20regarding%20my%20birth%20chart%20and%20future%20predictions.%20Please%20guide%20me."
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            <Button variant="primary" className="mr-4">
+                            <Button variant="primary">
                                 Talk to Astrologer
                             </Button>
                         </a>
                         <Link to="/shop">
-                            <Button variant="outline" className="text-auric-rose border-auric-rose hover:bg-auric-rose hover:text-white">
+                            <Button variant="outline" className="text-white border-white hover:bg-white hover:text-auric-rose">
                                 Shop Collection
                             </Button>
                         </Link>
-                    </motion.div>
-                </div>
+                    </div>
+                </HeroSlider>
+
+                {/* Decorative gradients */}
+                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-auric-blush to-transparent pointer-events-none"></div>
             </section>
 
             {/* Daily Horoscope Strip */}

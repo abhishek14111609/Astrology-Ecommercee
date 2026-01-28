@@ -1,6 +1,7 @@
 import React from 'react';
 import SectionHeading from '../components/UI/SectionHeading';
 import logo from '../assets/images/logo2.png';
+import logo1 from '../assets/images/crystal.png';
 
 const About = () => {
     return (
@@ -40,10 +41,46 @@ const About = () => {
                     </div>
                     <div className="relative">
                         <div className="aspect-[4/5] bg-white rounded-2xl overflow-hidden shadow-2xl skew-y-3 transform transition-transform hover:skew-y-0 duration-700">
-                            <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="About Us" className="w-full h-full object-cover" />
+                             <img src={logo1} alt="Logo"  />
                         </div>
                         <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-auric-gold rounded-full flex items-center justify-center animate-pulse">
                             <img src={logo} alt="Logo" className="w-20 h-20 object-contain brightness-0 invert opacity-50" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Mission & Vision */}
+            <section className="py-20 bg-white">
+                <div className="container mx-auto px-4 max-w-6xl">
+                    <SectionHeading title="Why We Exist" subtitle="OUR MISSION & VISION" />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12">
+                        <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-blush/60 via-white to-auric-gold/20">
+                            <img
+                                src="/images/about/mission-crystals.jpg"
+                                alt="Auric Krystals mission"
+                                className="absolute inset-0 w-full h-full object-cover opacity-70"
+                            />
+                            <div className="relative p-10 space-y-6 backdrop-blur-sm">
+                                <h3 className="font-serif text-3xl font-bold text-auric-rose">Our Mission</h3>
+                                <p className="text-gray-700 leading-relaxed">
+                                    Our mission is to guide individuals toward clarity, balance, and self-alignment through authentic astrology and consciously charged crystal energies. At Auric Krystals, we are committed to offering only pure, original, and certified crystals, prepared with intention and care. Every product and every guidance we provide is meant to support personal transformation, emotional healing, and spiritual growth—so that people feel supported, protected, and empowered on their life journey.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-gold/15 via-white to-auric-blush/50">
+                            <img
+                                src="/images/about/founder.png"
+                                alt="Auric Krystals vision"
+                                className="absolute inset-0 w-full h-full object-cover opacity-70"
+                            />
+                            <div className="relative p-10 space-y-6 backdrop-blur-sm">
+                                <h3 className="font-serif text-3xl font-bold text-auric-rose">Our Vision</h3>
+                                <p className="text-gray-700 leading-relaxed">
+                                    Our vision is to create a trusted sacred space where cosmic wisdom and Earth’s natural energies come together in harmony. We envision Auric Krystals as more than a brand—an energy companion for those seeking truth, healing, and purpose. By blending astrology, crystals, and intention-based practices, we aspire to help people live with greater awareness, confidence, and inner peace, while honoring the belief that destiny is guided best when aligned with conscious choice and pure energy.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
