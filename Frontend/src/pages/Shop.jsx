@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Filter, ChevronDown, ChevronUp, X, Search, Loader2 } from 'lucide-react';
 import ProductCard from '../components/UI/ProductCard';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 
 const Shop = () => {
     const [products, setProducts] = useState([]);
@@ -18,7 +18,7 @@ const Shop = () => {
             setLoading(true);
             try {
                 // Fetch products
-                const prodRes = await fetch(`${API_BASE_URL}/api/products`);
+                const prodRes = await fetch(`${VITE_API_BASE_URL}/api/products`);
                 const response = await prodRes.json();
 
                 // Check if response has the expected structure

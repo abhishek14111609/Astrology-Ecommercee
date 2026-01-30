@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 import {
     Plus,
     Edit2,
@@ -32,7 +32,7 @@ const Categories = () => {
         const fetchCategories = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${API_BASE_URL}/admin/categories`, {
+                const response = await axios.get(`${VITE_API_BASE_URL}/admin/categories`, {
 
                 });
                 if (isMounted) {
@@ -73,7 +73,7 @@ const Categories = () => {
         try {
             if (editingCategory) {
                 await axios.put(
-                    `${API_BASE_URL}/api/admin/categories/${editingCategory.id}`,
+                    `${VITE_API_BASE_URL}/api/admin/categories/${editingCategory.id}`,
                     formData,
                     {}
                 );
@@ -82,12 +82,12 @@ const Categories = () => {
                 ));
             } else {
                 const response = await axios.post(
-                    `${API_BASE_URL}/api/admin/categories`,
+                    `${VITE_API_BASE_URL}/api/admin/categories`,
                     formData,
                     {}
                 );
                 // Refetch to get the new category with ID
-                const newCategory = await axios.get(`${API_BASE_URL}/api/admin/categories`, {
+                const newCategory = await axios.get(`${VITE_API_BASE_URL}/api/admin/categories`, {
 
                 });
                 setCategories(newCategory.data);
@@ -102,7 +102,7 @@ const Categories = () => {
         if (!window.confirm('Are you sure you want to delete this category?')) return;
 
         try {
-            await axios.delete(`${API_BASE_URL}/api/admin/categories/${id}`, {
+            await axios.delete(`${VITE_API_BASE_URL}/api/admin/categories/${id}`, {
 
             });
             setCategories(prev => prev.filter(cat => cat.id !== id));

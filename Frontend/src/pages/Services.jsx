@@ -4,7 +4,7 @@ import Button from '../components/UI/Button';
 import { Star, Heart, Moon, Sun, Gem, Compass, X, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 import axios from 'axios';
 
 const Services = () => {
@@ -82,7 +82,7 @@ const Services = () => {
         setLoading(true);
 
         try {
-            await axios.post(`${API_BASE_URL}/api/service-bookings/create`, {
+            await axios.post(`${VITE_API_BASE_URL}/api/service-bookings/create`, {
                 service_title: selectedService.title,
                 service_subtitle: selectedService.subtitle,
                 service_price: selectedService.price,

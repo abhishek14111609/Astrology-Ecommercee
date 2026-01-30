@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { Upload, Save, Loader2, AlertCircle, CheckCircle2, Plus, X } from 'lucide-react';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 
 const PaymentSettings = () => {
     const { user } = useAuth();
@@ -19,7 +19,7 @@ const PaymentSettings = () => {
     const [saving, setSaving] = useState(false);
     const [status, setStatus] = useState(null);
 
-    const getBase = () => API_BASE_URL?.replace(/\/$/, '').replace(/\/api$/, '');
+    const getBase = () => VITE_API_BASE_URL?.replace(/\/$/, '').replace(/\/api$/, '');
     const apiUrl = (path) => `${getBase()}/api${path}`;
     const getImageUrl = (path) => {
         if (!path) return '';

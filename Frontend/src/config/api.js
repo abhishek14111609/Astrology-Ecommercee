@@ -1,11 +1,11 @@
 // Centralized API configuration
-export const API_BASE_URL = import.meta.env.VITE_API_URL;
+export const VITE_API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Helper function to build API endpoints
 export const buildApiUrl = (endpoint) => {
     // Remove leading slash if present to avoid double slashes
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-    return `${API_BASE_URL}${cleanEndpoint}`;
+    return `${VITE_API_BASE_URL}${cleanEndpoint}`;
 };
 
 // Helper function to build image URLs
@@ -20,7 +20,7 @@ export const buildImageUrl = (imagePath) => {
     // If it's a relative path, prepend the API base URL and /uploads
     // Remove leading slash to avoid double slashes
     const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-    return `${API_BASE_URL}/uploads${cleanPath}`;
+    return `${VITE_API_BASE_URL}/uploads${cleanPath}`;
 };
 
-export default API_BASE_URL;
+export default VITE_API_BASE_URL;

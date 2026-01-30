@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/UI/Button';
 import { ShieldCheck, CreditCard, Truck, CheckCircle2, ChevronRight, Loader2 } from 'lucide-react';
-import API_BASE_URL, { buildImageUrl } from '../config/api';
+import VITE_API_BASE_URL, { buildImageUrl } from '../config/api';
 
 const Checkout = () => {
     const { cartItems, cartTotal, clearCart } = useCart();

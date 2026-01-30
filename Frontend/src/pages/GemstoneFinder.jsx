@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../components/UI/Button';
 import axios from 'axios';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 
 const GemstoneFinder = () => {
     const [step, setStep] = useState(0);
@@ -17,7 +17,7 @@ const GemstoneFinder = () => {
         const fetchQuestions = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${API_BASE_URL}/api/products/quiz/questions`);
+                const response = await axios.get(`${VITE_API_BASE_URL}/api/products/quiz/questions`);
                 setQuestions(response.data);
                 setFetchError(null);
             } catch (error) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SectionHeading from '../components/UI/SectionHeading';
 import Button from '../components/UI/Button';
 import { Package, Calendar, IndianRupee, CheckCircle2, AlertCircle, Clock, Loader2, ArrowLeft, XCircle } from 'lucide-react';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -23,7 +23,7 @@ const TrackOrder = () => {
             setLoading(true);
             setError(null);
             try {
-                const res = await axios.get(`${API_BASE_URL}/api/orders/${orderId}`);
+                const res = await axios.get(`${VITE_API_BASE_URL}/api/orders/${orderId}`);
                 setOrder(res.data);
             } catch (err) {
                 setError(err.response?.data?.message || 'Failed to fetch order details');

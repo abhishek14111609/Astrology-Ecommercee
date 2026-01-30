@@ -2,7 +2,7 @@ import React from 'react';
 import SectionHeading from '../components/UI/SectionHeading';
 import Button from '../components/UI/Button';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 
 const Contact = () => {
     return (
@@ -75,7 +75,7 @@ const Contact = () => {
                                 button.disabled = true;
                                 button.innerHTML = 'Sending...';
 
-                                const res = await fetch(`${API_BASE_URL}/api/contact`, {
+                                const res = await fetch(`${VITE_API_BASE_URL}/api/contact`, {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify(data)

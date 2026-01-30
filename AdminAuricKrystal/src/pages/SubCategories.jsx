@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 import {
     Plus,
     Edit2,
@@ -28,7 +28,7 @@ const SubCategories = () => {
         category_id: ''
     });
 
-    const API_BASE = API_BASE_URL;
+    const API_BASE = VITE_API_BASE_URL;
 
     useEffect(() => {
         fetchData();

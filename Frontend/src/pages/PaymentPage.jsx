@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/UI/Button';
 import { Upload, Check, AlertCircle, Loader2, Copy, CheckCircle2 } from 'lucide-react';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 
 const PaymentPage = () => {
     const navigate = useNavigate();
@@ -37,7 +37,7 @@ const PaymentPage = () => {
         const fetchPaymentSettings = async () => {
             try {
                 // Fetch payment settings
-                const settingsRes = await axios.get(`${API_BASE_URL}/api/payment/settings`);
+                const settingsRes = await axios.get(`${VITE_API_BASE_URL}/api/payment/settings`);
                 setPaymentSettings(settingsRes.data);
                 setLoading(false);
             } catch (error) {
@@ -80,7 +80,7 @@ const PaymentPage = () => {
                 user_id: userId
             };
 
-            const orderResponse = await axios.post(`${API_BASE_URL}/api/orders`, orderPayload);
+            const orderResponse = await axios.post(`${VITE_API_BASE_URL}/api/orders`, orderPayload);
             const createdOrder = orderResponse.data.order;
             setOrder(createdOrder);
 
@@ -90,7 +90,7 @@ const PaymentPage = () => {
 
             const token = localStorage.getItem('token');
             const response = await axios.post(
-                `${API_BASE_URL}/api/payment/upload-screenshot/${createdOrder.id}`,
+                `${VITE_API_BASE_URL}/api/payment/upload-screenshot/${createdOrder.id}`,
                 formData,
                 {
                     headers: {
@@ -180,7 +180,7 @@ const PaymentPage = () => {
                                     {paymentSettings.qr_code_image && (
                                         <div className="bg-black p-4 rounded-xl">
                                             <img
-                                                src={`${API_BASE_URL}/${paymentSettings.qr_code_image}`}
+                                                src={`${VITE_API_BASE_URL}/${paymentSettings.qr_code_image}`}
                                                 alt="Payment QR Code"
                                                 className="w-56 h-56 object-cover rounded-lg"
                                             />
@@ -252,7 +252,7 @@ const PaymentPage = () => {
                                 <p className="text-gray-600 text-sm mb-4">Here is the screenshot we received for verification.</p>
                                 <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex justify-center">
                                     <img
-                                        src={`${API_BASE_URL}/${order.payment_screenshot}`}
+                                        src={`${VITE_API_BASE_URL}/${order.payment_screenshot}`}
                                         alt="Payment Proof"
                                         className="max-h-96 object-contain rounded-lg"
                                     />

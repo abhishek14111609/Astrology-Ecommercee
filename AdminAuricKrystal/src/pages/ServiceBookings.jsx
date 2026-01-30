@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 import { Calendar, Clock, User, Mail, Phone, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
 const ServiceBookings = () => {
@@ -17,7 +17,7 @@ const ServiceBookings = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get(`${API_BASE_URL}/service-bookings/all`, {
+            const response = await axios.get(`${VITE_API_BASE_URL}/service-bookings/all`, {
                 withCredentials: true
             });
             setBookings(response.data);
@@ -31,7 +31,7 @@ const ServiceBookings = () => {
 
     const handleUpdateStatus = async (bookingId, status, adminNotes = '') => {
         try {
-            await axios.put(`${API_BASE_URL}/service-bookings/update-status/${bookingId}`, {
+            await axios.put(`${VITE_API_BASE_URL}/service-bookings/update-status/${bookingId}`, {
                 status,
                 admin_notes: adminNotes
             }, { withCredentials: true });

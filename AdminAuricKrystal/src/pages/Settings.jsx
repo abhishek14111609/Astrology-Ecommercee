@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 import {
     Settings as SettingsIcon,
     Save,
@@ -26,7 +26,7 @@ const Settings = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
 
-    const API_BASE = API_BASE_URL;
+    const API_BASE = VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchSettings = async () => {

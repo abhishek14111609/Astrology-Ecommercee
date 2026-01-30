@@ -5,7 +5,7 @@ import SectionHeading from '../components/UI/SectionHeading';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -28,7 +28,7 @@ const Profile = () => {
             if (!user) return;
             setLoading(true);
             try {
-                const res = await axios.get(`${API_BASE_URL}/api/orders/myorders`);
+                const res = await axios.get(`${VITE_API_BASE_URL}/api/orders/myorders`);
                 setOrders(res.data);
             } catch (err) {
                 console.error('Failed to fetch orders', err);
@@ -41,7 +41,7 @@ const Profile = () => {
             if (!user) return;
             setBookingLoading(true);
             try {
-                const res = await axios.get(`${API_BASE_URL}/api/service-bookings/my-bookings`);
+                const res = await axios.get(`${VITE_API_BASE_URL}/api/service-bookings/my-bookings`);
                 setBookings(res.data);
             } catch (err) {
                 console.error('Failed to fetch bookings', err);

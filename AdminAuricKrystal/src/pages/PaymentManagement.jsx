@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { CheckCircle2, XCircle, Loader2, Eye, MessageSquare } from 'lucide-react';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 
 const PaymentManagement = () => {
     const { user } = useAuth();
@@ -19,7 +19,7 @@ const PaymentManagement = () => {
     }, []);
 
     // Normalize base URL to avoid double /api
-    const getBase = () => API_BASE_URL?.replace(/\/$/, '').replace(/\/api$/, '');
+    const getBase = () => VITE_API_BASE_URL?.replace(/\/$/, '').replace(/\/api$/, '');
 
     // Build API URL without double /api
     const apiUrl = (path) => `${getBase()}/api${path}`;

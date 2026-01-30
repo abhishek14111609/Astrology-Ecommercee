@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../config/api';
+import VITE_API_BASE_URL from '../config/api';
 import { useAuth } from './AuthContext';
 
 const NotificationContext = createContext();
@@ -17,7 +17,7 @@ export const NotificationProvider = ({ children }) => {
     const fetchNotifications = useCallback(async () => {
         if (!user) return;
         try {
-            const res = await axios.get(`${API_BASE_URL}/api/notifications/my-notifications`, {
+            const res = await axios.get(`${VITE_API_BASE_URL}/api/notifications/my-notifications`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
@@ -50,7 +50,7 @@ export const NotificationProvider = ({ children }) => {
     const markAsRead = useCallback(async (notificationId) => {
         try {
             await axios.put(
-                `${API_BASE_URL}/api/notifications/${notificationId}/read`,
+                `${VITE_API_BASE_URL}/api/notifications/${notificationId}/read`,
                 {},
                 {
                     headers: {
@@ -73,7 +73,7 @@ export const NotificationProvider = ({ children }) => {
     const markAllAsRead = useCallback(async () => {
         try {
             await axios.put(
-                `${API_BASE_URL}/api/notifications/mark-all-read`,
+                `${VITE_API_BASE_URL}/api/notifications/mark-all-read`,
                 {},
                 {
                     headers: {
@@ -107,7 +107,7 @@ export const NotificationProvider = ({ children }) => {
 
         try {
             await axios.delete(
-                `${API_BASE_URL}/api/notifications/${notificationId}`,
+                `${VITE_API_BASE_URL}/api/notifications/${notificationId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
