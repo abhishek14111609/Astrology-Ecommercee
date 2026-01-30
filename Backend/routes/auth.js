@@ -11,7 +11,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'auric_krystal_secret_key_2026';
 // Register
 router.post('/register', async (req, res) => {
     try {
-        const { name, email, password, zodiac_sign } = req.body;
+        const { name, email, phone, date_of_birth, password, zodiac_sign } = req.body;
 
         await connect();
 
@@ -24,7 +24,15 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const id = await getNextSequence('users');
-        const user = await User.create({ id, name, email, password: hashedPassword, zodiac_sign });
+        const user = await User.create({ 
+            id, 
+            name, 
+            email, 
+            phone, 
+            date_of_birth, 
+            password: hashedPassword, 
+            zodiac_sign 
+        });
         res.status(201).json({ message: 'User registered successfully', userId: user.id });
     } catch (error) {
         res.status(500).json({ message: 'Registration failed', error: error.message });

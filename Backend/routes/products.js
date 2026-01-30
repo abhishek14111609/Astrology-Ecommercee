@@ -3,6 +3,8 @@ import { connect } from '../db.js';
 import Product from '../models/Product.js';
 import Category from '../models/Category.js';
 import SubCategory from '../models/SubCategory.js';
+import QuizQuestion from '../models/QuizQuestion.js';
+import QuizOption from '../models/QuizOption.js';
 const router = express.Router();
 
 // Get all products with filters
@@ -91,6 +93,39 @@ router.post('/suggest', async (req, res) => {
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching suggestions', error: error.message });
+    }
+});
+
+// Get Quiz Questions with Options
+router.get('/quiz/questions', async (req, res) => {
+    try {
+        await connect();
+        const questions = await QuizQuestion.find().sort({ step_order: 1 }).lean();
+        
+        if (questions.length === 0) {
+            return res.json([]);
+        }
+
+        // Fetch options for each question
+        const questionsWithOptions = await Promise.all(
+            questions.map(async (question) => {
+                const options = await QuizOption.find({ question_id: question.id })
+                    .sort({ order: 1 })
+                    .lean();
+                
+                return {
+                    ...question,
+                    options: options.map(opt => ({
+                        text: opt.option_text,
+                        tag: opt.option_tag
+                    }))
+                };
+            })
+        );
+
+        res.json(questionsWithOptions);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching quiz questions', error: error.message });
     }
 });
 

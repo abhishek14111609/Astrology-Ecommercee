@@ -46,7 +46,7 @@ const Footer = () => {
                             <li><Link to="/about" className="hover:text-auric-gold transition-colors">About Our Journey</Link></li>
                             <li><Link to="/shop" className="hover:text-auric-gold transition-colors">The Boutique</Link></li>
                             <li><Link to="/services" className="hover:text-auric-gold transition-colors">Spiritual Services</Link></li>
-                            <li><Link to="/horoscope" className="hover:text-auric-gold transition-colors">Celestial Forecast</Link></li>
+                            <li><Link to="/Zodiac" className="hover:text-auric-gold transition-colors">Celestial Forecast</Link></li>
                             <li><Link to="/contact" className="hover:text-auric-gold transition-colors">Connect With Us</Link></li>
                         </ul>
                     </div>
@@ -63,20 +63,32 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    {/* Newsletter */}
+                    {/* Contact & Support */}
                     <div>
-                        <h3 className="font-serif text-lg font-semibold mb-6 text-auric-gold">Stay Enlightened</h3>
-                        <p className="text-white/70 text-sm mb-4">Subscribe to receive celestial updates and exclusive offers.</p>
-                        <form className="space-y-3">
-                            <input
-                                type="email"
-                                placeholder="Your email address"
-                                className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-auric-gold transition-colors"
-                            />
-                            <button className="w-full bg-auric-gold text-auric-rose font-bold py-3 rounded uppercase tracking-widest text-xs hover:bg-white hover:text-auric-rose transition-all duration-300">
-                                Subscribe
-                            </button>
-                        </form>
+                        <h3 className="font-serif text-lg font-semibold mb-6 text-auric-gold">Support</h3>
+                        <p className="text-white/70 text-sm mb-6">
+                            Reach out for guidance, support, or a custom consultation.
+                        </p>
+                        <div className="space-y-4 text-sm text-white/70">
+                            <div className="flex items-center gap-3">
+                                <MapPin size={16} className="text-auric-gold" />
+                                <span>125 Rk World Tower Rajkot 360006</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Phone size={16} className="text-auric-gold" />
+                                <span>+91 70432 16616</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Mail size={16} className="text-auric-gold" />
+                                <span>aurickrystals@gmail.com</span>
+                            </div>
+                        </div>
+                        <Link
+                            to="/contact"
+                            className="inline-block mt-6 bg-white/10 hover:bg-auric-gold text-white hover:text-auric-rose px-5 py-2 rounded uppercase tracking-widest text-xs font-bold transition-all duration-300"
+                        >
+                            Contact Us
+                        </Link>
                     </div>
 
                 </div>
@@ -86,7 +98,7 @@ const Footer = () => {
                     <div className="flex space-x-6 mt-4 md:mt-0">
                         <div className="flex items-center gap-2">
                             <Mail size={14} className="text-auric-gold" />
-                            <span>hello@aurickrystal.com</span>
+                            <span>aurickrystals@gmail.com</span>
                         </div>
                     </div>
                 </div>

@@ -3,166 +3,136 @@ import axios from 'axios';
 import API_BASE_URL from '../config/api';
 import {
     Plus,
-    Edit2,
-    Trash2,
     HelpCircle,
     Loader2,
     AlertCircle,
     X,
-    ArrowUp,
-    ArrowDown,
-    Save
+    Save,
+    ChevronDown,
+    ChevronUp
 } from 'lucide-react';
 
 const QuizConfig = () => {
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingQuestion, setEditingQuestion] = useState(null);
-    const [formData, setFormData] = useState({
-        question_text: '',
-        step_order: 1
+    const [expandedQuestions, setExpandedQuestions] = useState({});
+    const [questionOptions, setQuestionOptions] = useState({});
+    const [loadingOptions, setLoadingOptions] = useState({});
+    const [isOptionModalOpen, setIsOptionModalOpen] = useState(false);
+    const [editingOption, setEditingOption] = useState(null);
+    const [currentQuestionId, setCurrentQuestionId] = useState(null);
+    const [optionFormData, setOptionFormData] = useState({
+        option_text: '',
+        option_tag: 'A'
     });
 
     const API_BASE = API_BASE_URL;
 
     useEffect(() => {
-        let isMounted = true;
-
-        const fetchQuestions = async () => {
-            try {
-                setLoading(true);
-                const response = await axios.get(`${API_BASE}/admin/quiz/questions`, {
-
-                });
-                if (isMounted) {
-                    setQuestions(response.data);
-                    setError(null);
-                }
-            } catch (err) {
-                if (isMounted) {
-                    setError(err.response?.data?.message || 'Failed to load quiz questions');
-                }
-            } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
-            }
-        };
-
         fetchQuestions();
-
-        return () => {
-            isMounted = false;
-        };
     }, []);
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const fetchQuestions = async () => {
         try {
-            if (editingQuestion) {
-                await axios.put(
-                    `${API_BASE}/admin/quiz/questions/${editingQuestion.id}`,
-                    formData,
-                    {}
-                );
-                setQuestions(prev => prev.map(q =>
-                    q.id === editingQuestion.id ? { ...q, ...formData } : q
-                ).sort((a, b) => a.step_order - b.step_order));
-            } else {
-                const response = await axios.post(
-                    `${API_BASE}/admin/quiz/questions`,
-                    formData,
-                    {}
-                );
-                // Refetch to get the new question with ID
-                const updatedQuestions = await axios.get(`${API_BASE}/admin/quiz/questions`, {
-
-                });
-                setQuestions(updatedQuestions.data);
-            }
-            closeModal();
+            setLoading(true);
+            const response = await axios.get(`${API_BASE}/admin/quiz/questions`);
+            setQuestions(response.data);
+            setError(null);
         } catch (err) {
-            alert(err.response?.data?.message || 'Failed to save question');
+            setError(err.response?.data?.message || 'Failed to load quiz questions');
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this question?')) return;
+    const toggleQuestion = async (questionId) => {
+        const isExpanded = expandedQuestions[questionId];
+        
+        setExpandedQuestions(prev => ({
+            ...prev,
+            [questionId]: !isExpanded
+        }));
 
+        // Fetch options if expanding and not already loaded
+        if (!isExpanded && !questionOptions[questionId]) {
+            await fetchOptions(questionId);
+        }
+    };
+
+    const fetchOptions = async (questionId) => {
         try {
-            await axios.delete(`${API_BASE}/admin/quiz/questions/${id}`, {
-
-            });
-            setQuestions(prev => prev.filter(q => q.id !== id));
+            setLoadingOptions(prev => ({ ...prev, [questionId]: true }));
+            const response = await axios.get(`${API_BASE}/admin/quiz/questions/${questionId}/options`);
+            setQuestionOptions(prev => ({
+                ...prev,
+                [questionId]: response.data
+            }));
         } catch (err) {
-            alert(err.response?.data?.message || 'Failed to delete question');
+            alert('Failed to load options');
+        } finally {
+            setLoadingOptions(prev => ({ ...prev, [questionId]: false }));
         }
     };
 
-    const moveQuestion = async (question, direction) => {
-        const currentIndex = questions.findIndex(q => q.id === question.id);
-        if (
-            (direction === 'up' && currentIndex === 0) ||
-            (direction === 'down' && currentIndex === questions.length - 1)
-        ) {
-            return;
-        }
-
-        const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-        const newQuestions = [...questions];
-        const temp = newQuestions[currentIndex];
-        newQuestions[currentIndex] = newQuestions[newIndex];
-        newQuestions[newIndex] = temp;
-
-        // Update step_order for both questions
-        try {
-            await Promise.all([
-                axios.put(
-                    `${API_BASE}/admin/quiz/questions/${newQuestions[currentIndex].id}`,
-                    { ...newQuestions[currentIndex], step_order: currentIndex + 1 },
-                    {}
-                ),
-                axios.put(
-                    `${API_BASE}/admin/quiz/questions/${newQuestions[newIndex].id}`,
-                    { ...newQuestions[newIndex], step_order: newIndex + 1 },
-                    {}
-                )
-            ]);
-
-            setQuestions(newQuestions.map((q, i) => ({ ...q, step_order: i + 1 })));
-        } catch (err) {
-            alert('Failed to reorder questions');
-        }
-    };
-
-    const openModal = (question = null) => {
-        if (question) {
-            setEditingQuestion(question);
-            setFormData({
-                question_text: question.question_text,
-                step_order: question.step_order
+    const openOptionModal = (questionId, option = null) => {
+        setCurrentQuestionId(questionId);
+        if (option) {
+            setEditingOption(option);
+            setOptionFormData({
+                option_text: option.option_text,
+                option_tag: option.option_tag
             });
         } else {
-            setEditingQuestion(null);
-            setFormData({
-                question_text: '',
-                step_order: questions.length + 1
+            setEditingOption(null);
+            const existingOptions = questionOptions[questionId] || [];
+            setOptionFormData({
+                option_text: '',
+                option_tag: ['A', 'B', 'C', 'D'].find(tag => 
+                    !existingOptions.some(opt => opt.option_tag === tag)
+                ) || 'A'
             });
         }
-        setIsModalOpen(true);
+        setIsOptionModalOpen(true);
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setEditingQuestion(null);
-        setFormData({ question_text: '', step_order: 1 });
+    const closeOptionModal = () => {
+        setIsOptionModalOpen(false);
+        setEditingOption(null);
+        setCurrentQuestionId(null);
+        setOptionFormData({ option_text: '', option_tag: 'A' });
+    };
+
+    const handleOptionSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingOption) {
+                await axios.put(
+                    `${API_BASE}/admin/quiz/options/${editingOption.id}`,
+                    optionFormData
+                );
+            } else {
+                await axios.post(
+                    `${API_BASE}/admin/quiz/questions/${currentQuestionId}/options`,
+                    optionFormData
+                );
+            }
+            await fetchOptions(currentQuestionId);
+            closeOptionModal();
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to save option');
+        }
+    };
+
+    const handleDeleteOption = async (optionId, questionId) => {
+        if (!window.confirm('Are you sure you want to delete this option?')) return;
+
+        try {
+            await axios.delete(`${API_BASE}/admin/quiz/options/${optionId}`);
+            await fetchOptions(questionId);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to delete option');
+        }
     };
 
     return (
@@ -171,15 +141,8 @@ const QuizConfig = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl md:text-4xl font-bold text-neutral-900">Quiz Configuration</h1>
-                    <p className="text-neutral-500 mt-1">Manage gemstone finder quiz questions</p>
+                    <p className="text-neutral-500 mt-1">Manage gemstone finder quiz questions and options</p>
                 </div>
-                <button
-                    onClick={() => openModal()}
-                    className="btn-primary flex items-center gap-2"
-                >
-                    <Plus size={20} />
-                    Add Question
-                </button>
             </div>
 
             {/* Error Display */}
@@ -203,7 +166,7 @@ const QuizConfig = () => {
                         <h3 className="font-semibold text-neutral-900 mb-2">About Quiz Questions</h3>
                         <p className="text-sm text-neutral-600">
                             These questions help customers find the perfect gemstone based on their preferences.
-                            Questions are displayed in order (step 1, 2, 3...) during the quiz flow.
+                            Click on any question to view and manage its answer options.
                         </p>
                     </div>
                 </div>
@@ -218,129 +181,157 @@ const QuizConfig = () => {
                 <div className="card p-12 text-center">
                     <HelpCircle className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-neutral-600">No questions yet</h3>
-                    <p className="text-neutral-500 mt-2">Create your first quiz question to get started</p>
+                    <p className="text-neutral-500 mt-2">Run the seed script to populate quiz questions</p>
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {questions.map((question, index) => (
-                        <div key={question.id} className="card p-6 hover:shadow-lg transition-shadow">
-                            <div className="flex items-start gap-4">
-                                {/* Step Number */}
-                                <div className="flex-shrink-0">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-auric-purple to-auric-purple-dark rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-auric-purple/20">
-                                        {question.step_order}
-                                    </div>
-                                </div>
-
-                                {/* Question Content */}
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-neutral-900 mb-1">
-                                        {question.question_text}
-                                    </h3>
-                                    <p className="text-xs text-neutral-500">
-                                        Question ID: {question.id}
-                                    </p>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex items-center gap-2">
-                                    {/* Reorder Buttons */}
-                                    <div className="flex flex-col gap-1">
-                                        <button
-                                            onClick={() => moveQuestion(question, 'up')}
-                                            disabled={index === 0}
-                                            className="p-1 text-neutral-600 hover:bg-neutral-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                            title="Move up"
-                                        >
-                                            <ArrowUp size={16} />
-                                        </button>
-                                        <button
-                                            onClick={() => moveQuestion(question, 'down')}
-                                            disabled={index === questions.length - 1}
-                                            className="p-1 text-neutral-600 hover:bg-neutral-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                            title="Move down"
-                                        >
-                                            <ArrowDown size={16} />
-                                        </button>
+                    {questions.map((question) => (
+                        <div key={question.id} className="card overflow-hidden">
+                            {/* Question Header */}
+                            <div 
+                                className="p-6 cursor-pointer hover:bg-neutral-50 transition-colors"
+                                onClick={() => toggleQuestion(question.id)}
+                            >
+                                <div className="flex items-start gap-4">
+                                    {/* Step Number */}
+                                    <div className="flex-shrink-0">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-auric-purple to-auric-purple-dark rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-auric-purple/20">
+                                            {question.step_order}
+                                        </div>
                                     </div>
 
-                                    {/* Edit/Delete */}
-                                    <button
-                                        onClick={() => openModal(question)}
-                                        className="p-2 text-auric-purple hover:bg-auric-purple/10 rounded-lg transition-colors"
-                                        title="Edit"
-                                    >
-                                        <Edit2 size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(question.id)}
-                                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                        title="Delete"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
+                                    {/* Question Content */}
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-semibold text-neutral-900 mb-1">
+                                            {question.question_text}
+                                        </h3>
+                                    </div>
+
+                                    {/* Expand Icon */}
+                                    <div className="flex-shrink-0">
+                                        {expandedQuestions[question.id] ? (
+                                            <ChevronUp className="text-neutral-400" size={24} />
+                                        ) : (
+                                            <ChevronDown className="text-neutral-400" size={24} />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Options Section */}
+                            {expandedQuestions[question.id] && (
+                                <div className="border-t bg-neutral-50 p-6">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h4 className="font-semibold text-neutral-700">Answer Options</h4>
+                                        <button
+                                            onClick={() => openOptionModal(question.id)}
+                                            className="btn-secondary text-sm flex items-center gap-2"
+                                        >
+                                            <Plus size={16} />
+                                            Add Option
+                                        </button>
+                                    </div>
+
+                                    {loadingOptions[question.id] ? (
+                                        <div className="flex justify-center py-8">
+                                            <Loader2 className="w-8 h-8 text-auric-purple animate-spin" />
+                                        </div>
+                                    ) : questionOptions[question.id]?.length > 0 ? (
+                                        <div className="space-y-3">
+                                            {questionOptions[question.id]
+                                                .sort((a, b) => a.option_tag.localeCompare(b.option_tag))
+                                                .map((option) => (
+                                                <div 
+                                                    key={option.id}
+                                                    className="bg-white rounded-lg p-4 border border-neutral-200 hover:border-auric-purple/30 transition-colors"
+                                                >
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="flex-shrink-0">
+                                                            <span className="inline-flex items-center justify-center w-8 h-8 bg-auric-purple/10 text-auric-purple font-bold rounded-lg">
+                                                                {option.option_tag}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-neutral-900">{option.option_text}</p>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => handleDeleteOption(option.id, question.id)}
+                                                            className="flex-shrink-0 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                            title="Delete option"
+                                                        >
+                                                            <X size={16} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-8 text-neutral-500">
+                                            <p className="text-sm">No options yet. Add options (A, B, C, D) for this question.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Modal */}
-            {isModalOpen && (
+            {/* Option Modal */}
+            {isOptionModalOpen && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
                         <div className="flex items-center justify-between p-6 border-b">
                             <h2 className="text-2xl font-bold text-neutral-900">
-                                {editingQuestion ? 'Edit Question' : 'Add Question'}
+                                {editingOption ? 'Edit Option' : 'Add Option'}
                             </h2>
                             <button
-                                onClick={closeModal}
+                                onClick={closeOptionModal}
                                 className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
                             >
                                 <X size={20} />
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                        <form onSubmit={handleOptionSubmit} className="p-6 space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-neutral-700 mb-2">
-                                    Question Text *
+                                    Option Text *
                                 </label>
                                 <textarea
-                                    name="question_text"
-                                    value={formData.question_text}
-                                    onChange={handleInputChange}
+                                    value={optionFormData.option_text}
+                                    onChange={(e) => setOptionFormData(prev => ({ ...prev, option_text: e.target.value }))}
                                     required
-                                    rows={4}
+                                    rows={3}
                                     className="input-ghost w-full resize-none"
-                                    placeholder="e.g., What is your primary goal for using gemstones?"
+                                    placeholder="e.g., I want to attract love and harmony"
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-neutral-700 mb-2">
-                                    Step Order *
+                                    Tag (A-D) *
                                 </label>
-                                <input
-                                    type="number"
-                                    name="step_order"
-                                    value={formData.step_order}
-                                    onChange={handleInputChange}
+                                <select
+                                    value={optionFormData.option_tag}
+                                    onChange={(e) => setOptionFormData(prev => ({ ...prev, option_tag: e.target.value }))}
                                     required
-                                    min="1"
                                     className="input-ghost w-full"
-                                    placeholder="1"
-                                />
+                                >
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="D">D</option>
+                                </select>
                                 <p className="text-xs text-neutral-500 mt-1">
-                                    The order in which this question appears in the quiz
+                                    Options will be displayed in order A, B, C, D
                                 </p>
                             </div>
                             <div className="flex gap-3 pt-4">
-                                <button type="button" onClick={closeModal} className="btn-secondary flex-1">
+                                <button type="button" onClick={closeOptionModal} className="btn-secondary flex-1">
                                     Cancel
                                 </button>
                                 <button type="submit" className="btn-primary flex-1 flex items-center justify-center gap-2">
                                     <Save size={18} />
-                                    {editingQuestion ? 'Update' : 'Create'}
+                                    {editingOption ? 'Update' : 'Create'}
                                 </button>
                             </div>
                         </form>

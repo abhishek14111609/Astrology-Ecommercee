@@ -8,4 +8,19 @@ export const buildApiUrl = (endpoint) => {
     return `${API_BASE_URL}${cleanEndpoint}`;
 };
 
+// Helper function to build image URLs
+export const buildImageUrl = (imagePath) => {
+    if (!imagePath) return '/placeholder.jpg';
+    
+    // If it's already a full URL, return as is
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        return imagePath;
+    }
+    
+    // If it's a relative path, prepend the API base URL and /uploads
+    // Remove leading slash to avoid double slashes
+    const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+    return `${API_BASE_URL}/uploads${cleanPath}`;
+};
+
 export default API_BASE_URL;

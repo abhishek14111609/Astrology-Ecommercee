@@ -55,17 +55,22 @@ router.post('/', async (req, res) => {
         // Handle user_id if provided (e.g. from frontend context)
         const user_id = req.body.user_id || null;
 
+        // Safely handle customer name
+        let customerName = 'Guest';
+        if (customer_details && customer_details.firstName && customer_details.lastName) {
+            customerName = `${customer_details.firstName} ${customer_details.lastName}`;
+        } else if (customer_details && customer_details.fullName) {
+            customerName = customer_details.fullName;
+        }
+
         const newOrder = await Order.create({
             id,
             user_id,
             order_number: orderNumber,
-            customer_name: `${customer_details.firstName} ${customer_details.lastName}`,
-            customer_email: customer_details.email,
-            shipping_address: customer_details.address, // Added this field (might need to update model or just store in a mixed field if strict)
-            // Model doesn't have shipping_address, let's just use what we have or update model. 
-            // The model in previous step didn't show shipping_address field. 
-            // I'll stick to what the model has: customer_name, customer_email. 
-            // I will strictly allow whatever is in the schema.
+            customer_name: customerName,
+            customer_email: customer_details?.email || null,
+            customer_phone: customer_details?.phone || null,
+            customer_address: customer_details?.address || null,
             total_amount,
             status: 'pending',
             payment_status: 'paid', // Assuming payment gateway success for now

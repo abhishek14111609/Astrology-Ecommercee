@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, Minus, Plus, ArrowLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { buildImageUrl } from '../config/api';
 import Button from '../components/UI/Button';
 
 const Cart = () => {
@@ -34,7 +35,7 @@ const Cart = () => {
                         {cartItems.map((item, index) => (
                             <div key={`${item.id}-${index}`} className="bg-white p-4 rounded-lg shadow-sm flex gap-4 border border-gray-100 items-center">
                                 <div className="w-20 h-20 bg-gray-100 rounded-md shrink-0 overflow-hidden">
-                                    <img src={item.image_url || item.image} alt={item.name} className="w-full h-full object-cover" />
+                                    <img src={buildImageUrl(item.image_url || item.image)} alt={item.name} className="w-full h-full object-cover" />
                                 </div>
 
                                 <div className="flex-1">

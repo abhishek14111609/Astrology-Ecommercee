@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { User, Heart, ShoppingBag, Menu, X } from 'lucide-react';
+import { User, ShoppingBag, Menu, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import logo from '../../assets/images/Auric_Logo.png';
+import { useAuth } from '../../context/AuthContext';
+import NotificationDropdown from './NotificationDropdown';
+import logo from '../../assets/images/logo.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cartCount } = useCart();
+  const { user } = useAuth();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -14,30 +17,37 @@ const Header = () => {
     { name: 'Home', path: '/' },
     { name: 'Shop', path: '/shop' },
     { name: 'Services', path: '/services' },
-    { name: 'Horoscope', path: '/horoscope' },
+    { name: 'Zodiac', path: '/Zodiac' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-auric-gold/20">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-auric-gold/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
-              <img src={logo} alt="Auric Krystal" className="h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105" />
+              <img
+                src={logo}
+                alt="Auric Krystal"
+                className="h-12 md:h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+              />
               <div className="absolute -inset-1 bg-auric-gold/10 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </div>
             <div className="flex flex-col">
-              <span className="font-serif text-xl md:text-2xl font-bold text-auric-rose tracking-wider leading-none">Auric Krystal</span>
-              <span className="text-[0.6rem] uppercase tracking-[0.2em] text-auric-gold font-medium mt-1">Celestial Guidance</span>
+              <span className="font-serif text-3xl md:text-xl font-bold text-auric-rose tracking-wider leading-none">
+                Auric Krystal
+              </span>
+              <span className="text-[0.6rem] uppercase tracking-[0.2em] text-auric-gold font-medium mt-1">
+                Celestial Guidance
+              </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
               <NavLink
                 key={link.name}
@@ -53,14 +63,12 @@ const Header = () => {
           </nav>
 
           {/* Icons */}
-          <div className="hidden md:flex items-center space-x-6">
-            {/* <Link to="/wishlist" className="text-gray-700 hover:text-auric-gold transition-colors">
-              <Heart size={20} />
-            </Link> */}
+          <div className="hidden md:flex items-center space-x-5">
+            {user && <NotificationDropdown />}
             <Link to="/cart" className="relative text-gray-700 hover:text-auric-gold transition-colors">
               <ShoppingBag size={20} />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-auric-gold text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-2 bg-auric-gold text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
@@ -89,9 +97,7 @@ const Header = () => {
                 to={link.path}
                 onClick={() => setIsMenuOpen(false)}
                 className={({ isActive }) =>
-                  `block px-3 py-3 text-base font-medium rounded-md transition-colors ${isActive
-                    ? 'bg-auric-rose/5 text-auric-gold'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-auric-gold'
+                  `block px-3 py-3 text-base font-medium rounded-md transition-colors ${isActive ? 'bg-auric-rose/5 text-auric-gold' : 'text-gray-700 hover:bg-gray-50 hover:text-auric-gold'
                   }`
                 }
               >
@@ -99,12 +105,18 @@ const Header = () => {
               </NavLink>
             ))}
             <div className="flex items-center justify-around pt-4 border-t border-gray-100 mt-4">
-              {/* <Link to="/wishlist" className="text-gray-700 hover:text-auric-gold"><Heart size={24} /></Link> */}
+              {user && <div className="text-gray-700"><NotificationDropdown /></div>}
               <Link to="/cart" className="text-gray-700 hover:text-auric-gold relative">
                 <ShoppingBag size={24} />
-                <span className="absolute -top-1 -right-2 bg-auric-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-2 bg-auric-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
-              <Link to="/profile" className="text-gray-700 hover:text-auric-gold"><User size={24} /></Link>
+              <Link to="/profile" className="text-gray-700 hover:text-auric-gold">
+                <User size={24} />
+              </Link>
             </div>
           </div>
         </div>

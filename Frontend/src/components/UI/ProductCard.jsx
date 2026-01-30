@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Star, ShoppingBag, Eye } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { buildImageUrl } from '../../config/api';
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
@@ -9,7 +10,7 @@ const ProductCard = ({ product }) => {
     // Extract data with fallbacks
     // Always use numeric id for API calls, not MongoDB _id
     const productId = product.id || product._id;
-    const productImage = product.images?.[0]?.url || product.image || '/placeholder.jpg';
+    const productImage = buildImageUrl(product.image_url || product.images?.[0]?.url || product.image);
     const productPrice = product.variants?.[0]?.price || product.price || 0;
     const discountPercentage = product.variants?.[0]?.discountPercentage || product.discount || 0;
     const categoryName = product.category?.name || product.category || 'Uncategorized';

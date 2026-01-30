@@ -13,7 +13,8 @@ import {
     GitBranch,
     MessageSquare,
     Settings,
-    CreditCard
+    CreditCard,
+    Calendar
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -78,6 +79,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             name: 'Payment Settings',
             path: '/payment-settings',
             icon: Settings,
+            badge: null
+        },
+        {
+            name: 'Service Bookings',
+            path: '/service-bookings',
+            icon: Calendar,
             badge: null
         },
     ];

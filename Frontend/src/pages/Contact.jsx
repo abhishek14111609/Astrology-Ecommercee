@@ -4,8 +4,6 @@ import Button from '../components/UI/Button';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import API_BASE_URL from '../config/api';
 
-
-
 const Contact = () => {
     return (
         <div className="bg-auric-blush min-h-screen">
@@ -32,7 +30,7 @@ const Contact = () => {
                                     <Mail size={24} />
                                 </div>
                                 <h3 className="font-serif text-xl font-bold text-auric-rose mb-2">Email</h3>
-                                <p className="text-gray-600">hello@aurickrystal.com</p>
+                                <p className="text-gray-600">aurickrystals@gmail.com</p>
                                 <p className="text-gray-400 text-sm mt-1">24/7 Celestial Support</p>
                             </div>
                             <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
@@ -40,7 +38,7 @@ const Contact = () => {
                                     <Phone size={24} />
                                 </div>
                                 <h3 className="font-serif text-xl font-bold text-auric-rose mb-2">Phone</h3>
-                                <p className="text-gray-600">+91 98765 43210</p>
+                                <p className="text-gray-600">+91 70432 16616</p>
                                 <p className="text-gray-400 text-sm mt-1">Mon-Sat, 9am - 7pm</p>
                             </div>
                         </div>
@@ -52,9 +50,9 @@ const Contact = () => {
                                     <div className="flex items-start gap-4">
                                         <MapPin className="text-auric-gold mt-1 shrink-0" size={20} />
                                         <p className="text-white/80 leading-relaxed text-lg">
-                                            108 Celestial Grove, <br />
-                                            Zenith Towers, Floor 7, <br />
-                                            Mumbai - 400001, India
+                                            125 Rk World Tower <br />
+                                            Rajkot 360006 <br />
+                                            Gujrat, India
                                         </p>
                                     </div>
                                 </div>

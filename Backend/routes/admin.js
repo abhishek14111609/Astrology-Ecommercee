@@ -5,12 +5,14 @@ import Product from '../models/Product.js';
 import Category from '../models/Category.js';
 import SubCategory from '../models/SubCategory.js';
 import QuizQuestion from '../models/QuizQuestion.js';
+import QuizOption from '../models/QuizOption.js';
 import Order from '../models/Order.js';
 import User from '../models/User.js';
 import multer from 'multer';
 import xlsx from 'xlsx';
 import fs from 'fs';
 import path from 'path';
+import { notifyOrderStatusUpdate } from '../utils/notifications.js';
 const router = express.Router();
 
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
@@ -74,7 +76,7 @@ router.post('/upload-image', authenticateToken, isAdmin, uploadImageMiddleware.s
 // --- Product Management ---
 router.post('/products', authenticateToken, isAdmin, async (req, res) => {
     try {
-        const { name, slug, description, price, category_id, sub_category_id, zodiac_sign, image_url, is_bestseller, tags } = req.body;
+        const { name, slug, description, price, category_id, sub_category_id, zodiac_sign, image_url, is_bestseller, tags, stock } = req.body;
         await connect();
         const id = await getNextSequence('products');
         const created = await Product.create({
@@ -89,6 +91,7 @@ router.post('/products', authenticateToken, isAdmin, async (req, res) => {
             image_url,
             is_bestseller: !!is_bestseller,
             tags: Array.isArray(tags) ? tags : [],
+            stock: stock || 0,
         });
         res.status(201).json({ message: 'Product created', id: created.id });
     } catch (error) {
@@ -98,14 +101,15 @@ router.post('/products', authenticateToken, isAdmin, async (req, res) => {
 
 router.put('/products/:id', authenticateToken, isAdmin, async (req, res) => {
     try {
-        const { name, slug, description, price, category_id, sub_category_id, zodiac_sign, image_url, is_bestseller, tags } = req.body;
+        const { name, slug, description, price, category_id, sub_category_id, zodiac_sign, image_url, is_bestseller, tags, stock } = req.body;
         await connect();
         const updated = await Product.findOneAndUpdate(
             { id: parseInt(req.params.id) },
             {
                 name, slug, description, price, category_id, sub_category_id, zodiac_sign, image_url,
                 is_bestseller: !!is_bestseller,
-                tags: Array.isArray(tags) ? tags : []
+                tags: Array.isArray(tags) ? tags : [],
+                stock: stock || 0
             },
             { new: true }
         );
@@ -224,6 +228,13 @@ router.get('/categories', authenticateToken, isAdmin, async (req, res) => {
     try {
         await connect();
         const categories = await Category.find().sort({ id: 1 }).lean();
+        
+        // Fetch subcategories for each category
+        for (const category of categories) {
+            const subcategories = await SubCategory.find({ category_id: category.id }).sort({ id: 1 }).lean();
+            category.subcategories = subcategories;
+        }
+        
         res.json(categories);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching categories', error: error.message });
@@ -303,9 +314,76 @@ router.delete('/quiz/questions/:id', authenticateToken, isAdmin, async (req, res
         await connect();
         const deleted = await QuizQuestion.findOneAndDelete({ id: parseInt(req.params.id) });
         if (!deleted) return res.status(404).json({ message: 'Question not found' });
+        // Also delete associated options
+        await QuizOption.deleteMany({ question_id: parseInt(req.params.id) });
         res.json({ message: 'Question deleted' });
     } catch (error) {
         res.status(500).json({ message: 'Error deleting question', error: error.message });
+    }
+});
+
+// --- Quiz Options Management ---
+router.get('/quiz/questions/:id/options', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        await connect();
+        const options = await QuizOption.find({ question_id: parseInt(req.params.id) })
+            .sort({ order: 1 })
+            .lean();
+        res.json(options);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching options', error: error.message });
+    }
+});
+
+router.post('/quiz/questions/:id/options', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        const { option_text, option_tag, order } = req.body;
+        const question_id = parseInt(req.params.id);
+
+        await connect();
+        
+        // Check if question exists
+        const question = await QuizQuestion.findOne({ id: question_id });
+        if (!question) return res.status(404).json({ message: 'Question not found' });
+
+        const id = await getNextSequence('quiz_options');
+        const created = await QuizOption.create({ 
+            id, 
+            question_id, 
+            option_text, 
+            option_tag, 
+            order 
+        });
+        res.status(201).json({ message: 'Option created', data: created });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating option', error: error.message });
+    }
+});
+
+router.put('/quiz/options/:id', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        const { option_text, option_tag, order } = req.body;
+        await connect();
+        const updated = await QuizOption.findOneAndUpdate(
+            { id: parseInt(req.params.id) },
+            { option_text, option_tag, order },
+            { new: true }
+        );
+        if (!updated) return res.status(404).json({ message: 'Option not found' });
+        res.json({ message: 'Option updated', data: updated });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating option', error: error.message });
+    }
+});
+
+router.delete('/quiz/options/:id', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        await connect();
+        const deleted = await QuizOption.findOneAndDelete({ id: parseInt(req.params.id) });
+        if (!deleted) return res.status(404).json({ message: 'Option not found' });
+        res.json({ message: 'Option deleted' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting option', error: error.message });
     }
 });
 
@@ -321,6 +399,24 @@ router.get('/orders', authenticateToken, isAdmin, async (req, res) => {
             .limit(parseInt(limit))
             .skip((parseInt(page) - 1) * parseInt(limit))
             .lean();
+
+        // Populate customer names from user records if missing or "undefined undefined"
+        for (const order of orders) {
+            if (!order.customer_name || order.customer_name === 'undefined undefined' || order.customer_name === 'undefined') {
+                if (order.user_id) {
+                    const user = await User.findOne({ id: order.user_id }).lean();
+                    if (user) {
+                        order.customer_name = user.full_name || user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Unknown';
+                        if (!order.customer_email && user.email) {
+                            order.customer_email = user.email;
+                        }
+                    }
+                }
+                if (!order.customer_name || order.customer_name === 'undefined undefined') {
+                    order.customer_name = 'Unknown Customer';
+                }
+            }
+        }
 
         const total = await Order.countDocuments(query);
 
@@ -359,6 +455,17 @@ router.put('/orders/:id/status', authenticateToken, isAdmin, async (req, res) =>
             { new: true }
         );
         if (!updated) return res.status(404).json({ message: 'Order not found' });
+
+        // Create notification if user_id exists
+        if (updated.user_id) {
+            await notifyOrderStatusUpdate(
+                updated.user_id,
+                updated.id,
+                status,
+                updated.order_number
+            );
+        }
+
         res.json({ message: 'Order status updated', data: updated });
     } catch (error) {
         res.status(500).json({ message: 'Error updating order', error: error.message });
@@ -433,14 +540,20 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
             const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
-            data = xlsx.utils.sheet_to_json(sheet);
+            data = xlsx.utils.sheet_to_json(sheet, { 
+                raw: false,
+                defval: ''
+            });
         } catch (parseError) {
             return res.status(400).json({ message: 'Failed to parse file. Ensure it is a valid Excel or CSV file.', error: parseError.message });
         }
 
         if (!data || data.length === 0) {
-            return res.status(400).json({ message: 'File is empty' });
+            return res.status(400).json({ message: 'File is empty or has no data rows' });
         }
+
+        console.log('First row keys:', Object.keys(data[0]));
+        console.log('First row data:', data[0]);
 
         const results = {
             success: [],
@@ -451,25 +564,76 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
         // Process each row
         for (const row of data) {
             try {
+                // Normalize column names (handle different cases and spaces)
+                const normalizedRow = {};
+                const headerAliases = {
+                    products: 'name',
+                    product: 'name',
+                    product_name: 'name',
+                    categories: 'category_name',
+                    category: 'category_name',
+                    category_name: 'category_name',
+                    sub_category: 'sub_category_name',
+                    subcategory: 'sub_category_name',
+                    sub_category_name: 'sub_category_name',
+                    zodiac_signs: 'zodiac_sign',
+                    zodiac: 'zodiac_sign',
+                    best_seller: 'is_bestseller',
+                    bestseller: 'is_bestseller',
+                    stocks: 'stock',
+                    descriptions: 'description'
+                };
+
+                for (const key in row) {
+                    const cleanedKey = key.replace(/^\uFEFF/, '').trim();
+                    const normalizedKey = cleanedKey.toLowerCase().replace(/\s+/g, '_');
+                    const mappedKey = headerAliases[normalizedKey] || normalizedKey;
+                    normalizedRow[mappedKey] = row[key];
+                }
+
+                // Fallback: detect name/price columns dynamically
+                if (!normalizedRow.name) {
+                    const nameKey = Object.keys(row).find(k => /product|products|name/i.test(k));
+                    if (nameKey) normalizedRow.name = row[nameKey];
+                }
+                if (!normalizedRow.price) {
+                    const priceKey = Object.keys(row).find(k => /price|mrp|amount/i.test(k));
+                    if (priceKey) normalizedRow.price = row[priceKey];
+                }
+
+                // Trim string values
+                if (typeof normalizedRow.name === 'string') {
+                    normalizedRow.name = normalizedRow.name.trim();
+                }
+                if (typeof normalizedRow.price === 'string') {
+                    normalizedRow.price = normalizedRow.price.replace(/[^0-9.]/g, '').trim();
+                }
+
+                // Skip completely empty rows
+                const hasAnyValue = Object.values(row).some(value => String(value).trim() !== '');
+                if (!hasAnyValue) {
+                    continue;
+                }
+
                 // Validate required fields
-                if (!row.name || !row.price) {
+                if (!normalizedRow.name || !normalizedRow.price) {
                     results.failed.push({
                         row: row,
-                        error: 'Missing required fields: name or price'
+                        error: `Missing required fields: name or price. Found columns: ${Object.keys(row).join(', ')}`
                     });
                     continue;
                 }
 
                 // Generate slug if not provided
-                const slug = row.slug || row.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                const slug = normalizedRow.slug || normalizedRow.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
                 // Parse tags if string
                 let tags = [];
-                if (row.tags) {
-                    if (typeof row.tags === 'string') {
-                        tags = row.tags.split(',').map(t => t.trim());
-                    } else if (Array.isArray(row.tags)) {
-                        tags = row.tags;
+                if (normalizedRow.tags) {
+                    if (typeof normalizedRow.tags === 'string') {
+                        tags = normalizedRow.tags.split(',').map(t => t.trim()).filter(t => t);
+                    } else if (Array.isArray(normalizedRow.tags)) {
+                        tags = normalizedRow.tags;
                     }
                 }
 
@@ -483,21 +647,72 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                     continue;
                 }
 
+                // Resolve category/subcategory from names if provided
+                let categoryId = normalizedRow.category_id ? parseInt(normalizedRow.category_id) : null;
+                let subCategoryId = normalizedRow.sub_category_id ? parseInt(normalizedRow.sub_category_id) : null;
+
+                if (!categoryId && normalizedRow.category_name) {
+                    let rawCategory = String(normalizedRow.category_name).trim();
+                    let rawSubCategory = '';
+
+                    if (rawCategory.includes('>')) {
+                        const [cat, sub] = rawCategory.split('>').map(s => s.trim());
+                        rawCategory = cat;
+                        rawSubCategory = sub || '';
+                    } else if (rawCategory.includes('/')) {
+                        const [cat, sub] = rawCategory.split('/').map(s => s.trim());
+                        rawCategory = cat;
+                        rawSubCategory = sub || '';
+                    } else if (rawCategory.includes('|')) {
+                        const [cat, sub] = rawCategory.split('|').map(s => s.trim());
+                        rawCategory = cat;
+                        rawSubCategory = sub || '';
+                    }
+
+                    let category = await Category.findOne({ name: new RegExp(`^${rawCategory}$`, 'i') }).lean();
+                    if (!category) {
+                        const newCatId = await getNextSequence('categories');
+                        category = await Category.create({
+                            id: newCatId,
+                            name: rawCategory,
+                            slug: rawCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+                        });
+                    }
+                    categoryId = category.id;
+
+                    if (rawSubCategory) {
+                        let subCategory = await SubCategory.findOne({
+                            category_id: categoryId,
+                            name: new RegExp(`^${rawSubCategory}$`, 'i')
+                        }).lean();
+                        if (!subCategory) {
+                            const newSubId = await getNextSequence('sub_categories');
+                            subCategory = await SubCategory.create({
+                                id: newSubId,
+                                category_id: categoryId,
+                                name: rawSubCategory,
+                                slug: rawSubCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+                            });
+                        }
+                        subCategoryId = subCategory.id;
+                    }
+                }
+
                 // Create product
                 const id = await getNextSequence('products');
                 const product = await Product.create({
                     id,
-                    name: row.name,
+                    name: normalizedRow.name,
                     slug: slug,
-                    description: row.description || '',
-                    price: parseFloat(row.price),
-                    category_id: row.category_id || null,
-                    sub_category_id: row.sub_category_id || null,
-                    zodiac_sign: row.zodiac_sign || 'Aries',
-                    image_url: row.image_url || '',
-                    is_bestseller: row.is_bestseller === 'TRUE' || row.is_bestseller === true || row.is_bestseller === 1,
+                    description: normalizedRow.description || '',
+                    price: parseFloat(normalizedRow.price),
+                    category_id: categoryId,
+                    sub_category_id: subCategoryId,
+                    zodiac_sign: normalizedRow.zodiac_sign || 'Aries',
+                    image_url: normalizedRow.image_url || '',
+                    is_bestseller: normalizedRow.is_bestseller === 'TRUE' || normalizedRow.is_bestseller === 'true' || normalizedRow.is_bestseller === true || normalizedRow.is_bestseller === '1' || normalizedRow.is_bestseller === 1,
                     tags: tags,
-                    stock: row.stock ? parseInt(row.stock) : 0
+                    stock: normalizedRow.stock ? parseInt(normalizedRow.stock) : 0
                 });
 
                 results.success.push({

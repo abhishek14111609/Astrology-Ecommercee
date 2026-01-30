@@ -101,7 +101,7 @@ const Home = () => {
             image: slider1,
             subtitle: "Unlock Your Destiny",
             title: "Ancient Wisdom for Modern Life",
-            desc: "Get precise horoscope readings, premium crystal and gemstones spiritual remedies from India's most trusted astrologers."
+            desc: "Get precise Zodiac readings, premium crystal and gemstones spiritual remedies from India's most trusted astrologers."
         },
         {
             image: slider2,
@@ -144,12 +144,33 @@ const Home = () => {
                 <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-auric-blush to-transparent pointer-events-none"></div>
             </section>
 
-            {/* Daily Horoscope Strip */}
+
+            {/* Gemstone Finder CTA */}
+            <section className="py-20 bg-gradient-to-r from-auric-rose to-[#5c1a2e] text-white overflow-hidden relative">
+                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="max-w-3xl mx-auto text-center space-y-8">
+                        <span className="text-auric-gold uppercase tracking-[0.3em] text-sm font-bold">Gemstone Recommendation</span>
+                        <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight">Can't decide which stone <br /> resonates with you?</h2>
+                        <p className="text-lg text-white/80">Take our cosmic quiz. Our engine analyzes your energy patterns to suggest the perfect sacred artifact for your current path.</p>
+                        <div className="pt-4">
+                            <Link to="/gemstone-finder">
+                                <Button className="bg-auric-gold hover:bg-white hover:text-auric-rose border-none text-white px-10 py-4 text-lg">
+                                    Start Celestial Quiz
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Daily Zodiac Strip */}
             <div className="bg-white border-b border-gray-100 py-12">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-10">
-                        <span className="text-auric-gold uppercase tracking-[0.2em] text-xs font-semibold">Celestial Insights</span>
-                        <h2 className="font-serif text-3xl text-auric-rose font-bold mt-2">Daily Horoscopes</h2>
+                        <span className="text-auric-gold uppercase tracking-[0.2em] text-xs font-semibold">Suggestion As Per
+                        </span>
+                        <h2 className="font-serif text-3xl text-auric-rose font-bold mt-2">Zodiac Signs</h2>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
                         {zodiacs.map((sign, index) => (
@@ -186,26 +207,7 @@ const Home = () => {
                     )}
                 </div>
             </div>
-
-            {/* Gemstone Finder CTA */}
-            <section className="py-20 bg-gradient-to-r from-auric-rose to-[#5c1a2e] text-white overflow-hidden relative">
-                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
-                <div className="container mx-auto px-4 relative z-10">
-                    <div className="max-w-3xl mx-auto text-center space-y-8">
-                        <span className="text-auric-gold uppercase tracking-[0.3em] text-sm font-bold">Gemstone Recommendation</span>
-                        <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight">Can't decide which stone <br /> resonates with you?</h2>
-                        <p className="text-lg text-white/80">Take our cosmic quiz. Our engine analyzes your energy patterns to suggest the perfect sacred artifact for your current path.</p>
-                        <div className="pt-4">
-                            <Link to="/gemstone-finder">
-                                <Button className="bg-auric-gold hover:bg-white hover:text-auric-rose border-none text-white px-10 py-4 text-lg">
-                                    Start Celestial Quiz
-                                </Button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
+            
             {/* Services Section */}
             <section className="py-20 container mx-auto px-4">
                 <SectionHeading title="Our Premium Services" subtitle="COSMIC SOLUTIONS" />

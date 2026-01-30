@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/UI/Button';
 import { ShieldCheck, CreditCard, Truck, CheckCircle2, ChevronRight, Loader2 } from 'lucide-react';
-import API_BASE_URL from '../config/api';
+import API_BASE_URL, { buildImageUrl } from '../config/api';
 
 const Checkout = () => {
     const { cartItems, cartTotal, clearCart } = useCart();
@@ -24,8 +24,7 @@ const Checkout = () => {
 
     const [formData, setFormData] = useState({
         email: '',
-        firstName: '',
-        lastName: '',
+        fullName: '',
         address: '',
         city: '',
         pincode: '',
@@ -35,16 +34,10 @@ const Checkout = () => {
     // Auto-fill shipping form with logged-in user details
     useEffect(() => {
         if (user) {
-            const fullName = user.name || '';
-            const parts = fullName.trim().split(' ');
-            const firstName = parts[0] || '';
-            const lastName = parts.slice(1).join(' ') || '';
-
             setFormData(prev => ({
                 ...prev,
                 email: user.email || prev.email,
-                firstName: firstName || prev.firstName,
-                lastName: lastName || prev.lastName
+                fullName: user.name || prev.fullName
             }));
         }
     }, [user]);
@@ -132,15 +125,9 @@ const Checkout = () => {
                                         </h2>
 
                                         <div className="space-y-6">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium text-gray-700">First Name</label>
-                                                    <input required name="firstName" value={formData.firstName} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="John" />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium text-gray-700">Last Name</label>
-                                                    <input required name="lastName" value={formData.lastName} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="Doe" />
-                                                </div>
+                                                    <div className="space-y-2">
+                                                <label className="text-sm font-medium text-gray-700">Full Name</label>
+                                                <input required name="fullName" value={formData.fullName} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3 focus:outline-none focus:border-auric-gold transition-colors" placeholder="John Doe" />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-sm font-medium text-gray-700">Email Address</label>
@@ -208,7 +195,7 @@ const Checkout = () => {
                                     {cartItems.map((item) => (
                                         <div key={item.id} className="flex gap-4">
                                             <div className="w-16 h-16 bg-auric-blush rounded-md overflow-hidden shrink-0">
-                                                <img src={item.image_url || item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                <img src={buildImageUrl(item.image_url || item.image)} alt={item.name} className="w-full h-full object-cover" />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-bold text-auric-rose truncate">{item.name}</p>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Package, MapPin, Settings, LogOut, ChevronRight, Loader2 } from 'lucide-react';
+import { User, Package, MapPin, Settings, LogOut, ChevronRight, Loader2, Calendar, Clock } from 'lucide-react';
 import Button from '../components/UI/Button';
 import SectionHeading from '../components/UI/SectionHeading';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,9 @@ const Profile = () => {
     // State for orders
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [bookings, setBookings] = useState([]);
+    const [bookingLoading, setBookingLoading] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -34,7 +37,24 @@ const Profile = () => {
             }
         };
 
-        if (user) fetchOrders();
+        const fetchBookings = async () => {
+            if (!user) return;
+            setBookingLoading(true);
+            try {
+                const res = await axios.get(`${API_BASE_URL}/api/service-bookings/my-bookings`);
+                setBookings(res.data);
+            } catch (err) {
+                console.error('Failed to fetch bookings', err);
+                setBookings([]);
+            } finally {
+                setBookingLoading(false);
+            }
+        };
+
+        if (user) {
+            fetchOrders();
+            fetchBookings();
+        }
 
     }, [user, authLoading, navigate]);
 
@@ -53,11 +73,25 @@ const Profile = () => {
         navigate('/login');
     };
 
+    const confirmLogout = () => {
+        setShowLogoutModal(true);
+    };
+
+    const cancelLogout = () => {
+        setShowLogoutModal(false);
+    };
+
     const menuItems = [
         { icon: <Package size={20} />, label: "My Orders", desc: "Track, return or buy again" },
         { icon: <MapPin size={20} />, label: "Saved Addresses", desc: "Manage your delivery locations" },
         { icon: <Settings size={20} />, label: "Account Settings", desc: "Update your profile and preferences" }
     ];
+
+    const getBookingStatusClass = (status) => {
+        if (status === 'approved') return 'bg-green-100 text-green-700';
+        if (status === 'rejected') return 'bg-red-100 text-red-700';
+        return 'bg-yellow-100 text-yellow-700';
+    };
 
     return (
         <div className="bg-auric-blush min-h-screen py-16">
@@ -93,7 +127,7 @@ const Profile = () => {
                                     <ChevronRight size={16} className="text-gray-300 group-hover:text-auric-gold transition-colors" />
                                 </button>
                             ))}
-                            <button onClick={handleLogout} className="w-full flex items-center gap-4 p-5 text-red-400 hover:bg-red-50 transition-colors">
+                            <button onClick={confirmLogout} className="w-full flex items-center gap-4 p-5 text-red-400 hover:bg-red-50 transition-colors">
                                 <LogOut size={20} />
                                 <span className="text-sm font-bold">Sign Out</span>
                             </button>
@@ -149,6 +183,60 @@ const Profile = () => {
                             )}
                         </div>
 
+                        {/* Service Bookings */}
+                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                            <h3 className="font-serif text-xl font-bold text-auric-rose mb-6 flex items-center gap-2">
+                                <Calendar className="text-auric-gold" size={20} /> Service Bookings
+                            </h3>
+
+                            {bookingLoading ? (
+                                <div className="flex justify-center py-10">
+                                    <Loader2 className="animate-spin text-auric-gold" />
+                                </div>
+                            ) : bookings.length > 0 ? (
+                                <div className="space-y-4">
+                                    {bookings.map((booking) => (
+                                        <div key={booking.id} className="p-5 rounded-xl border border-gray-100 bg-gray-50/50">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                                <div>
+                                                    <div className="text-xs uppercase tracking-widest text-auric-gold mb-1">
+                                                        {booking.service_subtitle || 'Service Booking'}
+                                                    </div>
+                                                    <div className="text-sm font-bold text-auric-rose">
+                                                        {booking.service_title}
+                                                    </div>
+                                                    <div className="text-xs text-gray-500 mt-1">
+                                                        {booking.service_price}
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-4">
+                                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                        <Calendar size={14} className="text-auric-gold" />
+                                                        {booking.preferred_date ? new Date(booking.preferred_date).toLocaleDateString() : 'N/A'}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                        <Clock size={14} className="text-auric-gold" />
+                                                        {booking.preferred_time || 'N/A'}
+                                                    </div>
+                                                    <span className={`px-3 py-1 text-[0.6rem] font-bold rounded-full uppercase tracking-widest ${getBookingStatusClass(booking.status)}`}>
+                                                        {booking.status}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            {booking.message && (
+                                                <p className="text-xs text-gray-500 mt-3">Message: {booking.message}</p>
+                                            )}
+                                            {booking.admin_notes && (
+                                                <p className="text-xs text-gray-500 mt-2">Admin Notes: {booking.admin_notes}</p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-center text-gray-500 py-6">No service bookings found.</p>
+                            )}
+                        </div>
+
                         {/* Recommendation Banner */}
                         {/* <div className="bg-auric-rose rounded-2xl p-8 text-white relative overflow-hidden">
                             <div className="relative z-10 max-w-md">
@@ -167,6 +255,40 @@ const Profile = () => {
 
                 </div>
             </div>
+
+            {/* Logout Confirmation Modal */}
+            {showLogoutModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+                    <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl transform transition-all">
+                        <div className="text-center">
+                            <div className="w-16 h-16 bg-red-50 rounded-full mx-auto flex items-center justify-center mb-4">
+                                <LogOut className="text-red-500" size={32} />
+                            </div>
+                            <h3 className="font-serif text-2xl font-bold text-auric-rose mb-3">
+                                Confirm Logout
+                            </h3>
+                            <p className="text-gray-600 mb-8">
+                                Are you sure you want to log out? You'll need to sign in again to access your account.
+                            </p>
+                            <div className="flex gap-4">
+                                <Button
+                                    onClick={cancelLogout}
+                                    variant="secondary"
+                                    className="flex-1 py-3"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={handleLogout}
+                                    className="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white"
+                                >
+                                    Log Out
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

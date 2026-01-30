@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SectionHeading from '../components/UI/SectionHeading';
 import Button from '../components/UI/Button';
 
-const Horoscope = () => {
+const Zodiac = () => {
     const signs = [
         { name: 'Aries', date: 'Mar 21 - Apr 19', symbol: '♈', element: 'Fire', trait: 'Fearless' },
         { name: 'Taurus', date: 'Apr 20 - May 20', symbol: '♉', element: 'Earth', trait: 'Reliable' },
@@ -23,7 +23,7 @@ const Horoscope = () => {
     return (
         <div className="bg-auric-blush min-h-screen py-20">
             <div className="container mx-auto px-4">
-                <SectionHeading title="Daily Celestial Guidance" subtitle="YOUR HOROSCOPE" />
+                <SectionHeading title="Daily Celestial Guidance" subtitle="YOUR Zodiac" />
 
                 <p className="text-center text-gray-600 max-w-2xl mx-auto mb-16 text-lg">
                     Discover how the current planetary movements are influencing your energy,
@@ -94,4 +94,4 @@ const Horoscope = () => {
     );
 };
 
-export default Horoscope;
+export default Zodiac;

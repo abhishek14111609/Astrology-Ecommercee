@@ -15,6 +15,7 @@ import QuizConfig from './pages/QuizConfig';
 import Inquiries from './pages/Inquiries';
 import PaymentManagement from './pages/PaymentManagement';
 import PaymentSettings from './pages/PaymentSettings';
+import ServiceBookings from './pages/ServiceBookings';
 import Login from './pages/Login';
 
 import { AuthProvider } from './context/AuthContext';
@@ -43,6 +44,7 @@ function App() {
             <Route path="quiz" element={<QuizConfig />} />
             <Route path="payments" element={<PaymentManagement />} />
             <Route path="payment-settings" element={<PaymentSettings />} />
+            <Route path="service-bookings" element={<ServiceBookings />} />
             <Route path="analytics" element={<div className="text-center py-20 text-neutral-400">Analytics page coming soon...</div>} />
             <Route path="*" element={<div className="text-center py-20 text-neutral-400">Page not found</div>} />
           </Route>

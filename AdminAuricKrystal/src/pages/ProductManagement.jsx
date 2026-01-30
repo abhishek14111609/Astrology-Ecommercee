@@ -34,7 +34,8 @@ const ProductManagement = () => {
         image_url: '',
         zodiac_sign: 'Aries',
         is_bestseller: false,
-        tags: []
+        tags: [],
+        stock: 0
     });
     const [editingProduct, setEditingProduct] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -70,7 +71,7 @@ const ProductManagement = () => {
         formData.append('image', file);
 
         try {
-            const response = await axios.post(`${API_BASE_URL}/api/admin/upload-image`, formData, {
+            const response = await axios.post(`${API_BASE_URL}/admin/upload-image`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             setForm(prev => ({ ...prev, image_url: response.data.imageUrl }));
@@ -91,7 +92,8 @@ const ProductManagement = () => {
             image_url: '',
             zodiac_sign: 'Aries',
             is_bestseller: false,
-            tags: []
+            tags: [],
+            stock: 0
         });
         setEditingProduct(null);
     };
@@ -101,9 +103,9 @@ const ProductManagement = () => {
         setLoading(true);
         try {
             if (editingProduct) {
-                await axios.put(`${API_BASE_URL}/api/admin/products/${editingProduct.id}`, form);
+                await axios.put(`${API_BASE_URL}/admin/products/${editingProduct.id}`, form);
             } else {
-                await axios.post(`${API_BASE_URL}/api/admin/products`, form);
+                await axios.post(`${API_BASE_URL}/admin/products`, form);
             }
             fetchInitialData();
             resetForm();
@@ -126,7 +128,8 @@ const ProductManagement = () => {
             image_url: product.image_url || product.image || '',
             zodiac_sign: product.zodiac_sign || 'Aries',
             is_bestseller: product.is_bestseller || false,
-            tags: product.tags || []
+            tags: product.tags || [],
+            stock: product.stock || 0
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -134,7 +137,7 @@ const ProductManagement = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this product?')) return;
         try {
-            await axios.delete(`${API_BASE_URL}/api/admin/products/${id}`);
+            await axios.delete(`${API_BASE_URL}/admin/products/${id}`);
             setProducts(prev => prev.filter(p => p.id !== id));
         } catch (err) {
             alert('Failed to delete product');
@@ -156,7 +159,7 @@ const ProductManagement = () => {
             formData.append('file', uploadFile);
 
             const response = await axios.post(
-                `${API_BASE_URL}/api/admin/products/upload-excel`,
+                `${API_BASE_URL}/admin/products/upload-excel`,
                 formData,
                 {
                     headers: {
@@ -185,13 +188,14 @@ const ProductManagement = () => {
         // Create sample Excel data
         const sampleData = [
             {
-                name: 'Sample Product',
-                price: 1999.00,
-                description: 'Product description here',
-                zodiac_sign: 'Aries',
-                is_bestseller: 'FALSE',
-                tags: 'Healing, Meditation',
-                stock: 50
+                Categories: 'Healing Crystals',
+                Products: 'Sample Product',
+                Price: 1999.00,
+                Tags: 'Healing, Meditation',
+                'Best Seller': 'FALSE',
+                'Zodiac Signs': 'Aries',
+                Stocks: 50,
+                Descriptions: 'Product description here'
             }
         ];
 
@@ -200,30 +204,32 @@ const ProductManagement = () => {
         ws.innerHTML = `
             <thead>
                 <tr>
-                    <th>name</th>
-                    <th>price</th>
-                    <th>description</th>
-                    <th>zodiac_sign</th>
-                    <th>is_bestseller</th>
-                    <th>tags</th>
-                    <th>stock</th>
+                    <th>Categories</th>
+                    <th>Products</th>
+                    <th>Price</th>
+                    <th>Tags</th>
+                    <th>Best Seller</th>
+                    <th>Zodiac Signs</th>
+                    <th>Stocks</th>
+                    <th>Descriptions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
+                    <td>Healing Crystals</td>
                     <td>Sample Product</td>
                     <td>1999.00</td>
-                    <td>Product description here</td>
-                    <td>Aries</td>
-                    <td>FALSE</td>
                     <td>Healing, Meditation</td>
+                    <td>FALSE</td>
+                    <td>Aries</td>
                     <td>50</td>
+                    <td>Product description here</td>
                 </tr>
             </tbody>
         `;
 
         // Convert to CSV for simplicity
-        const csv = 'name,price,description,zodiac_sign,is_bestseller,tags,stock\nSample Product,1999.00,Product description here,Aries,FALSE,"Healing, Meditation",50\n';
+        const csv = 'Categories,Products,Price,Tags,Best Seller,Zodiac Signs,Stocks,Descriptions\nHealing Crystals,Sample Product,1999.00,"Healing, Meditation",FALSE,Aries,50,"Product description here"\n';
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -421,6 +427,21 @@ const ProductManagement = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
+                                        <label className="text-xs font-semibold text-neutral-700">Stock Quantity</label>
+                                        <input
+                                            placeholder="50"
+                                            type="number"
+                                            min="0"
+                                            className="input-ghost"
+                                            value={form.stock}
+                                            onChange={e => setForm({ ...form, stock: e.target.value })}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
                                         <label className="text-xs font-semibold text-neutral-700">Category</label>
                                         <select
                                             className="input-ghost"
@@ -500,6 +521,25 @@ const ProductManagement = () => {
                                         value={form.description}
                                         onChange={e => setForm({ ...form, description: e.target.value })}
                                     />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold text-neutral-700">Tags (comma-separated)</label>
+                                    <input
+                                        placeholder="e.g. Healing, Meditation, Energy"
+                                        className="input-ghost"
+                                        value={Array.isArray(form.tags) ? form.tags.join(', ') : ''}
+                                        onChange={e => setForm({ ...form, tags: e.target.value.split(',').map(t => t.trim()).filter(t => t) })}
+                                    />
+                                    {form.tags.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {form.tags.map((tag, idx) => (
+                                                <span key={idx} className="badge bg-auric-purple/10 text-auric-purple border-auric-purple/20 text-xs">
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -588,8 +628,32 @@ const ProductManagement = () => {
                                             </span>
                                         </div>
 
+                                        {p.description && (
+                                            <p className="text-sm text-neutral-600 line-clamp-2">{p.description}</p>
+                                        )}
+
+                                        {p.tags && p.tags.length > 0 && (
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {p.tags.slice(0, 3).map((tag, idx) => (
+                                                    <span key={idx} className="badge bg-auric-purple/10 text-auric-purple border-auric-purple/20 text-[10px]">
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                                {p.tags.length > 3 && (
+                                                    <span className="badge bg-neutral-100 text-neutral-500 border-neutral-200 text-[10px]">
+                                                        +{p.tags.length - 3}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+
                                         <div className="flex items-center justify-between pt-4 border-t border-neutral-100">
-                                            <span className="text-2xl font-bold text-neutral-900">₹{p.price}</span>
+                                            <div>
+                                                <span className="text-2xl font-bold text-neutral-900">₹{p.price}</span>
+                                                <span className="block text-xs text-neutral-500 mt-1">
+                                                    Stock: {p.stock || 0}
+                                                </span>
+                                            </div>
                                             <div className="flex items-center gap-2">
                                                 {p.is_bestseller && (
                                                     <span className="badge badge-warning">

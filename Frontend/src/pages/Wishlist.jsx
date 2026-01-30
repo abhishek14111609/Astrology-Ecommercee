@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Trash2, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { buildImageUrl } from '../config/api';
 import Button from '../components/UI/Button';
 import SectionHeading from '../components/UI/SectionHeading';
 import { products } from '../data/products';
@@ -36,7 +37,7 @@ const Wishlist = () => {
                     {wishlistItems.map((item) => (
                         <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-500">
                             <div className="relative aspect-square overflow-hidden bg-auric-blush">
-                                <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                <img src={buildImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                 <button className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-md rounded-full text-red-400 hover:text-red-600 hover:bg-white transition-all shadow-sm">
                                     <Trash2 size={18} />
                                 </button>

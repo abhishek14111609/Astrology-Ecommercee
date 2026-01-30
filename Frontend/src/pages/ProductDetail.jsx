@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import Button from '../components/UI/Button';
 // import { products } from '../data/products'; // REMOVED
 import ProductCard from '../components/UI/ProductCard';
-import API_BASE_URL from '../config/api';
+import API_BASE_URL, { buildImageUrl } from '../config/api';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -82,8 +82,11 @@ const ProductDetail = () => {
 
     // Ensure images array is populated (backend might return just 'image' or 'images')
     const galleryImages = (product.images && product.images.length > 0)
-        ? product.images
+        ? product.images.map(img => typeof img === 'string' ? img : img.url)
         : [product.image_url || product.image];
+    
+    // Build full image URLs
+    const processedGalleryImages = galleryImages.map(img => buildImageUrl(img));
 
     return (
         <div className="bg-white py-12">
@@ -103,11 +106,11 @@ const ProductDetail = () => {
                     {/* Image Gallery */}
                     <div className="space-y-4">
                         <div className="aspect-square bg-auric-blush rounded-lg overflow-hidden border border-gray-100">
-                            <img src={galleryImages[activeImage]} alt={product.name} className="w-full h-full object-cover" />
+                            <img src={processedGalleryImages[activeImage]} alt={product.name} className="w-full h-full object-cover" />
                         </div>
-                        {galleryImages.length > 1 && (
+                        {processedGalleryImages.length > 1 && (
                             <div className="flex gap-4 overflow-x-auto">
-                                {galleryImages.map((img, idx) => (
+                                {processedGalleryImages.map((img, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setActiveImage(idx)}

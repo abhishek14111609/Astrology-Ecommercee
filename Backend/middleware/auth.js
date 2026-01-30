@@ -20,3 +20,4 @@ export const isAdmin = (req, res, next) => {
     next();
 };
 
+export const verifyToken = authenticateToken;

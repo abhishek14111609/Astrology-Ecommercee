@@ -7,6 +7,8 @@ const Register = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        phone: '',
+        date_of_birth: '',
         password: '',
         zodiac_sign: 'Aries'
     });
@@ -70,6 +72,29 @@ const Register = () => {
                                 required
                                 className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-auric-gold focus:border-auric-gold focus:z-10 sm:text-sm"
                                 placeholder="john@example.com"
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">Phone Number</label>
+                            <input
+                                name="phone"
+                                type="tel"
+                                maxLength={10}
+                                minLength={10}
+                                required
+                                className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-auric-gold focus:border-auric-gold focus:z-10 sm:text-sm"
+                                placeholder="+91 1234567890"
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">Date of Birth</label>
+                            <input
+                                name="date_of_birth"
+                                type="date"
+                                required
+                                className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-auric-gold focus:border-auric-gold focus:z-10 sm:text-sm"
                                 onChange={handleChange}
                             />
                         </div>

@@ -27,6 +27,8 @@ import contactRoutes from './routes/contact.js';
 import settingsRoutes from './routes/settings.js';
 import paymentRoutes from './routes/payment.js';
 import adminPaymentRoutes from './routes/admin-payments.js';
+import serviceBookingRoutes from './routes/service-bookings.js';
+import notificationRoutes from './routes/notifications.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
@@ -39,6 +41,8 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin/payments', adminPaymentRoutes);
+app.use('/api/service-bookings', serviceBookingRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {
