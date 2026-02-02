@@ -44,7 +44,7 @@ const Footer = () => {
                         <h3 className="font-serif text-lg font-semibold mb-6 text-auric-gold">Explore</h3>
                         <ul className="space-y-3 text-sm text-white/70">
                             <li><Link to="/about" className="hover:text-auric-gold transition-colors">About Our Journey</Link></li>
-                            <li><Link to="/shop" className="hover:text-auric-gold transition-colors">The Boutique</Link></li>
+                            <li><Link to="/shop" className="hover:text-auric-gold transition-colors">The </Link></li>
                             <li><Link to="/services" className="hover:text-auric-gold transition-colors">Spiritual Services</Link></li>
                             <li><Link to="/Zodiac" className="hover:text-auric-gold transition-colors">Celestial Forecast</Link></li>
                             <li><Link to="/contact" className="hover:text-auric-gold transition-colors">Connect With Us</Link></li>
