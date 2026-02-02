@@ -29,9 +29,9 @@ const Dashboard = () => {
         try {
             // Fetch all dashboard data in parallel
             const [statsRes, ordersRes, productsRes] = await Promise.all([
-                axios.get(`${VITE_API_BASE_URL}/dashboard/stats`),
-                axios.get(`${VITE_API_BASE_URL}/dashboard/recent-orders?limit=5`),
-                axios.get(`${VITE_API_BASE_URL}/dashboard/top-products?limit=4`)
+                axios.get(`${VITE_API_BASE_URL}/api/admin/dashboard/stats`),
+                axios.get(`${VITE_API_BASE_URL}/api/admin/dashboard/recent-orders?limit=5`),
+                axios.get(`${VITE_API_BASE_URL}/api/admin/dashboard/top-products?limit=4`)
             ]);
 
             // Format stats data

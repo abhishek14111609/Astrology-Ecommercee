@@ -24,7 +24,7 @@ const Inquiries = () => {
     const fetchInquiries = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`${API_BASE}/contact`, {
+            const response = await axios.get(`${API_BASE}/api/contact`, {
 
             });
             setInquiries(response.data);
@@ -44,7 +44,7 @@ const Inquiries = () => {
         if (!window.confirm('Are you sure you want to delete this message?')) return;
 
         try {
-            await axios.delete(`${API_BASE}/contact/${id}`, {
+            await axios.delete(`${API_BASE}/api/contact/${id}`, {
 
             });
             setInquiries(prev => prev.filter(inq => inq._id !== id));

@@ -24,6 +24,12 @@ const PaymentManagement = () => {
     // Build API URL without double /api
     const apiUrl = (path) => `${getBase()}/api${path}`;
 
+    // Get auth headers
+    const getAuthHeaders = () => {
+        const token = localStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    };
+
     // Normalize image URLs to avoid /api prefix or missing host
     const getImageUrl = (path) => {
         if (!path) return '';
@@ -34,10 +40,9 @@ const PaymentManagement = () => {
 
     const fetchPendingPayments = async () => {
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.get(
                 apiUrl('/admin/payments/pending-payments'),
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: getAuthHeaders() }
             );
             setPendingPayments(response.data);
          } catch (error) {
@@ -47,10 +52,9 @@ const PaymentManagement = () => {
 
     const fetchHistory = async () => {
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.get(
                 apiUrl('/admin/payments/history'),
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: getAuthHeaders() }
             );
             setHistory(response.data || []);
         } catch (error) {
@@ -63,11 +67,10 @@ const PaymentManagement = () => {
         setProcessing(true);
 
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.post(
                 apiUrl(`/admin/payments/approve-payment/${selectedOrder.id}`),
                 { adminNotes: approvalNotes },
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: getAuthHeaders() }
             );
 
             setPendingPayments(pendingPayments.filter(p => p.id !== selectedOrder.id));
@@ -90,11 +93,10 @@ const PaymentManagement = () => {
         setProcessing(true);
 
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.post(
                 apiUrl(`/admin/payments/reject-payment/${selectedOrder.id}`),
                 { rejectionReason: rejectionReason },
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: getAuthHeaders() }
             );
 
             setPendingPayments(pendingPayments.filter(p => p.id !== selectedOrder.id));

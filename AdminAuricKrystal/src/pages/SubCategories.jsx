@@ -39,8 +39,8 @@ const SubCategories = () => {
             setLoading(true);
             const token = localStorage.getItem('token');
             const [subRes, catRes] = await Promise.all([
-                axios.get(`${API_BASE}/admin/subcategories`, { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get(`${API_BASE}/admin/categories`, { headers: { Authorization: `Bearer ${token}` } })
+                axios.get(`${API_BASE}/api/admin/subcategories`, { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get(`${API_BASE}/api/admin/categories`, { headers: { Authorization: `Bearer ${token}` } })
             ]);
             setSubcategories(subRes.data);
             setCategories(catRes.data);
@@ -69,13 +69,13 @@ const SubCategories = () => {
             const token = localStorage.getItem('token');
             if (editingItem) {
                 await axios.put(
-                    `${API_BASE}/admin/subcategories/${editingItem.id}`,
+                    `${API_BASE}/api/admin/subcategories/${editingItem.id}`,
                     formData,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
             } else {
                 await axios.post(
-                    `${API_BASE}/admin/subcategories`,
+                    `${API_BASE}/api/admin/subcategories`,
                     formData,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
@@ -91,7 +91,7 @@ const SubCategories = () => {
         if (!window.confirm('Are you sure you want to delete this sub-category?')) return;
 
         try {
-            await axios.delete(`${API_BASE}/admin/subcategories/${id}`, {
+            await axios.delete(`${API_BASE}/api/admin/subcategories/${id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setSubcategories(prev => prev.filter(item => item.id !== id));

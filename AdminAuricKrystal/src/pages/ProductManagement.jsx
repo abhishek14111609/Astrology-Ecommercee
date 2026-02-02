@@ -46,6 +46,14 @@ const ProductManagement = () => {
     const [uploadResult, setUploadResult] = useState(null);
     const [showUploadModal, setShowUploadModal] = useState(false);
 
+    // API helper functions
+    const getBase = () => VITE_API_BASE_URL?.replace(/\/$/, '').replace(/\/api$/, '');
+    const apiUrl = (path) => `${getBase()}/api${path}`;
+    const getAuthHeaders = () => {
+        const token = localStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    };
+
     useEffect(() => {
         fetchInitialData();
     }, []);
@@ -54,12 +62,18 @@ const ProductManagement = () => {
         setFetching(true);
         try {
             const [prodRes, catRes] = await Promise.all([
-                axios.get(`${VITE_API_BASE_URL}/products`),
-                axios.get(`${VITE_API_BASE_URL}/admin/categories`)
+                axios.get(apiUrl('/products')),
+                axios.get(apiUrl('/admin/categories'), { headers: getAuthHeaders() })
             ]);
             setProducts(prodRes.data);
             setCategories(catRes.data);
-        } catch (err) { console.error(err); }
+        } catch (err) {
+            console.error('Error fetching data:', err);
+            if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+                alert('Session expired. Please login again.');
+                navigate('/login');
+            }
+        }
         setFetching(false);
     };
 
@@ -71,12 +85,15 @@ const ProductManagement = () => {
         formData.append('image', file);
 
         try {
-            const response = await axios.post(`${VITE_API_BASE_URL}/admin/upload-image`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+            const response = await axios.post(apiUrl('/admin/upload-image'), formData, {
+                headers: {
+                    ...getAuthHeaders(),
+                    'Content-Type': 'multipart/form-data'
+                }
             });
             setForm(prev => ({ ...prev, image_url: response.data.imageUrl }));
         } catch (err) {
-            console.error(err);
+            console.error('Image upload error:', err);
             alert('Failed to upload image');
         }
     };
@@ -103,15 +120,25 @@ const ProductManagement = () => {
         setLoading(true);
         try {
             if (editingProduct) {
-                await axios.put(`${VITE_API_BASE_URL}/admin/products/${editingProduct.id}`, form);
+                await axios.put(apiUrl(`/admin/products/${editingProduct.id}`), form, {
+                    headers: getAuthHeaders()
+                });
             } else {
-                await axios.post(`${VITE_API_BASE_URL}/admin/products`, form);
+                await axios.post(apiUrl('/admin/products'), form, {
+                    headers: getAuthHeaders()
+                });
             }
             fetchInitialData();
             resetForm();
             alert(`Product ${editingProduct ? 'updated' : 'created'} successfully!`);
         } catch (err) {
-            alert('Operation failed. Check connection.');
+            console.error('Submit error:', err);
+            if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+                alert('Session expired. Please login again.');
+                navigate('/login');
+            } else {
+                alert('Operation failed. Check connection.');
+            }
         }
         setLoading(false);
     };
@@ -137,10 +164,19 @@ const ProductManagement = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this product?')) return;
         try {
-            await axios.delete(`${VITE_API_BASE_URL}/admin/products/${id}`);
+            await axios.delete(apiUrl(`/admin/products/${id}`), {
+                headers: getAuthHeaders()
+            });
             setProducts(prev => prev.filter(p => p.id !== id));
+            alert('Product deleted successfully!');
         } catch (err) {
-            alert('Failed to delete product');
+            console.error('Delete error:', err);
+            if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+                alert('Session expired. Please login again.');
+                navigate('/login');
+            } else {
+                alert('Failed to delete product');
+            }
         }
     };
 
@@ -154,15 +190,15 @@ const ProductManagement = () => {
         setUploadResult(null);
 
         try {
-            const token = localStorage.getItem('token');
             const formData = new FormData();
             formData.append('file', uploadFile);
 
             const response = await axios.post(
-                `${VITE_API_BASE_URL}/admin/products/upload-excel`,
+                apiUrl('/admin/products/upload-excel'),
                 formData,
                 {
                     headers: {
+                        ...getAuthHeaders(),
                         'Content-Type': 'multipart/form-data'
                     }
                 }
