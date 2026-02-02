@@ -15,7 +15,7 @@ const Shipping = () => {
 
                     <section>
                         <h3 className="font-serif text-2xl font-bold text-auric-rose mb-4">International Shipping</h3>
-                        <p>Auric Krystal ships worldwide. International delivery times vary between 10-14 business days depending on customs clearance and location. Please note that customs duties and taxes, if applicable, are to be borne by the recipient.</p>
+                        <p>Auric krystals ships worldwide. International delivery times vary between 10-14 business days depending on customs clearance and location. Please note that customs duties and taxes, if applicable, are to be borne by the recipient.</p>
                     </section>
 
                     <section>
@@ -25,7 +25,7 @@ const Shipping = () => {
 
                     <section>
                         <h3 className="font-serif text-2xl font-bold text-auric-rose mb-4">Damaged Items</h3>
-                        <p>In the rare event that an item arrives damaged, please contact our support team at hello@aurickrystal.com within 48 hours of delivery with photographic evidence of the damage. we will arrange for a replacement immediately.</p>
+                        <p>In the rare event that an item arrives damaged, please contact our support team at hello@aurickrystals.com within 48 hours of delivery with photographic evidence of the damage. we will arrange for a replacement immediately.</p>
                     </section>
                 </div>
             </div>

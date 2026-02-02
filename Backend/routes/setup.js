@@ -50,7 +50,7 @@ router.get('/database-status', async (req, res) => {
             Promise.resolve(status['wishlist'] = { exists: false, count: 0 }),
         ]);
 
-        res.json({ status, database: 'auric_krystal_mongo' });
+        res.json({ status, database: 'auric_krystals_mongo' });
     } catch (error) {
         res.status(500).json({ message: 'Error checking database status', error: error.message });
     }

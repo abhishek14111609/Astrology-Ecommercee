@@ -17,7 +17,7 @@ const ServiceBookings = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get(`${VITE_API_BASE_URL}/api/admin/service-bookings`, {
+            const response = await axios.get(`${VITE_API_BASE_URL}/api/service-bookings/all`, {
                 withCredentials: true
             });
             setBookings(response.data);
@@ -31,7 +31,7 @@ const ServiceBookings = () => {
 
     const handleUpdateStatus = async (bookingId, status, adminNotes = '') => {
         try {
-            await axios.put(`${VITE_API_BASE_URL}/api/admin/service-bookings/update-status/${bookingId}`, {
+            await axios.put(`${VITE_API_BASE_URL}/api/service-bookings/update-status/${bookingId}`, {
                 status,
                 admin_notes: adminNotes
             }, { withCredentials: true });

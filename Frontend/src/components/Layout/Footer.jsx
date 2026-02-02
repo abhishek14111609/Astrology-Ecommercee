@@ -12,9 +12,9 @@ const Footer = () => {
                     {/* Brand & Description */}
                     <div>
                         <div className="mb-6 flex items-center gap-3">
-                            <img src={logo} alt="Auric Krystal" className="h-10 w-auto object-contain brightness-0 invert" />
+                            <img src={logo} alt="Auric krystals" className="h-10 w-auto object-contain brightness-0 invert" />
                             <div className="flex flex-col">
-                                <span className="font-serif text-xl font-bold text-white tracking-wider leading-none">Auric Krystal</span>
+                                <span className="font-serif text-xl font-bold text-white tracking-wider leading-none">Auric krystals</span>
                                 <p className="text-[0.5rem] uppercase tracking-[0.2em] text-auric-gold mt-1">Celestial Guidance</p>
                             </div>
                         </div>
@@ -80,7 +80,7 @@ const Footer = () => {
                             </div>
                             <div className="flex items-center gap-3">
                                 <Mail size={16} className="text-auric-gold" />
-                                <span>aurickrystals@gmail.com</span>
+                                <span>aurickrystalss@gmail.com</span>
                             </div>
                         </div>
                         <Link
@@ -94,11 +94,11 @@ const Footer = () => {
                 </div>
 
                 <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-white/50">
-                    <p>&copy; {new Date().getFullYear()} Auric Krystal. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} Auric krystals. All rights reserved.</p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
                         <div className="flex items-center gap-2">
                             <Mail size={14} className="text-auric-gold" />
-                            <span>aurickrystals@gmail.com</span>
+                            <span>aurickrystalss@gmail.com</span>
                         </div>
                     </div>
                 </div>

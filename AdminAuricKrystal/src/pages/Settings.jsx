@@ -123,7 +123,7 @@ const Settings = () => {
                                 value={settings.site_name}
                                 onChange={handleChange}
                                 className="input-ghost w-full"
-                                placeholder="e.g. Auric Krystal"
+                                placeholder="e.g. Auric krystals"
                             />
                         </div>
                         <div>

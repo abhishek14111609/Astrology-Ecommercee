@@ -30,7 +30,7 @@ const Contact = () => {
                                     <Mail size={24} />
                                 </div>
                                 <h3 className="font-serif text-xl font-bold text-auric-rose mb-2">Email</h3>
-                                <p className="text-gray-600">aurickrystals@gmail.com</p>
+                                <p className="text-gray-600">aurickrystalss@gmail.com</p>
                                 <p className="text-gray-400 text-sm mt-1">24/7 Celestial Support</p>
                             </div>
                             <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center text-center">

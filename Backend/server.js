@@ -9,7 +9,7 @@ const PORT = process.env.PORT;
 import authRoutes from './routes/auth.js';
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5175', 'https://aurickrystal.com', 'https://www.aurickrystal.com', 'https://admin.aurickrystal.com'], // Frontend and Admin ports
+    origin: ['http://localhost:5173', 'http://localhost:5178', 'https://aurickrystals.com', 'https://www.aurickrystals.com', 'https://admin.aurickrystals.com'], // Frontend and Admin ports
     credentials: true
 }));
 app.use(express.json());
@@ -46,7 +46,7 @@ app.use('/api/notifications', notificationRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {
-    res.send('Auric Krystal Backend is running...');
+    res.send('Auric krystals Backend is running...');
 });
 
 // Health check to test DB connection

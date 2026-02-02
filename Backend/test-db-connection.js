@@ -147,7 +147,7 @@ async function testDatabaseConnection() {
         console.error('1. MongoDB is running');
         console.error('2. Backend server is running (npm run dev)');
         console.error('3. MONGO_URI is correct (or uses default)');
-        console.error('4. Database "auric_krystal" will be created automatically');
+        console.error('4. Database "auric_krystals" will be created automatically');
         process.exit(1);
     }
 }

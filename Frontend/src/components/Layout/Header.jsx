@@ -31,14 +31,14 @@ const Header = () => {
             <div className="relative">
               <img
                 src={logo}
-                alt="Auric Krystal"
+                alt="Auric krystals"
                 className="h-12 md:h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute -inset-1 bg-auric-gold/10 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </div>
             <div className="flex flex-col">
               <span className="font-serif text-3xl md:text-xl font-bold text-auric-rose tracking-wider leading-none">
-                Auric Krystal
+                Auric krystals
               </span>
               <span className="text-[0.6rem] uppercase tracking-[0.2em] text-auric-gold font-medium mt-1">
                 Celestial Guidance

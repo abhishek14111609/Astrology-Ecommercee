@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`${VITE_API_BASE_URL}/auth/me`);
+            const res = await axios.get(`${VITE_API_BASE_URL}/api/auth/me`);
             setUser(res.data);
             localStorage.setItem('user', JSON.stringify(res.data)); // Keep local copy for non-critical UI if needed, but rely on cookie
         } catch (error) {
@@ -32,14 +32,14 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const res = await axios.post(`${VITE_API_BASE_URL}/auth/login`, { email, password });
+        const res = await axios.post(`${VITE_API_BASE_URL}/api/auth/login`, { email, password });
         setUser(res.data.user);
         return res.data;
     };
 
     const logout = async () => {
         try {
-            await axios.post(`${VITE_API_BASE_URL}/auth/logout`);
+            await axios.post(`${VITE_API_BASE_URL}/api/auth/logout`);
             setUser(null);
             localStorage.removeItem('user');
         } catch (error) {

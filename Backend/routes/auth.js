@@ -6,7 +6,7 @@ import User from '../models/User.js';
 import { getNextSequence } from '../models/Counter.js';
 const router = express.Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'auric_krystal_secret_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'auric_krystals_secret_key_2026';
 
 // Register
 router.post('/register', async (req, res) => {

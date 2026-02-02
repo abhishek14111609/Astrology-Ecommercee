@@ -114,7 +114,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                         </div>
                         <div>
                             <h2 className="text-lg font-serif font-bold text-neutral-900 leading-tight">
-                                Auric Krystal
+                                Auric krystals
                             </h2>
                             <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold">
                                 Admin Portal
