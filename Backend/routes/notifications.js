@@ -12,9 +12,12 @@ router.get('/my-notifications', verifyToken, async (req, res) => {
         const notifications = await Notification.find({ user_id: req.user.id })
             .sort({ created_at: -1 })
             .lean();
-        res.json(notifications);
+        // Ensure we always return an array
+        res.json(Array.isArray(notifications) ? notifications : []);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch notifications', error: error.message });
+        console.error('Error fetching notifications:', error);
+        // Return empty array on error instead of error object
+        res.status(500).json([]);
     }
 });
 

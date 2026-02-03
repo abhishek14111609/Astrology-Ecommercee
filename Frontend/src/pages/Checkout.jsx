@@ -90,7 +90,7 @@ const Checkout = () => {
             <div className="min-h-[60vh] flex flex-col items-center justify-center bg-auric-blush px-4">
                 <h1 className="font-serif text-2xl font-bold text-auric-rose mb-4">Your Cart is Empty</h1>
                 <Link to="/shop">
-                    <Button variant="primary">Return to Boutique</Button>
+                    <Button variant="primary">Return to </Button>
                 </Link>
             </div>
         );

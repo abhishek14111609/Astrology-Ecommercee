@@ -22,7 +22,7 @@ const Wishlist = () => {
                 <h1 className="font-serif text-2xl font-bold text-auric-rose mb-2">Your Wishlist is Empty</h1>
                 <p className="text-gray-500 mb-8 text-center max-w-sm">Save your favorite spiritual artifacts to view them here later.</p>
                 <Link to="/shop">
-                    <Button variant="primary">Explore Boutique</Button>
+                    <Button variant="primary">Explore </Button>
                 </Link>
             </div>
         );

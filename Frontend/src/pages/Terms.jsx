@@ -8,7 +8,7 @@ const Terms = () => {
                 <SectionHeading title="Terms of Harmony" subtitle="LEGAL" />
 
                 <div className="mt-12 space-y-8 text-gray-700 leading-relaxed">
-                    <p>By accessing the Auric Krystal sanctuary, you agree to abide by these terms of service.</p>
+                    <p>By accessing the Auric krystals sanctuary, you agree to abide by these terms of service.</p>
 
                     <section>
                         <h3 className="font-serif text-xl font-bold text-auric-rose mb-3">Service Guidelines</h3>
@@ -17,7 +17,7 @@ const Terms = () => {
 
                     <section>
                         <h3 className="font-serif text-xl font-bold text-auric-rose mb-3">Intellectual Property</h3>
-                        <p>All content on this site, including text, designs, and brand imagery, is the property of Auric Krystal. Unauthorized reproduction is strictly prohibited.</p>
+                        <p>All content on this site, including text, designs, and brand imagery, is the property of Auric krystals. Unauthorized reproduction is strictly prohibited.</p>
                     </section>
 
                     <section>

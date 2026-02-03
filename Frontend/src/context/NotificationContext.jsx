@@ -22,11 +22,16 @@ export const NotificationProvider = ({ children }) => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            setNotifications(res.data);
-            const unread = res.data.filter(n => !n.read).length;
+            // Ensure res.data is an array
+            const notificationsData = Array.isArray(res.data) ? res.data : [];
+            setNotifications(notificationsData);
+            const unread = notificationsData.filter(n => !n.read).length;
             setUnreadCount(unread);
         } catch (error) {
             console.error('Failed to fetch notifications:', error);
+            // Set empty array on error
+            setNotifications([]);
+            setUnreadCount(0);
         }
     }, [user]);
 

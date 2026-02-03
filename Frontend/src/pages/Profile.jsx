@@ -29,9 +29,10 @@ const Profile = () => {
             setLoading(true);
             try {
                 const res = await axios.get(`${VITE_API_BASE_URL}/api/orders/myorders`);
-                setOrders(res.data);
+                setOrders(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error('Failed to fetch orders', err);
+                setOrders([]);
             } finally {
                 setLoading(false);
             }
@@ -42,7 +43,7 @@ const Profile = () => {
             setBookingLoading(true);
             try {
                 const res = await axios.get(`${VITE_API_BASE_URL}/api/service-bookings/my-bookings`);
-                setBookings(res.data);
+                setBookings(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error('Failed to fetch bookings', err);
                 setBookings([]);

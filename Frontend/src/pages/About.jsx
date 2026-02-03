@@ -14,7 +14,7 @@ const About = () => {
                 <div className="relative z-10 max-w-4xl mx-auto space-y-6">
                     <span className="inline-block text-auric-gold uppercase tracking-[0.3em] text-sm font-semibold">Our Eternal Journey</span>
                     <h1 className="font-serif text-5xl md:text-7xl font-bold text-auric-rose leading-tight">
-                        The Story of <br /> <span className="text-auric-gold italic whitespace-nowrap">Auric Krystal</span>
+                        The Story of <br /> <span className="text-auric-gold italic whitespace-nowrap">Auric krystals</span>
                     </h1>
                 </div>
             </section>
@@ -26,16 +26,16 @@ const About = () => {
                         <SectionHeading title="Ancient Roots, Modern Soul" subtitle="OUR ORIGIN" center={false} />
                         <div className="space-y-6 text-gray-700 leading-relaxed">
                             <p>
-                                Auric Krystals was born from a simple belief — that crystals are not just beautiful objects, but living carriers of energy, intention, and ancient wisdom. Every crystal we offer is carefully chosen, not by appearance alone, but by its vibration, origin, and purity. We deal only in pure, original, and certified crystals and gemstones, because authenticity is the foundation of true healing.
+                                Auric krystalss was born from a simple belief — that crystals are not just beautiful objects, but living carriers of energy, intention, and ancient wisdom. Every crystal we offer is carefully chosen, not by appearance alone, but by its vibration, origin, and purity. We deal only in pure, original, and certified crystals and gemstones, because authenticity is the foundation of true healing.
                             </p>
                             <p>
-                                At Auric Krystals, quality is never compromised. Each gemstone and crystal product goes through a mindful selection process, ensuring it is natural, energetically sound, and worthy of becoming a part of your journey. From spiritual tools to gemstone creations, every piece reflects our commitment to truth, transparency, and trust.
+                                At Auric krystalss, quality is never compromised. Each gemstone and crystal product goes through a mindful selection process, ensuring it is natural, energetically sound, and worthy of becoming a part of your journey. From spiritual tools to gemstone creations, every piece reflects our commitment to truth, transparency, and trust.
                             </p>
                             <p>
-                                But we believe a crystal’s journey doesn’t end at delivery — it begins there. That’s why every Auric Krystals product comes with a certification of authenticity and a special crystal charging bag, so your crystal remains protected and energetically aligned. More importantly, each crystal is energetically cleansed and charged with intention, based on the purpose for which you are welcoming it into your life — whether it’s healing, protection, abundance, peace, or spiritual growth.
+                                But we believe a crystal’s journey doesn’t end at delivery — it begins there. That’s why every Auric krystalss product comes with a certification of authenticity and a special crystal charging bag, so your crystal remains protected and energetically aligned. More importantly, each crystal is energetically cleansed and charged with intention, based on the purpose for which you are welcoming it into your life — whether it’s healing, protection, abundance, peace, or spiritual growth.
                             </p>
                             <p>
-                                Auric Krystals is not just about selling crystals; it’s about creating a soulful connection between you and the energy you choose to carry. When a crystal reaches you, it carries care, consciousness, and a silent blessing — reminding you that the universe always supports those who seek with purity of heart.
+                                Auric krystalss is not just about selling crystals; it’s about creating a soulful connection between you and the energy you choose to carry. When a crystal reaches you, it carries care, consciousness, and a silent blessing — reminding you that the universe always supports those who seek with purity of heart.
                             </p>
                         </div>
                     </div>
@@ -58,13 +58,13 @@ const About = () => {
                         <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-blush/60 via-white to-auric-gold/20">
                             <img
                                 src="/images/about/mission-crystals.jpg"
-                                alt="Auric Krystals mission"
+                                alt="Auric krystalss mission"
                                 className="absolute inset-0 w-full h-full object-cover opacity-70"
                             />
                             <div className="relative p-10 space-y-6 backdrop-blur-sm">
                                 <h3 className="font-serif text-3xl font-bold text-auric-rose">Our Mission</h3>
                                 <p className="text-gray-700 leading-relaxed">
-                                    Our mission is to guide individuals toward clarity, balance, and self-alignment through authentic astrology and consciously charged crystal energies. At Auric Krystals, we are committed to offering only pure, original, and certified crystals, prepared with intention and care. Every product and every guidance we provide is meant to support personal transformation, emotional healing, and spiritual growth—so that people feel supported, protected, and empowered on their life journey.
+                                    Our mission is to guide individuals toward clarity, balance, and self-alignment through authentic astrology and consciously charged crystal energies. At Auric krystalss, we are committed to offering only pure, original, and certified crystals, prepared with intention and care. Every product and every guidance we provide is meant to support personal transformation, emotional healing, and spiritual growth—so that people feel supported, protected, and empowered on their life journey.
                                 </p>
                             </div>
                         </div>
@@ -72,13 +72,13 @@ const About = () => {
                         <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-gold/15 via-white to-auric-blush/50">
                             <img
                                 src="/images/about/founder.png"
-                                alt="Auric Krystals vision"
+                                alt="Auric krystalss vision"
                                 className="absolute inset-0 w-full h-full object-cover opacity-70"
                             />
                             <div className="relative p-10 space-y-6 backdrop-blur-sm">
                                 <h3 className="font-serif text-3xl font-bold text-auric-rose">Our Vision</h3>
                                 <p className="text-gray-700 leading-relaxed">
-                                    Our vision is to create a trusted sacred space where cosmic wisdom and Earth’s natural energies come together in harmony. We envision Auric Krystals as more than a brand—an energy companion for those seeking truth, healing, and purpose. By blending astrology, crystals, and intention-based practices, we aspire to help people live with greater awareness, confidence, and inner peace, while honoring the belief that destiny is guided best when aligned with conscious choice and pure energy.
+                                    Our vision is to create a trusted sacred space where cosmic wisdom and Earth’s natural energies come together in harmony. We envision Auric krystalss as more than a brand—an energy companion for those seeking truth, healing, and purpose. By blending astrology, crystals, and intention-based practices, we aspire to help people live with greater awareness, confidence, and inner peace, while honoring the belief that destiny is guided best when aligned with conscious choice and pure energy.
                                 </p>
                             </div>
                         </div>
@@ -89,7 +89,7 @@ const About = () => {
             {/* Values */}
             <section className="py-20 bg-auric-blush text-white">
                 <div className="container mx-auto px-4">
-                    <SectionHeading title="The Pillars of Auric Krystal" subtitle="OUR VALUES" />
+                    <SectionHeading title="The Pillars of Auric krystals" subtitle="OUR VALUES" />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
                         <div className="p-8 border border-auric-rose/10 rounded-lg hover:border-auric-gold transition-colors">
                             <h3 className="font-serif text-2xl font-bold text-auric-gold mb-4">Authenticity</h3>

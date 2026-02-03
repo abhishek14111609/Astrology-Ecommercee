@@ -32,7 +32,7 @@ const Settings = () => {
         const fetchSettings = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${API_BASE}/settings`, {
+                const response = await axios.get(`${API_BASE}/api/admin/settings`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 setSettings(response.data);
@@ -62,7 +62,7 @@ const Settings = () => {
         setSuccess(false);
 
         try {
-            const response = await axios.put(`${API_BASE}/settings`, settings, {
+            const response = await axios.put(`${API_BASE}/api/admin/settings`, settings, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setSettings(response.data);
@@ -123,7 +123,7 @@ const Settings = () => {
                                 value={settings.site_name}
                                 onChange={handleChange}
                                 className="input-ghost w-full"
-                                placeholder="e.g. Auric Krystal"
+                                placeholder="e.g. Auric krystals"
                             />
                         </div>
                         <div>

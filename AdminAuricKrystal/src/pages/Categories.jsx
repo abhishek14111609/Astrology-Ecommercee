@@ -32,7 +32,7 @@ const Categories = () => {
         const fetchCategories = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${VITE_API_BASE_URL}/admin/categories`, {
+                const response = await axios.get(`${VITE_API_BASE_URL}/api/admin/categories`, {
 
                 });
                 if (isMounted) {

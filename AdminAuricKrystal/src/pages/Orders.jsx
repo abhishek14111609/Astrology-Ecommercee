@@ -47,7 +47,7 @@ const Orders = () => {
         const fetchOrders = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${API_BASE}/admin/orders`, {
+                const response = await axios.get(`${API_BASE}/api/admin/orders`, {
                     params: {
                         status: statusFilter,
                         page: pagination.page,
@@ -81,7 +81,7 @@ const Orders = () => {
     const handleStatusChange = async (orderId, newStatus) => {
         try {
             await axios.put(
-                `${API_BASE}/admin/orders/${orderId}/status`,
+                `${API_BASE}/api/admin/orders/${orderId}/status`,
                 { status: newStatus },
                 {}
             );

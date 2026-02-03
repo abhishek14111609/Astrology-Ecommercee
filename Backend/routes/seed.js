@@ -146,10 +146,10 @@ router.post('/seed-data', async (req, res) => {
         const bcrypt = require('bcryptjs');
         const hashedPassword = await bcrypt.hash('admin123', 10);
         try {
-            const existingAdmin = await User.findOne({ email: 'admin@aurickrystal.com' }).lean();
+            const existingAdmin = await User.findOne({ email: 'admin@aurickrystals.com' }).lean();
             if (!existingAdmin) {
                 const id = await getNextSequence('users');
-                await User.create({ id, name: 'Admin User', email: 'admin@aurickrystal.com', password: hashedPassword, role: 'admin' });
+                await User.create({ id, name: 'Admin User', email: 'admin@aurickrystals.com', password: hashedPassword, role: 'admin' });
             }
             results.push({ type: 'user', name: 'Admin User', success: true });
         } catch (err) {

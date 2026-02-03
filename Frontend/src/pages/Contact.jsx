@@ -12,7 +12,7 @@ const Contact = () => {
                 <div className="container mx-auto px-4 text-center">
                     <SectionHeading title="Connect With Us" subtitle="SAY HELLO" />
                     <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
-                        Whether you seek a custom celestial consultation or have a question about our boutique items,
+                        Whether you seek a custom celestial consultation or have a question about our  items,
                         our guardians of harmony are here to assist you.
                     </p>
                 </div>
@@ -30,7 +30,7 @@ const Contact = () => {
                                     <Mail size={24} />
                                 </div>
                                 <h3 className="font-serif text-xl font-bold text-auric-rose mb-2">Email</h3>
-                                <p className="text-gray-600">aurickrystals@gmail.com</p>
+                                <p className="text-gray-600">aurickrystalss@gmail.com</p>
                                 <p className="text-gray-400 text-sm mt-1">24/7 Celestial Support</p>
                             </div>
                             <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
@@ -39,7 +39,7 @@ const Contact = () => {
                                 </div>
                                 <h3 className="font-serif text-xl font-bold text-auric-rose mb-2">Phone</h3>
                                 <p className="text-gray-600">+91 70432 16616</p>
-                                <p className="text-gray-400 text-sm mt-1">Mon-Sat, 9am - 7pm</p>
+                                <p className="text-gray-400 text-sm mt-1">Mon-Sun, 11:00am - 11:00pm</p>
                             </div>
                         </div>
 

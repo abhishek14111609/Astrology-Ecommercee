@@ -27,6 +27,10 @@ const PaymentSettings = () => {
         const cleanPath = path.replace(/^\//, '');
         return `${getBase()}/${cleanPath}`;
     };
+    const getAuthHeaders = () => {
+        const token = localStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    };
 
     useEffect(() => {
         fetchSettings();
@@ -34,10 +38,9 @@ const PaymentSettings = () => {
 
     const fetchSettings = async () => {
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.get(
                 apiUrl('/admin/payments/settings'),
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: getAuthHeaders() }
             );
             if (response.data) {
                 setSettings(response.data);
@@ -94,7 +97,6 @@ const PaymentSettings = () => {
         setStatus(null);
 
         try {
-            const token = localStorage.getItem('token');
             const formData = new FormData();
 
             formData.append('upi_id', settings.upi_id);
@@ -112,7 +114,7 @@ const PaymentSettings = () => {
                 formData,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        ...getAuthHeaders(),
                         'Content-Type': 'multipart/form-data'
                     }
                 }

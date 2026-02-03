@@ -36,7 +36,7 @@ const QuizConfig = () => {
     const fetchQuestions = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`${API_BASE}/admin/quiz/questions`);
+            const response = await axios.get(`${API_BASE}/api/admin/quiz/questions`);
             setQuestions(response.data);
             setError(null);
         } catch (err) {
@@ -63,7 +63,7 @@ const QuizConfig = () => {
     const fetchOptions = async (questionId) => {
         try {
             setLoadingOptions(prev => ({ ...prev, [questionId]: true }));
-            const response = await axios.get(`${API_BASE}/admin/quiz/questions/${questionId}/options`);
+            const response = await axios.get(`${API_BASE}/api/admin/quiz/questions/${questionId}/options`);
             setQuestionOptions(prev => ({
                 ...prev,
                 [questionId]: response.data
@@ -108,12 +108,12 @@ const QuizConfig = () => {
         try {
             if (editingOption) {
                 await axios.put(
-                    `${API_BASE}/admin/quiz/options/${editingOption.id}`,
+                    `${API_BASE}/api/admin/quiz/options/${editingOption.id}`,
                     optionFormData
                 );
             } else {
                 await axios.post(
-                    `${API_BASE}/admin/quiz/questions/${currentQuestionId}/options`,
+                    `${API_BASE}/api/admin/quiz/questions/${currentQuestionId}/options`,
                     optionFormData
                 );
             }
@@ -128,7 +128,7 @@ const QuizConfig = () => {
         if (!window.confirm('Are you sure you want to delete this option?')) return;
 
         try {
-            await axios.delete(`${API_BASE}/admin/quiz/options/${optionId}`);
+            await axios.delete(`${API_BASE}/api/admin/quiz/options/${optionId}`);
             await fetchOptions(questionId);
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to delete option');

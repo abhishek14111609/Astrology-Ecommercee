@@ -99,7 +99,7 @@ const Login = () => {
                     </form>
                 </div>
                 <div className="bg-neutral-50 p-6 text-center text-sm text-neutral-400 border-t border-neutral-100">
-                    Auric Krystal Admin Panel
+                    Auric krystals Admin Panel
                 </div>
             </div>
         </div>

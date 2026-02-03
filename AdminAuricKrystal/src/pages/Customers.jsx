@@ -37,7 +37,7 @@ const Customers = () => {
         const fetchCustomers = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${API_BASE}/admin/customers`, {
+                const response = await axios.get(`${API_BASE}/api/admin/customers`, {
                     params: {
                         page: pagination.page,
                         limit: pagination.limit,
@@ -73,7 +73,7 @@ const Customers = () => {
 
     const viewCustomerDetails = async (customerId) => {
         try {
-            const response = await axios.get(`${API_BASE}/admin/customers/${customerId}`, {
+            const response = await axios.get(`${API_BASE}/api/admin/customers/${customerId}`, {
 
             });
             setSelectedCustomer(response.data);

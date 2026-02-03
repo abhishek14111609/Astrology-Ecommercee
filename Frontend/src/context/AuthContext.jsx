@@ -31,10 +31,14 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const res = await axios.post(`${API_URL}/api/auth/login`, { email, password });
-        // Assuming API returns user object now
+        // Use user-specific login endpoint to prevent admin access
+        const res = await axios.post(`${API_URL}/api/auth/user-login`, { email, password });
+        // Check if user is admin (should be rejected by backend, but double-check)
+        if (res.data.user && res.data.user.role === 'admin') {
+            throw new Error('Admin accounts cannot access the frontend. Please use the admin panel.');
+        }
         setUser(res.data.user);
-        return res.data; // Return full data for redirection logic or success messages
+        return res.data;
     };
 
     const logout = async () => {

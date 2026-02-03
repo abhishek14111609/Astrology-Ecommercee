@@ -8,7 +8,7 @@ const Privacy = () => {
                 <SectionHeading title="Privacy Policy" subtitle="LEGAL" />
 
                 <div className="mt-12 space-y-8 text-gray-700 leading-relaxed">
-                    <p>At Auric Krystal, we are committed to protecting your privacy and personal spiritual information. This policy outlines how we collect, use, and safeguard your data.</p>
+                    <p>At Auric krystals, we are committed to protecting your privacy and personal spiritual information. This policy outlines how we collect, use, and safeguard your data.</p>
 
                     <section>
                         <h3 className="font-serif text-xl font-bold text-auric-rose mb-3">Information Collection</h3>
