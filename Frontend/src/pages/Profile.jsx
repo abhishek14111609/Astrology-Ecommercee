@@ -18,45 +18,48 @@ const Profile = () => {
     const [bookingLoading, setBookingLoading] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+    // Fetch orders function
+    const fetchOrders = async () => {
+        if (!user) return;
+        setLoading(true);
+        try {
+            const res = await axios.get(`${VITE_API_BASE_URL}/api/orders/myorders`);
+            setOrders(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            console.error('Failed to fetch orders', err);
+            setOrders([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Fetch bookings function
+    const fetchBookings = async () => {
+        if (!user) return;
+        setBookingLoading(true);
+        try {
+            const res = await axios.get(`${VITE_API_BASE_URL}/api/service-bookings/my-bookings`);
+            setBookings(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            console.error('Failed to fetch bookings', err);
+            setBookings([]);
+        } finally {
+            setBookingLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (!authLoading && !user) {
             navigate('/login');
             return; // Important: exit early
         }
 
-        const fetchOrders = async () => {
-            if (!user) return;
-            setLoading(true);
-            try {
-                const res = await axios.get(`${VITE_API_BASE_URL}/api/orders/myorders`);
-                setOrders(Array.isArray(res.data) ? res.data : []);
-            } catch (err) {
-                console.error('Failed to fetch orders', err);
-                setOrders([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        const fetchBookings = async () => {
-            if (!user) return;
-            setBookingLoading(true);
-            try {
-                const res = await axios.get(`${VITE_API_BASE_URL}/api/service-bookings/my-bookings`);
-                setBookings(Array.isArray(res.data) ? res.data : []);
-            } catch (err) {
-                console.error('Failed to fetch bookings', err);
-                setBookings([]);
-            } finally {
-                setBookingLoading(false);
-            }
-        };
-
         if (user) {
             fetchOrders();
             fetchBookings();
         }
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, authLoading, navigate]);
 
     if (authLoading || !user) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-auric-gold" /></div>;
@@ -64,9 +67,9 @@ const Profile = () => {
     const displayUser = {
         name: user.name || "Seeker",
         email: user.email || "",
-        joined: "January 2026",
+        joined: user.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : "Unknown",
         zodiac: user.zodiac_sign || "",
-        avatar: null
+        avatar: user.avatar || null
     };
 
     const handleLogout = async () => {
@@ -186,9 +189,19 @@ const Profile = () => {
 
                         {/* Service Bookings */}
                         <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                            <h3 className="font-serif text-xl font-bold text-auric-rose mb-6 flex items-center gap-2">
-                                <Calendar className="text-auric-gold" size={20} /> Service Bookings
-                            </h3>
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="font-serif text-xl font-bold text-auric-rose flex items-center gap-2">
+                                    <Calendar className="text-auric-gold" size={20} /> Service Bookings
+                                </h3>
+                                <button 
+                                    onClick={fetchBookings} 
+                                    disabled={bookingLoading}
+                                    className="text-xs text-auric-gold hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+                                >
+                                    <Loader2 size={12} className={bookingLoading ? 'animate-spin' : ''} />
+                                    Refresh
+                                </button>
+                            </div>
 
                             {bookingLoading ? (
                                 <div className="flex justify-center py-10">
@@ -197,7 +210,7 @@ const Profile = () => {
                             ) : bookings.length > 0 ? (
                                 <div className="space-y-4">
                                     {bookings.map((booking) => (
-                                        <div key={booking.id} className="p-5 rounded-xl border border-gray-100 bg-gray-50/50">
+                                        <div key={booking.id} className="p-5 rounded-xl border border-gray-100 bg-gray-50/50 hover:border-auric-gold/30 transition-colors">
                                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                                 <div>
                                                     <div className="text-xs uppercase tracking-widest text-auric-gold mb-1">
@@ -234,7 +247,16 @@ const Profile = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-center text-gray-500 py-6">No service bookings found.</p>
+                                <div className="text-center py-6">
+                                    <p className="text-gray-500 mb-4">No service bookings found.</p>
+                                    <Button 
+                                        variant="outline" 
+                                        className="text-xs py-2 px-4 border-auric-gold text-auric-gold"
+                                        onClick={() => navigate('/services')}
+                                    >
+                                        Book a Service
+                                    </Button>
+                                </div>
                             )}
                         </div>
 

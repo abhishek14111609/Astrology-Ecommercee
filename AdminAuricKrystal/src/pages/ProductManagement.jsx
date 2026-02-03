@@ -221,52 +221,14 @@ const ProductManagement = () => {
     };
 
     const downloadTemplate = () => {
-        // Create sample Excel data
-        const sampleData = [
-            {
-                Categories: 'Healing Crystals',
-                Products: 'Sample Product',
-                Price: 1999.00,
-                Tags: 'Healing, Meditation',
-                'Best Seller': 'FALSE',
-                'Zodiac Signs': 'Aries',
-                Stocks: 50,
-                Descriptions: 'Product description here'
-            }
-        ];
-
-        // Create worksheet
-        const ws = document.createElement('table');
-        ws.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Categories</th>
-                    <th>Products</th>
-                    <th>Price</th>
-                    <th>Tags</th>
-                    <th>Best Seller</th>
-                    <th>Zodiac Signs</th>
-                    <th>Stocks</th>
-                    <th>Descriptions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Healing Crystals</td>
-                    <td>Sample Product</td>
-                    <td>1999.00</td>
-                    <td>Healing, Meditation</td>
-                    <td>FALSE</td>
-                    <td>Aries</td>
-                    <td>50</td>
-                    <td>Product description here</td>
-                </tr>
-            </tbody>
-        `;
-
-        // Convert to CSV for simplicity
-        const csv = 'Categories,Products,Price,Tags,Best Seller,Zodiac Signs,Stocks,Descriptions\nHealing Crystals,Sample Product,1999.00,"Healing, Meditation",FALSE,Aries,50,"Product description here"\n';
-        const blob = new Blob([csv], { type: 'text/csv' });
+        // Create CSV with header and sample rows
+        const csv = `Categories,Products,Price,Tags,Best Seller,Zodiac Signs,Stocks,Descriptions
+Healing Crystals,Amethyst Cluster,2499.00,"Healing, Meditation",TRUE,Pisces,50,Natural amethyst for spiritual healing
+Healing Crystals,Rose Quartz Heart,1299.00,"Love, Healing",TRUE,Taurus,30,Heart-shaped rose quartz for emotional healing
+Protective Stones,Black Tourmaline,1299.00,"Protection, Grounding",FALSE,Capricorn,75,Protective grounding stone
+Energy Stones,Citrine Point,899.00,"Success, Abundance",TRUE,Leo,100,Prosperity and success stone`;
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
