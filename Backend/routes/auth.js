@@ -6,7 +6,7 @@ import User from '../models/User.js';
 import { getNextSequence } from '../models/Counter.js';
 const router = express.Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'auric_krystals_secret_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Register
 router.post('/register', async (req, res) => {
@@ -63,7 +63,8 @@ const generateTokenAndRespond = async (user, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
-            zodiac_sign: user.zodiac_sign
+            zodiac_sign: user.zodiac_sign,
+            created_at: user.created_at
         }
     });
 };
@@ -174,7 +175,8 @@ router.get('/me', async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
-            zodiac_sign: user.zodiac_sign
+            zodiac_sign: user.zodiac_sign,
+            created_at: user.created_at
         });
     } catch (error) {
         res.status(401).json({ message: 'Invalid token' });

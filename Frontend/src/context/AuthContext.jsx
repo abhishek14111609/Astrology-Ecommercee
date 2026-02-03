@@ -4,6 +4,9 @@ import VITE_API_BASE_URL from '../config/api';
 
 const API_URL = VITE_API_BASE_URL;
 
+// Configure axios defaults globally to send credentials (cookies) with all requests
+axios.defaults.withCredentials = true;
+
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -11,9 +14,6 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    // Configure axios defaults
-    axios.defaults.withCredentials = true;
 
     const checkAuth = async () => {
         try {

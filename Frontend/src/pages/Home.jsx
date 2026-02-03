@@ -1,19 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, ShieldCheck, Truck, Headphones, Compass, Heart, Gem } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Truck, Headphones, Compass, Heart, Gem, X, Loader2 } from 'lucide-react';
 import Button from '../components/UI/Button';
 import SectionHeading from '../components/UI/SectionHeading';
 import ProductCard from '../components/UI/ProductCard';
 import { products as allProducts } from '../data/products';
 import VITE_API_BASE_URL from '../config/api';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 import MysticalSlider from '../components/UI/MysticalSlider';
 
 const Home = () => {
-    const [bestSellers, setBestSellers] = React.useState([]);
-    const [zodiacProducts, setZodiacProducts] = React.useState([]);
-    const [selectedZodiac, setSelectedZodiac] = React.useState('Aries');
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    const [bestSellers, setBestSellers] = useState([]);
+    const [zodiacProducts, setZodiacProducts] = useState([]);
+    const [selectedZodiac, setSelectedZodiac] = useState('Aries');
+    const [showBookingModal, setShowBookingModal] = useState(false);
+    const [selectedService, setSelectedService] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [bookingData, setBookingData] = useState({
+        preferred_date: '',
+        preferred_time: '',
+        message: ''
+    });
 
     // Fetch Bestsellers
     React.useEffect(() => {
@@ -82,6 +94,41 @@ const Home = () => {
         { name: "Aquarius", icon: "♒" },
         { name: "Pisces", icon: "♓" }
     ];
+
+    const handleBookSession = (service) => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+        setSelectedService(service);
+        setShowBookingModal(true);
+    };
+
+    const handleInputChange = (e) => {
+        setBookingData({ ...bookingData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmitBooking = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            await axios.post(`${VITE_API_BASE_URL}/api/service-bookings/create`, {
+                service_title: selectedService.title,
+                service_subtitle: selectedService.subtitle,
+                service_price: selectedService.price,
+                ...bookingData
+            });
+
+            alert('Booking request submitted successfully! We will contact you soon.');
+            setShowBookingModal(false);
+            setBookingData({ preferred_date: '', preferred_time: '', message: '' });
+        } catch (error) {
+            alert(error.response?.data?.message || 'Failed to submit booking');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="bg-auric-blush">
@@ -167,7 +214,13 @@ const Home = () => {
                             <p className="text-gray-600 leading-relaxed mb-8">{service.desc}</p>
                             <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-50">
                                 <span className="text-2xl font-serif font-bold text-auric-rose">{service.price}</span>
-                                <Button variant="outline" className="text-xs px-4 py-2 border-auric-gold text-auric-gold hover:bg-auric-gold hover:text-white">Book Session</Button>
+                                <Button 
+                                    onClick={() => handleBookSession(service)}
+                                    variant="outline" 
+                                    className="text-xs px-4 py-2 border-auric-gold text-auric-gold hover:bg-auric-gold hover:text-white"
+                                >
+                                    Book Session
+                                </Button>
                             </div>
                         </div>
                     ))}
@@ -227,6 +280,88 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Booking Modal */}
+            {showBookingModal && selectedService && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+                    <div className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl transform transition-all max-h-[90vh] overflow-y-auto">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="font-serif text-2xl font-bold text-auric-rose">Book {selectedService.title}</h3>
+                            <button onClick={() => setShowBookingModal(false)} className="text-gray-400 hover:text-gray-600">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <div className="bg-auric-blush/30 p-4 rounded-xl mb-6">
+                            <p className="text-sm text-gray-600 mb-1">{selectedService.subtitle}</p>
+                            <p className="text-2xl font-serif font-bold text-auric-rose">{selectedService.price}</p>
+                        </div>
+
+                        <form onSubmit={handleSubmitBooking} className="space-y-4">
+                            <div>
+                                <label className="text-sm font-medium text-gray-700 block mb-2">Preferred Date</label>
+                                <input
+                                    type="date"
+                                    name="preferred_date"
+                                    required
+                                    value={bookingData.preferred_date}
+                                    onChange={handleInputChange}
+                                    min={new Date().toISOString().split('T')[0]}
+                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-auric-gold"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-sm font-medium text-gray-700 block mb-2">Preferred Time</label>
+                                <input
+                                    type="time"
+                                    name="preferred_time"
+                                    required
+                                    value={bookingData.preferred_time}
+                                    onChange={handleInputChange}
+                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-auric-gold"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-sm font-medium text-gray-700 block mb-2">Message (Optional)</label>
+                                <textarea
+                                    name="message"
+                                    value={bookingData.message}
+                                    onChange={handleInputChange}
+                                    rows="4"
+                                    placeholder="Any specific requirements or questions..."
+                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-auric-gold resize-none"
+                                ></textarea>
+                            </div>
+
+                            <div className="flex gap-4 mt-6">
+                                <Button
+                                    type="button"
+                                    onClick={() => setShowBookingModal(false)}
+                                    variant="secondary"
+                                    className="flex-1 py-3"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    disabled={loading}
+                                    variant="primary"
+                                    className="flex-1 py-3 flex items-center justify-center gap-2"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <Loader2 className="animate-spin" size={16} />
+                                            Submitting...
+                                        </>
+                                    ) : 'Submit Request'}
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

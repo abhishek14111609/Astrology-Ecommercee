@@ -13,6 +13,7 @@ import xlsx from 'xlsx';
 import fs from 'fs';
 import path from 'path';
 import { notifyOrderStatusUpdate } from '../utils/notifications.js';
+import { applyWatermarkInPlace } from '../utils/watermark.js';
 const router = express.Router();
 
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
@@ -63,10 +64,23 @@ const uploadImageMiddleware = multer({
 });
 
 // Image Upload Route
-router.post('/upload-image', authenticateToken, isAdmin, uploadImageMiddleware.single('image'), (req, res) => {
+router.post('/upload-image', authenticateToken, isAdmin, uploadImageMiddleware.single('image'), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ message: 'No image uploaded' });
-        const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+        
+        const uploadedImagePath = req.file.path;
+        
+        // Apply watermark to the uploaded image
+        try {
+            await applyWatermarkInPlace(uploadedImagePath);
+        } catch (watermarkError) {
+            // Log the error but don't fail the upload - just serve without watermark
+            console.error('Watermark application failed:', watermarkError);
+        }
+        
+        const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+        const host = req.get('host');
+        const imageUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
         res.json({ imageUrl });
     } catch (error) {
         res.status(500).json({ message: 'Error uploading image', error: error.message });
@@ -555,6 +569,17 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
         console.log('First row keys:', Object.keys(data[0]));
         console.log('First row data:', data[0]);
 
+        // Show normalization example for first row
+        if (data.length > 0) {
+            console.log('Sample column mapping:');
+            const sampleRow = data[0];
+            for (const key in sampleRow) {
+                const cleanedKey = key.replace(/^\uFEFF/, '').trim();
+                const normalizedKey = cleanedKey.toLowerCase().replace(/\s+/g, '_');
+                console.log(`  "${key}" → "${normalizedKey}"`);
+            }
+        }
+
         const results = {
             success: [],
             failed: [],
@@ -570,6 +595,9 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                     products: 'name',
                     product: 'name',
                     product_name: 'name',
+                    price: 'price',
+                    mrp: 'price',
+                    amount: 'price',
                     categories: 'category_name',
                     category: 'category_name',
                     category_name: 'category_name',
@@ -577,11 +605,16 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                     subcategory: 'sub_category_name',
                     sub_category_name: 'sub_category_name',
                     zodiac_signs: 'zodiac_sign',
+                    zodiac_sign: 'zodiac_sign',
                     zodiac: 'zodiac_sign',
                     best_seller: 'is_bestseller',
                     bestseller: 'is_bestseller',
                     stocks: 'stock',
-                    descriptions: 'description'
+                    stock: 'stock',
+                    descriptions: 'description',
+                    description: 'description',
+                    tags: 'tags',
+                    tag: 'tags'
                 };
 
                 for (const key in row) {
@@ -591,22 +624,49 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                     normalizedRow[mappedKey] = row[key];
                 }
 
-                // Fallback: detect name/price columns dynamically
-                if (!normalizedRow.name) {
+                // Log first row mapping for debugging
+                if (data.indexOf(row) === 1) { // Log second row (index 1) to see actual data
+                    console.log('Row mapping for debugging:');
+                    console.log('Original row:', row);
+                    console.log('Normalized row:', normalizedRow);
+                }
+
+                // Fallback: detect name/price columns dynamically if not already mapped
+                if (!normalizedRow.name || normalizedRow.name === '') {
                     const nameKey = Object.keys(row).find(k => /product|products|name/i.test(k));
                     if (nameKey) normalizedRow.name = row[nameKey];
                 }
-                if (!normalizedRow.price) {
+                if (!normalizedRow.price || normalizedRow.price === '') {
                     const priceKey = Object.keys(row).find(k => /price|mrp|amount/i.test(k));
                     if (priceKey) normalizedRow.price = row[priceKey];
                 }
 
-                // Trim string values
+                // Trim and clean string values
                 if (typeof normalizedRow.name === 'string') {
                     normalizedRow.name = normalizedRow.name.trim();
                 }
                 if (typeof normalizedRow.price === 'string') {
-                    normalizedRow.price = normalizedRow.price.replace(/[^0-9.]/g, '').trim();
+                    normalizedRow.price = normalizedRow.price.trim();
+                    // Remove currency symbols and extra characters, keep only numbers and decimal
+                    const cleanPrice = normalizedRow.price.replace(/[^0-9.]/g, '').trim();
+                    normalizedRow.price = cleanPrice || normalizedRow.price; // Keep original if cleaning removes everything
+                }
+
+                // Ensure price is a valid number string
+                if (normalizedRow.price !== undefined && normalizedRow.price !== null) {
+                    const priceStr = String(normalizedRow.price).trim();
+                    if (priceStr === '' || priceStr === '0' || priceStr === '0.00') {
+                        normalizedRow.price = ''; // Mark as invalid
+                    } else {
+                        const numPrice = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
+                        if (!isNaN(numPrice) && numPrice > 0) {
+                            normalizedRow.price = numPrice.toString();
+                        } else {
+                            normalizedRow.price = ''; // Mark as invalid
+                        }
+                    }
+                } else {
+                    normalizedRow.price = ''; // Mark as invalid if undefined
                 }
 
                 // Skip completely empty rows
@@ -617,9 +677,13 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
 
                 // Validate required fields
                 if (!normalizedRow.name || !normalizedRow.price) {
+                    const missingFields = [];
+                    if (!normalizedRow.name) missingFields.push('name (Products column)');
+                    if (!normalizedRow.price) missingFields.push('price (Price column)');
+                    
                     results.failed.push({
                         row: row,
-                        error: `Missing required fields: name or price. Found columns: ${Object.keys(row).join(', ')}`
+                        error: `Missing required fields: ${missingFields.join(' and ')}. Row values: name="${normalizedRow.name}", price="${normalizedRow.price}". Provided columns: ${Object.keys(row).join(', ')}`
                     });
                     continue;
                 }
