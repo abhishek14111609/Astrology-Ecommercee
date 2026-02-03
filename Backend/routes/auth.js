@@ -39,7 +39,36 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// Login
+// Login - Generic handler for token generation
+const generateTokenAndRespond = async (user, res) => {
+    // Generate Token
+    const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        JWT_SECRET,
+        { expiresIn: '24h' }
+    );
+
+    // Set Cookie
+    res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000
+    });
+
+    res.json({
+        message: 'Login successful',
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            zodiac_sign: user.zodiac_sign
+        }
+    });
+};
+
+// Login - Main endpoint (used internally or by specific clients)
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -56,31 +85,67 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Generate Token
-        const token = jwt.sign(
-            { id: user.id, email: user.email, role: user.role },
-            JWT_SECRET,
-            { expiresIn: '24h' }
-        );
+        await generateTokenAndRespond(user, res);
+    } catch (error) {
+        res.status(500).json({ message: 'Login failed', error: error.message });
+    }
+});
 
-        // Set Cookie
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // true in production
-            sameSite: 'lax', // or 'none' if cross-site in prod
-            maxAge: 24 * 60 * 60 * 1000 // 24 hours
-        });
+// User Login - Only for regular users (rejects admins)
+router.post('/user-login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
 
-        res.json({
-            message: 'Login successful',
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                zodiac_sign: user.zodiac_sign
-            }
-        });
+        await connect();
+        const user = await User.findOne({ email }).lean();
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        // Check password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        // Reject admin users
+        if (user.role === 'admin') {
+            return res.status(403).json({ 
+                message: 'Admin accounts cannot access the frontend. Please use the admin panel.' 
+            });
+        }
+
+        await generateTokenAndRespond(user, res);
+    } catch (error) {
+        res.status(500).json({ message: 'Login failed', error: error.message });
+    }
+});
+
+// Admin Login - Only for admin users (rejects regular users)
+router.post('/admin-login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        await connect();
+        const user = await User.findOne({ email }).lean();
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        // Check password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        // Only allow admin users
+        if (user.role !== 'admin') {
+            return res.status(403).json({ 
+                message: 'This login is for admin access only. Please use the customer login.' 
+            });
+        }
+
+        await generateTokenAndRespond(user, res);
     } catch (error) {
         res.status(500).json({ message: 'Login failed', error: error.message });
     }

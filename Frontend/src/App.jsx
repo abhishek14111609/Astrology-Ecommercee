@@ -25,6 +25,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import GemstoneFinder from './pages/GemstoneFinder';
 import ScrollToTop from './components/Layout/ScrollToTop';
+import QuizPopup from './components/UI/QuizPopup';
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
       <NotificationProvider>
         <CartProvider>
           <BrowserRouter>
+            <QuizPopup />
             <ScrollToTop />
             <Routes>
               <Route path="/" element={<MasterLayout />}>

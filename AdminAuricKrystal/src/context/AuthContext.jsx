@@ -32,7 +32,8 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const res = await axios.post(`${VITE_API_BASE_URL}/api/auth/login`, { email, password });
+        // Use admin-specific login endpoint to prevent regular user access
+        const res = await axios.post(`${VITE_API_BASE_URL}/api/auth/admin-login`, { email, password });
         setUser(res.data.user);
         return res.data;
     };

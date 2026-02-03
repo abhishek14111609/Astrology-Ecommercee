@@ -1,30 +1,19 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Star, ShieldCheck, Truck, Headphones, Compass, Heart, Gem } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowRight, ShieldCheck, Truck, Headphones, Compass, Heart, Gem } from 'lucide-react';
 import Button from '../components/UI/Button';
 import SectionHeading from '../components/UI/SectionHeading';
 import ProductCard from '../components/UI/ProductCard';
 import { products as allProducts } from '../data/products';
 import VITE_API_BASE_URL from '../config/api';
 
-import HeroSlider from '../components/UI/HeroSlider';
-import slider1 from '../assets/images/slider1.jpeg';
-import slider2 from '../assets/images/slider2.jpeg';
-import slider3 from '../assets/images/slider3.jpeg';
+import MysticalSlider from '../components/UI/MysticalSlider';
 
 const Home = () => {
-    const targetRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: targetRef,
-        offset: ["start end", "end start"]
-    });
-
     const [bestSellers, setBestSellers] = React.useState([]);
     const [zodiacProducts, setZodiacProducts] = React.useState([]);
     const [selectedZodiac, setSelectedZodiac] = React.useState('Aries');
-
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
 
     // Fetch Bestsellers
     React.useEffect(() => {
@@ -33,7 +22,7 @@ const Home = () => {
                 const res = await fetch(`${VITE_API_BASE_URL}/api/products?is_bestseller=1`);
                 const data = await res.json();
                 setBestSellers(data.length > 0 ? data.slice(0, 4) : allProducts.slice(0, 4));
-            } catch (err) {
+            } catch {
                 setBestSellers(allProducts.slice(0, 4));
             }
         };
@@ -79,8 +68,6 @@ const Home = () => {
         }
     ];
 
-    const products = allProducts.slice(0, 4);
-
     const zodiacs = [
         { name: "Aries", icon: "♈" },
         { name: "Taurus", icon: "♉" },
@@ -96,53 +83,10 @@ const Home = () => {
         { name: "Pisces", icon: "♓" }
     ];
 
-    const slides = [
-        {
-            image: slider1,
-            subtitle: "Unlock Your Destiny",
-            title: "Ancient Wisdom for Modern Life",
-            desc: "Get precise Zodiac readings, premium crystal and gemstones spiritual remedies from India's most trusted astrologers."
-        },
-        {
-            image: slider2,
-            subtitle: "Healing Crystals",
-            title: "Energize Your Soul",
-            desc: "Discover our exclusive collection of energized gemstones and crystals to bring balance and harmony to your life."
-        },
-        {
-            image: slider3,
-            subtitle: "Expert Consultation",
-            title: "Guidance from the Stars",
-            desc: "Connect with our experienced astrologers for personalized readings and finding your true path."
-        }
-    ];
-
     return (
         <div className="bg-auric-blush">
             {/* Hero Section */}
-            <section ref={targetRef} className="relative h-screen flex items-center justify-center overflow-hidden bg-white text-center px-4">
-                <HeroSlider slides={slides}>
-                    <div className="flex flex-wrap justify-center gap-4">
-                        <a
-                            href="https://wa.me/917043216616?text=Hello%2C%20I%20would%20like%20to%20consult%20with%20an%20astrologer%20regarding%20my%20birth%20chart%20and%20future%20predictions.%20Please%20guide%20me."
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <Button variant="primary">
-                                Talk to Astrologer
-                            </Button>
-                        </a>
-                        <Link to="/shop">
-                            <Button variant="outline" className="text-white border-white hover:bg-white hover:text-auric-rose">
-                                Shop Collection
-                            </Button>
-                        </Link>
-                    </div>
-                </HeroSlider>
-
-                {/* Decorative gradients */}
-                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-auric-blush to-transparent pointer-events-none"></div>
-            </section>
+            <MysticalSlider />
 
 
             {/* Gemstone Finder CTA */}
