@@ -13,6 +13,7 @@ import xlsx from 'xlsx';
 import fs from 'fs';
 import path from 'path';
 import { notifyOrderStatusUpdate } from '../utils/notifications.js';
+import { applyWatermarkInPlace } from '../utils/watermark.js';
 const router = express.Router();
 
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
@@ -63,10 +64,23 @@ const uploadImageMiddleware = multer({
 });
 
 // Image Upload Route
-router.post('/upload-image', authenticateToken, isAdmin, uploadImageMiddleware.single('image'), (req, res) => {
+router.post('/upload-image', authenticateToken, isAdmin, uploadImageMiddleware.single('image'), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ message: 'No image uploaded' });
-        const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+        
+        const uploadedImagePath = req.file.path;
+        
+        // Apply watermark to the uploaded image
+        try {
+            await applyWatermarkInPlace(uploadedImagePath);
+        } catch (watermarkError) {
+            // Log the error but don't fail the upload - just serve without watermark
+            console.error('Watermark application failed:', watermarkError);
+        }
+        
+        const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+        const host = req.get('host');
+        const imageUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
         res.json({ imageUrl });
     } catch (error) {
         res.status(500).json({ message: 'Error uploading image', error: error.message });

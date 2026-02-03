@@ -45,10 +45,17 @@ const ProductManagement = () => {
     const [uploading, setUploading] = useState(false);
     const [uploadResult, setUploadResult] = useState(null);
     const [showUploadModal, setShowUploadModal] = useState(false);
+    const [imageUploading, setImageUploading] = useState(false);
 
     // API helper functions
     const getBase = () => VITE_API_BASE_URL?.replace(/\/$/, '').replace(/\/api$/, '');
     const apiUrl = (path) => `${getBase()}/api${path}`;
+    const getImageUrl = (path) => {
+        if (!path) return '';
+        if (path.startsWith('http://') || path.startsWith('https://')) return path;
+        const cleanPath = path.replace(/^\//, '');
+        return `${getBase()}/${cleanPath}`;
+    };
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
         return token ? { Authorization: `Bearer ${token}` } : {};
@@ -81,6 +88,7 @@ const ProductManagement = () => {
         const file = e.target.files[0];
         if (!file) return;
 
+        setImageUploading(true);
         const formData = new FormData();
         formData.append('image', file);
 
@@ -91,10 +99,14 @@ const ProductManagement = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            setForm(prev => ({ ...prev, image_url: response.data.imageUrl }));
+            console.log('Upload response:', response.data);
+            const uploadedUrl = response.data.imageUrl || response.data.image_url || response.data.url || response.data.path;
+            setForm(prev => ({ ...prev, image_url: uploadedUrl || '' }));
         } catch (err) {
             console.error('Image upload error:', err);
-            alert('Failed to upload image');
+            alert('Failed to upload image: ' + (err.response?.data?.message || err.message));
+        } finally {
+            setImageUploading(false);
         }
     };
 
@@ -475,18 +487,25 @@ Energy Stones,Citrine Point,899.00,"Success, Abundance",TRUE,Leo,100,Prosperity 
                                             accept="image/*"
                                             onChange={handleImageUpload}
                                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                            disabled={imageUploading}
                                         />
                                         <div className="flex flex-col items-center justify-center text-center">
                                             <div className="w-10 h-10 bg-auric-purple/10 rounded-full flex items-center justify-center mb-2">
-                                                <Upload size={18} className="text-auric-purple" />
+                                                {imageUploading ? (
+                                                    <Loader2 size={18} className="text-auric-purple animate-spin" />
+                                                ) : (
+                                                    <Upload size={18} className="text-auric-purple" />
+                                                )}
                                             </div>
-                                            <p className="text-xs font-medium text-neutral-900">Click to upload image</p>
+                                            <p className="text-xs font-medium text-neutral-900">
+                                                {imageUploading ? 'Uploading...' : 'Click to upload image'}
+                                            </p>
                                             <p className="text-[10px] text-neutral-500 mt-1">PNG, JPG up to 5MB</p>
                                         </div>
                                     </div>
                                     {form.image_url && (
                                         <div className="mt-3 relative w-full h-48 rounded-lg overflow-hidden border border-neutral-200 group">
-                                            <img src={form.image_url} alt="Preview" className="h-full w-full object-cover" />
+                                            <img src={getImageUrl(form.image_url)} alt="Preview" className="h-full w-full object-cover" />
                                             <button
                                                 type="button"
                                                 onClick={() => setForm(prev => ({ ...prev, image_url: '' }))}

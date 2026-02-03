@@ -42,7 +42,7 @@ const Header = () => {
               </span>
               <span className="text-[0.6rem] uppercase tracking-[0.2em] text-auric-gold font-medium mt-1">
                 Celestial Guidance
-              </span> */}
+              </span>
             </div>
           </Link>
 
