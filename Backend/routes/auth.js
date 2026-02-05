@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { connect } from '../db.js';
 import User from '../models/User.js';
 import { getNextSequence } from '../models/Counter.js';
+import { validateRegistrationInput } from '../utils/validation.js';
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -13,11 +14,25 @@ router.post('/register', async (req, res) => {
     try {
         const { name, email, phone, date_of_birth, password, zodiac_sign } = req.body;
 
+        // Validate input
+        const validation = validateRegistrationInput({ name, email, phone, password });
+        if (!validation.isValid) {
+            return res.status(400).json({ 
+                message: 'Validation failed',
+                error: 'INVALID_INPUT',
+                errors: validation.errors
+            });
+        }
+
         await connect();
 
         const existing = await User.findOne({ email }).lean();
         if (existing) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(400).json({ 
+                message: 'Email already registered',
+                error: 'DUPLICATE_EMAIL',
+                details: 'This email address is already associated with an account. Please login or use a different email.'
+            });
         }
 
         // Hash password
@@ -35,7 +50,21 @@ router.post('/register', async (req, res) => {
         });
         res.status(201).json({ message: 'User registered successfully', userId: user.id });
     } catch (error) {
-        res.status(500).json({ message: 'Registration failed', error: error.message });
+        // Handle MongoDB duplicate key error
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyPattern)[0];
+            return res.status(400).json({ 
+                message: `This ${field} is already registered`,
+                error: 'DUPLICATE_KEY_ERROR',
+                field: field,
+                details: `An account with this ${field} already exists. Please use a different ${field} or login with your existing account.`
+            });
+        }
+        
+        res.status(500).json({ 
+            message: 'Registration failed', 
+            error: error.message 
+        });
     }
 });
 
