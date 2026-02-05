@@ -50,17 +50,38 @@ const About = () => {
                 </div>
             </section>
 
+            {/* Dr. Krupali Mehta */}
+            <section className="py-20 bg-white">
+                <div className="container mx-auto px-4 max-w-6xl">
+                    <SectionHeading title="Meet Our Founder" subtitle="DR. KRUPALI MEHTA" />
+                    <div className="grid grid-cols-1 lg:grid-cols-1 gap-12 mt-12">
+                        <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-blush/40 via-white to-auric-gold/10">
+                            <div className="relative p-10 space-y-6 backdrop-blur-sm">
+                                <h3 className="font-serif text-3xl font-bold text-auric-rose">Dr. Krupali Mehta</h3>
+                                <p className="text-gray-700 leading-relaxed">
+                                    My journey as an astrologer began with a quiet inner calling to understand energy, destiny, and the deeper reasons behind life's patterns. From an early stage, I felt naturally drawn toward planets, numbers, and unseen forces that influence human lives. Astrology became a language of the soul—one that helped me see meaning even in the most challenging phases.
+                                </p>
+                                <p className="text-gray-700 leading-relaxed">
+                                    Through years of study and spiritual discipline, I realized that planetary guidance alone is only one part of the journey. I discovered how deeply energy affects emotions, decisions, and life flow. This awareness gradually led me toward crystal healing—where Earth's natural energies work in harmony with cosmic influences to support balance and transformation.
+                                </p>
+                                <p className="text-gray-700 leading-relaxed">
+                                    Auric Krystals was born from this realization—a sacred bridge between astrology and energy healing where planetary wisdom meets the pure, natural power of crystals. Each crystal is chosen not only for its beauty, but for its vibration and purpose, cleansed and charged with intention before reaching you.
+                                </p>
+                                <p className="text-gray-700 leading-relaxed">
+                                    My purpose remains constant—to offer clarity, healing, and alignment. When cosmic knowledge and Earth's energy come together with pure intention, they create gentle yet powerful shifts, helping individuals walk their life path with awareness, strength, and trust.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Mission & Vision */}
             <section className="py-20 bg-white">
                 <div className="container mx-auto px-4 max-w-6xl">
                     <SectionHeading title="Why We Exist" subtitle="OUR MISSION & VISION" />
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12">
                         <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-blush/60 via-white to-auric-gold/20">
-                            <img
-                                src="/images/about/mission-crystals.jpg"
-                                alt="Auric krystalss mission"
-                                className="absolute inset-0 w-full h-full object-cover opacity-70"
-                            />
                             <div className="relative p-10 space-y-6 backdrop-blur-sm">
                                 <h3 className="font-serif text-3xl font-bold text-auric-rose">Our Mission</h3>
                                 <p className="text-gray-700 leading-relaxed">
@@ -70,11 +91,6 @@ const About = () => {
                         </div>
 
                         <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-gold/15 via-white to-auric-blush/50">
-                            <img
-                                src="/images/about/founder.png"
-                                alt="Auric krystalss vision"
-                                className="absolute inset-0 w-full h-full object-cover opacity-70"
-                            />
                             <div className="relative p-10 space-y-6 backdrop-blur-sm">
                                 <h3 className="font-serif text-3xl font-bold text-auric-rose">Our Vision</h3>
                                 <p className="text-gray-700 leading-relaxed">
