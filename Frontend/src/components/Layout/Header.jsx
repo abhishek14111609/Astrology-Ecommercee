@@ -4,7 +4,7 @@ import { User, ShoppingBag, Menu, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import NotificationDropdown from './NotificationDropdown';
-import logo from '../../assets/images/logo.png';
+import logo from '../../assets/images/mnlg.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,18 +32,18 @@ const Header = () => {
               <img
                 src={logo}
                 alt="Auric krystals"
-                className="h-12 md:h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+                className="h-16 md:h-20 lg:h-24 w-56 object-contain transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute -inset-1 bg-auric-gold/10 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              {/* <div className="absolute -inset-1 bg-auric-gold/10 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div> */}
             </div>
-            <div className="flex flex-col">
+            {/* <div className="flex flex-col">
               <span className="font-serif text-3xl md:text-xl font-bold text-auric-rose tracking-wider leading-none">
                 Auric krystals
               </span>
               <span className="text-[0.6rem] uppercase tracking-[0.2em] text-auric-gold font-medium mt-1">
                 Celestial Guidance
               </span>
-            </div>
+            </div> */}
           </Link>
 
           {/* Desktop Navigation */}
