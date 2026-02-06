@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import news1 from '../../assets/images/news1.jpeg';
-import news2 from '../../assets/images/news2.jpeg';
-import news3 from '../../assets/images/news3.jpeg';
-import news4 from '../../assets/images/news4.jpeg';
+import news1 from '../../assets/images/1.png';
+import news2 from '../../assets/images/2.png';
+import news3 from '../../assets/images/3.png';
+import news4 from '../../assets/images/5.png';
 
 const MysticalSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -10,68 +10,68 @@ const MysticalSlider = () => {
   const slides = [
     {
       id: 1,
-    //   title: 'Auric Krystals',
-    //   subtitle: 'Pure Energy. Authentic Crystals. Conscious Living.',
-    //   description: 'Certified Crystals & Gemstones • Spiritual & Energy Products',
-    //   ctaText: 'Explore Products',
-    //   ctaAction: () => navigate('/shop'),
-    //   bgGradient: 'from-purple-900 via-purple-800 to-indigo-900',
+      //   title: 'Auric Krystals',
+      //   subtitle: 'Pure Energy. Authentic Crystals. Conscious Living.',
+      //   description: 'Certified Crystals & Gemstones • Spiritual & Energy Products',
+      //   ctaText: 'Explore Products',
+      //   ctaAction: () => navigate('/shop'),
+      //   bgGradient: 'from-purple-900 via-purple-800 to-indigo-900',
       imageUrl: news1,
-    //   icon: '✨',
+      //   icon: '✨',
     },
     {
       id: 2,
-    //   title: 'Meet Our Modern Astro Guide',
-    //   subtitle: 'Dr. Krupali R. Mehta',
-    //   description: 'Your Path, Our Guidance',
-    //   features: [
-    //     'VedicKundali Consultation',
-    //     'Kundali Matching',
-    //     'Numerology',
-    //     'Tarot Card Reading',
-    //     'Vastu Guidance',
-    //     'Healing Sessions',
-    //     'Relationship Counselling',
-    //     'Career Counselling',
-    //   ],
-    //   ctaText: 'Book Consultation',
-    //   ctaAction: () => navigate('/services'),
-    //   bgGradient: 'from-purple-900 via-purple-800 to-indigo-900',
+      //   title: 'Meet Our Modern Astro Guide',
+      //   subtitle: 'Dr. Krupali R. Mehta',
+      //   description: 'Your Path, Our Guidance',
+      //   features: [
+      //     'VedicKundali Consultation',
+      //     'Kundali Matching',
+      //     'Numerology',
+      //     'Tarot Card Reading',
+      //     'Vastu Guidance',
+      //     'Healing Sessions',
+      //     'Relationship Counselling',
+      //     'Career Counselling',
+      //   ],
+      //   ctaText: 'Book Consultation',
+      //   ctaAction: () => navigate('/services'),
+      //   bgGradient: 'from-purple-900 via-purple-800 to-indigo-900',
       imageUrl: news2,
-    //   icon: '🌟',
+      //   icon: '🌟',
     },
     {
       id: 3,
-    //   title: 'Why Our Crystal Products Are Different',
-    //   subtitle: 'You might notice our prices differ from other crystal sellers—and here\'s why:',
-    //   description: 'At Auric Krystals, we provide energized experiences',
-    //   features: [
-    //     'Energized Authentic Crystal Bracelet',
-    //     'Certificate of Authenticity',
-    //     'Each product energized & prepared thoughtfully',
-    //     'Every crystal delivers positive energy',
-    //   ],
-    //   ctaText: 'Learn More',
-    //   ctaAction: () => navigate('/about'),
-    //   bgGradient: 'from-purple-900 via-purple-800 to-indigo-900',
+      //   title: 'Why Our Crystal Products Are Different',
+      //   subtitle: 'You might notice our prices differ from other crystal sellers—and here\'s why:',
+      //   description: 'At Auric Krystals, we provide energized experiences',
+      //   features: [
+      //     'Energized Authentic Crystal Bracelet',
+      //     'Certificate of Authenticity',
+      //     'Each product energized & prepared thoughtfully',
+      //     'Every crystal delivers positive energy',
+      //   ],
+      //   ctaText: 'Learn More',
+      //   ctaAction: () => navigate('/about'),
+      //   bgGradient: 'from-purple-900 via-purple-800 to-indigo-900',
       imageUrl: news3,
-    //   icon: '💎',
+      //   icon: '💎',
     },
     {
       id: 4,
-    //   title: 'Hampers by Auric Krystals',
-    //   subtitle: 'Why gift ordinary or artificial items?',
-    //   description: 'When you can gift positive energy, intention, and healing vibrations',
-    //   features: [
-    //     'Corporate Gift Hampers',
-    //     'Return Gifts for All Occasions',
-    //     'Diwali Gift Hampers',
-    //   ],
-    //   ctaText: 'View Hampers',
-    //   ctaAction: () => navigate('/shop'),
-    //   bgGradient: 'from-purple-900 via-purple-800 to-indigo-900',
+      //   title: 'Hampers by Auric Krystals',
+      //   subtitle: 'Why gift ordinary or artificial items?',
+      //   description: 'When you can gift positive energy, intention, and healing vibrations',
+      //   features: [
+      //     'Corporate Gift Hampers',
+      //     'Return Gifts for All Occasions',
+      //     'Diwali Gift Hampers',
+      //   ],
+      //   ctaText: 'View Hampers',
+      //   ctaAction: () => navigate('/shop'),
+      //   bgGradient: 'from-purple-900 via-purple-800 to-indigo-900',
       imageUrl: news4,
-    //   icon: '🎁',
+      //   icon: '🎁',
     },
   ];
 
@@ -98,24 +98,24 @@ const MysticalSlider = () => {
   const slide = slides[currentSlide];
 
   return (
-    <div className="relative w-full min-h-screen md:h-screen overflow-hidden">
+    <div className="relative w-full h-[300px] xs:h-[350px] sm:h-[450px] md:h-[550px] lg:h-[650px] xl:h-[700px] overflow-hidden bg-gray-900">
       {/* Slides Container */}
       <div className="relative w-full h-full">
         {slides.map((s, index) => (
           <div
             key={s.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
           >
             {/* Background Image */}
-            <div
-              className="absolute inset-0 bg-center bg-cover bg-no-repeat"
-              style={{ backgroundImage: `url(${s.imageUrl})` }}
+            <img
+              src={s.imageUrl}
+              alt={`Slide ${s.id}`}
+              className="absolute inset-0 w-full h-full object-cover object-center"
             />
 
             {/* Dark Overlay for Text Readability */}
-            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20" />
 
             {/* Content */}
             <div className="relative w-full h-full flex items-center justify-center px-3 sm:px-6 md:px-8 py-8 sm:py-12 md:py-0">
@@ -166,10 +166,10 @@ const MysticalSlider = () => {
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        // className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 bg-white/20 hover:bg-white/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300 transform hover:scale-110"
+        className="absolute left-1 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white p-1.5 sm:p-2 md:p-3 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
         aria-label="Previous slide"
       >
-        <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -181,10 +181,10 @@ const MysticalSlider = () => {
 
       <button
         onClick={nextSlide}
-        // className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 bg-white/20 hover:bg-white/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300 transform hover:scale-110"
+        className="absolute right-1 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white p-1.5 sm:p-2 md:p-3 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
         aria-label="Next slide"
       >
-        <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -195,17 +195,16 @@ const MysticalSlider = () => {
       </button>
 
       {/* Dot Indicators */}
-      <div className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-2 sm:gap-3">
+      <div className="absolute bottom-3 sm:bottom-4 md:bottom-6 lg:bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 sm:gap-2 md:gap-3">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            // className={`rounded-full transition-all duration-300 ${
-            //   index === currentSlide
-            //     ? 'bg-amber-300 w-6 sm:w-8 h-3'
-            //     : 'w-2 sm:w-3 h-2 sm:h-3 bg-white/40 hover:bg-white/60'
-            // }`}
-            // aria-label={`Go to slide ${index + 1}`}
+            className={`rounded-full transition-all duration-300 shadow-md ${index === currentSlide
+                ? 'bg-amber-400 w-5 sm:w-6 md:w-8 h-2.5 sm:h-3'
+                : 'w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 bg-white/50 hover:bg-white/70'
+              }`}
+            aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>
