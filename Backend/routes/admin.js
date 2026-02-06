@@ -582,6 +582,8 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
 
         const results = {
             success: [],
+            updated: [],
+            skipped: [],
             failed: [],
             total: data.length
         };
@@ -701,16 +703,6 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                     }
                 }
 
-                // Check if product already exists
-                const existingProduct = await Product.findOne({ slug }).lean();
-                if (existingProduct) {
-                    results.failed.push({
-                        row: row,
-                        error: 'Product with this slug already exists'
-                    });
-                    continue;
-                }
-
                 // Resolve category/subcategory from names if provided
                 let categoryId = normalizedRow.category_id ? parseInt(normalizedRow.category_id) : null;
                 let subCategoryId = normalizedRow.sub_category_id ? parseInt(normalizedRow.sub_category_id) : null;
@@ -762,6 +754,77 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                     }
                 }
 
+                // Check if product already exists (by slug)
+                const existingProduct = await Product.findOne({ slug }).lean();
+                if (existingProduct) {
+                    const updates = {};
+
+                    if (normalizedRow.name && normalizedRow.name !== existingProduct.name) {
+                        updates.name = normalizedRow.name;
+                    }
+                    if (normalizedRow.description && normalizedRow.description !== existingProduct.description) {
+                        updates.description = normalizedRow.description;
+                    }
+                    if (normalizedRow.price) {
+                        const parsedPrice = parseFloat(normalizedRow.price);
+                        if (!isNaN(parsedPrice) && parsedPrice !== existingProduct.price) {
+                            updates.price = parsedPrice;
+                        }
+                    }
+                    if (categoryId && categoryId !== existingProduct.category_id) {
+                        updates.category_id = categoryId;
+                    }
+                    if (subCategoryId && subCategoryId !== existingProduct.sub_category_id) {
+                        updates.sub_category_id = subCategoryId;
+                    }
+                    if (normalizedRow.zodiac_sign && normalizedRow.zodiac_sign !== existingProduct.zodiac_sign) {
+                        updates.zodiac_sign = normalizedRow.zodiac_sign;
+                    }
+                    if (normalizedRow.image_url && normalizedRow.image_url !== existingProduct.image_url) {
+                        updates.image_url = normalizedRow.image_url;
+                    }
+                    if (normalizedRow.is_bestseller !== undefined && normalizedRow.is_bestseller !== '') {
+                        const isBestSeller = normalizedRow.is_bestseller === 'TRUE' || normalizedRow.is_bestseller === 'true' || normalizedRow.is_bestseller === true || normalizedRow.is_bestseller === '1' || normalizedRow.is_bestseller === 1;
+                        if (isBestSeller !== existingProduct.is_bestseller) {
+                            updates.is_bestseller = isBestSeller;
+                        }
+                    }
+                    if (normalizedRow.tags) {
+                        const existingTags = Array.isArray(existingProduct.tags) ? existingProduct.tags.map(t => String(t).trim()) : [];
+                        const newTags = Array.isArray(tags) ? tags.map(t => String(t).trim()) : [];
+                        const existingSorted = [...existingTags].sort();
+                        const newSorted = [...newTags].sort();
+                        if (JSON.stringify(existingSorted) !== JSON.stringify(newSorted)) {
+                            updates.tags = newTags;
+                        }
+                    }
+                    if (normalizedRow.stock !== undefined && normalizedRow.stock !== null && String(normalizedRow.stock).trim() !== '') {
+                        const parsedStock = parseInt(normalizedRow.stock);
+                        if (!isNaN(parsedStock) && parsedStock !== existingProduct.stock) {
+                            updates.stock = parsedStock;
+                        }
+                    }
+
+                    if (Object.keys(updates).length > 0) {
+                        await Product.findOneAndUpdate(
+                            { id: existingProduct.id },
+                            updates,
+                            { new: true }
+                        );
+                        results.updated.push({
+                            name: existingProduct.name,
+                            id: existingProduct.id
+                        });
+                    } else {
+                        results.skipped.push({
+                            name: existingProduct.name,
+                            id: existingProduct.id,
+                            reason: 'No changes detected'
+                        });
+                    }
+                    continue;
+                }
+
                 // Create product
                 const id = await getNextSequence('products');
                 const product = await Product.create({
@@ -797,8 +860,12 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
             results: {
                 total: results.total,
                 successful: results.success.length,
+                updated: results.updated.length,
+                skipped: results.skipped.length,
                 failed: results.failed.length,
                 successList: results.success,
+                updatedList: results.updated,
+                skippedList: results.skipped,
                 failedList: results.failed
             }
         });

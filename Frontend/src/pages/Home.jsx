@@ -95,6 +95,64 @@ const Home = () => {
         { name: "Pisces", icon: "♓" }
     ];
 
+    const testimonials = [
+        {
+            name: 'Ananya Sharma',
+            // title: 'Jaipur, India',
+            quote: 'The gemstone recommendation was spot on. I felt calmer within days and the craftsmanship is stunning.',
+            rating: 5
+        },
+        {
+            name: 'Rohit Mehta',
+            // title: 'Mumbai, India',
+            quote: 'Authentic products and fast delivery. The kundali session was detailed and very insightful.',
+            rating: 5
+        },
+        {
+            name: 'Meera Iyer',
+            // title: 'Bengaluru, India',
+            quote: 'Beautiful packaging and genuine support. The team guided me patiently to choose the right rudraksha.',
+            rating: 4
+        },
+        {
+            name: 'Vikram Singh',
+            // title: 'Delhi, India',
+            quote: 'The birth chart analysis was incredibly accurate. It helped me understand my career path and make better decisions.',
+            rating: 5
+        },
+        {
+            name: 'Priya Kapoor',
+            // title: 'Pune, India',
+            quote: 'Amazing collection of rudraksha beads. The energization process explained by your team was very helpful.',
+            rating: 5
+        },
+        {
+            name: 'Amit Verma',
+            // title: 'Hyderabad, India',
+            quote: 'Fast shipping and authentic products. The shiva lingam crystal I ordered exceeded my expectations.',
+            rating: 5
+        },
+        {
+            name: 'Neha Gupta',
+            // title: 'Chennai, India',
+            quote: 'The love compatibility reading was eye-opening. Thank you for the honest and detailed analysis.',
+            rating: 4
+        },
+        {
+            name: 'Rahul Patel',
+            // title: 'Ahmedabad, India',
+            quote: 'Excellent customer service and genuine astrological guidance. Will definitely recommend to friends.',
+            rating: 5
+        },
+        {
+            name: 'Sanjana Reddy',
+            // title: 'Bangalore, India',
+            quote: 'The gemstone prescription changed my life. Feeling more balanced and focused since wearing my recommended stone.',
+            rating: 5
+        }
+    ];
+
+
     const handleBookSession = (service) => {
         if (!user) {
             navigate('/login');
@@ -280,6 +338,46 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Testimonials Marquee */}
+            <section className="py-20 bg-white">
+                <div className="container mx-auto px-4">
+                    <div className="text-center mb-12">
+                        <span className="text-auric-gold uppercase tracking-[0.2em] text-xs font-semibold">Testimonials</span>
+                        <h2 className="font-serif text-3xl md:text-4xl text-auric-rose font-bold mt-2">What Our Clients Say</h2>
+                    </div>
+
+                    <div className="space-y-8">
+                        {[0, 1].map((row) => (
+                            <div key={row} className="overflow-hidden">
+                                <div className={`testimonial-track ${row === 0 ? 'testimonial-left' : 'testimonial-right'}`}>
+                                    {[...testimonials, ...testimonials].map((item, index) => (
+                                        <div key={`${row}-${index}`} className="testimonial-card">
+                                            <div className="flex items-center gap-1 mb-3">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <span
+                                                        key={i}
+                                                        className={`text-sm ${i < item.rating ? 'text-auric-gold' : 'text-auric-rose/20'}`}
+                                                    >
+                                                        ★
+                                                    </span>
+                                                ))}
+                                            </div>
+                                            <p className="text-auric-rose text-sm leading-relaxed mb-6">“{item.quote}”</p>
+                                            <div>
+                                                <h4 className="font-serif text-lg font-bold text-auric-rose">{item.name}</h4>
+                                                <p className="text-xs text-auric-rose/70 uppercase tracking-widest">{item.title}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            
 
             {/* Booking Modal */}
             {showBookingModal && selectedService && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Filter, ChevronDown, ChevronUp, X, Search, Loader2 } from 'lucide-react';
 import ProductCard from '../components/UI/ProductCard';
 import VITE_API_BASE_URL from '../config/api';
@@ -6,12 +6,15 @@ import VITE_API_BASE_URL from '../config/api';
 const Shop = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [categories, setCategories] = useState(['All']);
     const [priceRange, setPriceRange] = useState(50000);
     const [sortBy, setSortBy] = useState('newest');
     const [searchQuery, setSearchQuery] = useState('');
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [isSortOpen, setIsSortOpen] = useState(false);
+    const categoryRef = useRef(null);
+    const sortRef = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -47,6 +50,24 @@ const Shop = () => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (categoryRef.current && !categoryRef.current.contains(event.target)) {
+                setIsCategoryOpen(false);
+            }
+            if (sortRef.current && !sortRef.current.contains(event.target)) {
+                setIsSortOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleOutsideClick);
+        document.addEventListener('touchstart', handleOutsideClick);
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+            document.removeEventListener('touchstart', handleOutsideClick);
+        };
+    }, []);
+
     // Filter Logic
     const filteredProducts = products.filter(product => {
         // Handle nested category structure
@@ -76,65 +97,162 @@ const Shop = () => {
             <div className="container mx-auto px-4">
 
                 {/* Page Header */}
-                <div className="mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center bg-white p-6 rounded-lg shadow-sm gap-4">
-                    <div>
-                        <h1 className="font-serif text-3xl font-bold text-auric-rose">Divine Shop</h1>
-                        <p className="text-gray-500 text-sm mt-1">Explore our collection of {sortedProducts.length} spiritual artifacts</p>
+                <div className="mb-8 rounded-2xl border border-auric-gold/10 bg-white/80 p-6 shadow-md backdrop-blur-sm">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <p className="text-xs uppercase tracking-[0.2em] text-auric-gold">Celestial Collection</p>
+                            <h1 className="font-serif text-3xl font-bold text-auric-rose">Divine Shop</h1>
+                            <p className="text-gray-500 text-sm mt-1">Explore our collection of {sortedProducts.length} spiritual artifacts</p>
+                        </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4 w-full lg:w-auto">
-                        <div className="relative flex-1 min-w-[200px] lg:flex-none lg:w-48">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                    <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
+                        <div className="relative h-full">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-auric-gold">
+                                <Search size={16} />
+                            </div>
                             <input
                                 type="text"
-                                placeholder="Search products..."
+                                placeholder="Search gems, rituals, artifacts..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-gray-50 border border-gray-200 rounded pl-10 pr-3 py-1 text-sm focus:outline-none focus:border-auric-gold"
+                                className="h-18 w-full rounded-xl border border-gray-200 bg-white px-10 text-sm shadow-sm outline-none transition focus:border-auric-gold focus:ring-2 focus:ring-auric-gold/30"
                             />
                         </div>
 
-                        <div className="flex items-center gap-2 flex-1 min-w-[200px] lg:flex-none">
-                            <span className="text-gray-500 text-sm whitespace-nowrap">Price:</span>
-                            <div className="flex items-center gap-2 flex-1">
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="50000"
-                                    step="1000"
-                                    value={priceRange}
-                                    onChange={(e) => setPriceRange(Number(e.target.value))}
-                                    className="flex-1 accent-auric-gold h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                                />
-                                <span className="text-sm font-medium text-auric-rose whitespace-nowrap">₹{priceRange}</span>
+                        <div className="flex h-18 flex-col justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-medium text-gray-500">Price Range</span>
+                                <span className="rounded-full bg-auric-blush px-2 py-0.5 text-xs font-semibold text-auric-rose">₹{priceRange}</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="0"
+                                max="50000"
+                                step="1000"
+                                value={priceRange}
+                                onChange={(e) => setPriceRange(Number(e.target.value))}
+                                className="w-full accent-auric-gold"
+                            />
+                            <div className="flex justify-between text-[10px] text-gray-400">
+                                <span>₹0</span>
+                                <span>₹50k</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <span className="text-gray-500 text-sm">Category:</span>
-                            <select
-                                value={selectedCategory}
-                                onChange={(e) => setSelectedCategory(e.target.value)}
-                                className="bg-gray-50 border border-gray-200 rounded px-3 py-1 text-sm focus:outline-none focus:border-auric-gold"
-                            >
-                                {categories.map(cat => (
-                                    <option key={cat} value={cat}>{cat}</option>
-                                ))}
-                            </select>
-                        </div>
+                        <label className="flex h-18 flex-col justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                            <span className="text-xs font-medium text-gray-500">Category</span>
+                            <div className="relative" ref={categoryRef}>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsCategoryOpen((prev) => !prev);
+                                        setIsSortOpen(false);
+                                    }}
+                                    aria-expanded={isCategoryOpen}
+                                    className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm outline-none transition focus:border-auric-gold focus:ring-2 focus:ring-auric-gold/30 lg:hidden"
+                                >
+                                    <span className="truncate">{selectedCategory}</span>
+                                    <ChevronDown size={16} className="text-gray-400" />
+                                </button>
+                                {isCategoryOpen && (
+                                    <ul className="absolute left-0 right-0 z-20 mt-2 max-h-56 overflow-auto rounded-lg border border-gray-200 bg-white py-1 text-sm shadow-lg lg:hidden">
+                                        {categories.map((cat) => (
+                                            <li key={cat}>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setSelectedCategory(cat);
+                                                        setIsCategoryOpen(false);
+                                                    }}
+                                                    className="block w-full px-3 py-2 text-left hover:bg-auric-blush"
+                                                >
+                                                    {cat}
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                                <select
+                                    value={selectedCategory}
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    className="hidden w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm outline-none transition focus:border-auric-gold focus:ring-2 focus:ring-auric-gold/30 lg:block"
+                                >
+                                    {categories.map(cat => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </label>
 
-                        <div className="flex items-center gap-2">
-                            <span className="text-gray-500 text-sm">Sort By:</span>
-                            <select
-                                value={sortBy}
-                                onChange={(e) => setSortBy(e.target.value)}
-                                className="bg-gray-50 border border-gray-200 rounded px-3 py-1 text-sm focus:outline-none focus:border-auric-gold"
-                            >
-                                <option value="newest">Newest Arrivals</option>
-                                <option value="price-low">Price: Low to High</option>
-                                <option value="price-high">Price: High to Low</option>
-                            </select>
-                        </div>
+                        <label className="flex h-18 flex-col justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                            <span className="text-xs font-medium text-gray-500">Sort By</span>
+                            <div className="relative" ref={sortRef}>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsSortOpen((prev) => !prev);
+                                        setIsCategoryOpen(false);
+                                    }}
+                                    aria-expanded={isSortOpen}
+                                    className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm outline-none transition focus:border-auric-gold focus:ring-2 focus:ring-auric-gold/30 lg:hidden"
+                                >
+                                    <span className="truncate">
+                                        {sortBy === 'newest' ? 'Newest Arrivals' : sortBy === 'price-low' ? 'Price: Low to High' : 'Price: High to Low'}
+                                    </span>
+                                    <ChevronDown size={16} className="text-gray-400" />
+                                </button>
+                                {isSortOpen && (
+                                    <ul className="absolute left-0 right-0 z-20 mt-2 max-h-56 overflow-auto rounded-lg border border-gray-200 bg-white py-1 text-sm shadow-lg lg:hidden">
+                                        <li>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setSortBy('newest');
+                                                    setIsSortOpen(false);
+                                                }}
+                                                className="block w-full px-3 py-2 text-left hover:bg-auric-blush"
+                                            >
+                                                Newest Arrivals
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setSortBy('price-low');
+                                                    setIsSortOpen(false);
+                                                }}
+                                                className="block w-full px-3 py-2 text-left hover:bg-auric-blush"
+                                            >
+                                                Price: Low to High
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setSortBy('price-high');
+                                                    setIsSortOpen(false);
+                                                }}
+                                                className="block w-full px-3 py-2 text-left hover:bg-auric-blush"
+                                            >
+                                                Price: High to Low
+                                            </button>
+                                        </li>
+                                    </ul>
+                                )}
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className="hidden w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm outline-none transition focus:border-auric-gold focus:ring-2 focus:ring-auric-gold/30 lg:block"
+                                >
+                                    <option value="newest">Newest Arrivals</option>
+                                    <option value="price-low">Price: Low to High</option>
+                                    <option value="price-high">Price: High to Low</option>
+                                </select>
+                            </div>
+                        </label>
                     </div>
                 </div>
 
