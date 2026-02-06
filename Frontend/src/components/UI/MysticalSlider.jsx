@@ -83,19 +83,19 @@ const MysticalSlider = () => {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
+  // const goToSlide = (index) => {
+  //   setCurrentSlide(index);
+  // };
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
+  // const nextSlide = () => {
+  //   setCurrentSlide((prev) => (prev + 1) % slides.length);
+  // };
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+  // const prevSlide = () => {
+  //   setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  // };
 
-  const slide = slides[currentSlide];
+  // const slide = slides[currentSlide];
 
   return (
     <div className="relative w-full h-[300px] xs:h-[350px] sm:h-[450px] md:h-[550px] lg:h-[650px] xl:h-[700px] overflow-hidden bg-gray-900">
@@ -164,7 +164,7 @@ const MysticalSlider = () => {
       </div>
 
       {/* Navigation Arrows */}
-      <button
+      {/* <button
         onClick={prevSlide}
         className="absolute left-1 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white p-1.5 sm:p-2 md:p-3 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
         aria-label="Previous slide"
@@ -173,13 +173,12 @@ const MysticalSlider = () => {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
             d="M15 19l-7-7 7-7"
           />
         </svg>
-      </button>
+      </button> */}
 
-      <button
+      {/* <button
         onClick={nextSlide}
         className="absolute right-1 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white p-1.5 sm:p-2 md:p-3 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
         aria-label="Next slide"
@@ -188,11 +187,10 @@ const MysticalSlider = () => {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
             d="M9 5l7 7-7 7"
           />
         </svg>
-      </button>
+      </button> */}
 
       {/* Dot Indicators */}
       <div className="absolute bottom-3 sm:bottom-4 md:bottom-6 lg:bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 sm:gap-2 md:gap-3">
@@ -207,7 +205,7 @@ const MysticalSlider = () => {
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
-      </div>
+      </div> */}
 
       {/* Slide Counter */}
       {/* <div className="absolute top-4 sm:top-8 right-4 sm:right-8 z-30 bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-1 sm:py-2 rounded-full text-white text-xs sm:text-sm font-semibold">
