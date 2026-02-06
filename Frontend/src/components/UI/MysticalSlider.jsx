@@ -205,7 +205,7 @@ const MysticalSlider = () => {
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
-      </div> */}
+      </div>
 
       {/* Slide Counter */}
       {/* <div className="absolute top-4 sm:top-8 right-4 sm:right-8 z-30 bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-1 sm:py-2 rounded-full text-white text-xs sm:text-sm font-semibold">
