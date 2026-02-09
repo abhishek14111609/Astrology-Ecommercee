@@ -24,7 +24,7 @@ const PaymentPage = () => {
     // Get shipping data and cart info from checkout
     const shippingData = location.state?.shippingData || {};
     const cartItems = location.state?.cartItems || [];
-    const userId = location.state?.userId || null;
+    const userId = user?.id || location.state?.userId || null;
     const cartTotal = location.state?.cartTotal || 0;
 
     useEffect(() => {

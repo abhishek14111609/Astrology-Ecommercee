@@ -3,13 +3,28 @@ import { connect } from '../db.js';
 import Order from '../models/Order.js';
 import { getNextSequence } from '../models/Counter.js';
 import { authenticateToken } from '../middleware/auth.js';
+import jwt from 'jsonwebtoken';
 import Product from '../models/Product.js';
 
 const router = express.Router();
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
+const tryAttachUserFromToken = (req) => {
+    const token = req.cookies?.token || (req.headers['authorization'] && req.headers['authorization'].split(' ')[1]);
+    if (!token || !JWT_SECRET) return;
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+    } catch (error) {
+        // Ignore invalid/expired tokens for guest checkout
+    }
+};
+
 // Create new order
 router.post('/', async (req, res) => {
     try {
+        tryAttachUserFromToken(req);
         const { items, customer_details } = req.body;
         // User is optional (guest checkout), but if token is present, we can link it.
         // For now, let's assume we receive user_id if logged in, or handle it via token if passed.
@@ -53,7 +68,7 @@ router.post('/', async (req, res) => {
         const orderNumber = `AK-${100000 + id}`;
 
         // Handle user_id if provided (e.g. from frontend context)
-        const user_id = req.body.user_id || null;
+        const user_id = req.user?.id || req.body.user_id || null;
 
         // Safely handle customer name
         let customerName = 'Guest';
