@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../components/UI/Button';
+import ProductCard from '../components/UI/ProductCard';
 import axios from 'axios';
 import VITE_API_BASE_URL from '../config/api';
 
@@ -11,6 +12,10 @@ const GemstoneFinder = () => {
     const [loading, setLoading] = useState(true);
     const [questions, setQuestions] = useState([]);
     const [fetchError, setFetchError] = useState(null);
+    const [products, setProducts] = useState([]);
+    const [productsLoading, setProductsLoading] = useState(false);
+    const [productsError, setProductsError] = useState(null);
+    const [matchedProducts, setMatchedProducts] = useState([]);
 
     // Fetch quiz questions on component mount
     useEffect(() => {
@@ -32,6 +37,32 @@ const GemstoneFinder = () => {
         fetchQuestions();
     }, []);
 
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                setProductsLoading(true);
+                const response = await axios.get(`${VITE_API_BASE_URL}/api/products`);
+                const data = response.data?.data?.products || response.data?.products || response.data;
+
+                if (Array.isArray(data)) {
+                    setProducts(data);
+                    setProductsError(null);
+                } else {
+                    setProducts([]);
+                    setProductsError('Failed to load product recommendations.');
+                }
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                setProducts([]);
+                setProductsError('Failed to load product recommendations.');
+            } finally {
+                setProductsLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
     // Crystal recommendations mapped to answer themes (A-D)
     const crystalResults = [
         {
@@ -42,6 +73,7 @@ const GemstoneFinder = () => {
                 'Gently opens the heart, heals emotional wounds, and attracts harmonious relationships. Supports inner peace and emotional balance.',
             searchHint: 'Search "Rose Quartz" in the shop to view all options.',
             matches: ['A'],
+            keywords: ['rose quartz'],
         },
         {
             id: 'amethyst',
@@ -51,6 +83,7 @@ const GemstoneFinder = () => {
                 'Soothes the mind, eases overthinking, and enhances intuition. Ideal when you want calm, focus, and emotional stability.',
             searchHint: 'Type "Amethyst" in the search bar and pick what resonates.',
             matches: ['B'],
+            keywords: ['amethyst'],
         },
         {
             id: 'citrine',
@@ -60,6 +93,7 @@ const GemstoneFinder = () => {
                 'Known as the stone of prosperity and positivity. Boosts confidence, attracts success, and helps clear self-doubt.',
             searchHint: 'Search "Citrine" to explore prosperity pieces.',
             matches: ['C'],
+            keywords: ['citrine'],
         },
         {
             id: 'black-tourmaline',
@@ -69,6 +103,7 @@ const GemstoneFinder = () => {
                 'Absorbs negativity, grounds your energy, and builds a shield of stability. Great for sensitive or draining environments.',
             searchHint: 'Type "Black Tourmaline" to see protective pieces.',
             matches: ['D'],
+            keywords: ['black tourmaline', 'tourmaline'],
         },
         {
             id: 'clear-quartz',
@@ -78,6 +113,7 @@ const GemstoneFinder = () => {
                 'The master healer. Amplifies positive energy, supports focus, and balances overall well-being.',
             searchHint: 'Search "Clear Quartz" to find master healer options.',
             matches: ['A', 'B', 'C', 'D'],
+            keywords: ['clear quartz', 'quartz'],
         },
         {
             id: 'green-aventurine',
@@ -87,6 +123,7 @@ const GemstoneFinder = () => {
                 'Attracts luck and gentle growth while keeping emotions calm. Perfect for new beginnings and steady progress.',
             searchHint: 'Type "Green Aventurine" to see growth-focused pieces.',
             matches: ['A', 'C'],
+            keywords: ['green aventurine', 'aventurine'],
         },
         {
             id: 'tigers-eye',
@@ -96,6 +133,7 @@ const GemstoneFinder = () => {
                 'Builds courage, confidence, and decisive action—especially during challenges or competition.',
             searchHint: 'Search "Tiger\'s Eye" for confidence boosters.',
             matches: ['C'],
+            keywords: ["tiger's eye", 'tiger eye'],
         },
         {
             id: 'labradorite',
@@ -105,6 +143,7 @@ const GemstoneFinder = () => {
                 'Protects the aura, heightens intuition, and supports spiritual growth during life transitions.',
             searchHint: 'Type "Labradorite" to browse transformative pieces.',
             matches: ['B', 'D'],
+            keywords: ['labradorite'],
         },
         {
             id: 'carnelian',
@@ -114,6 +153,7 @@ const GemstoneFinder = () => {
                 'Ignites passion, creativity, and drive. Great when you need a spark of motivation and vitality.',
             searchHint: 'Search "Carnelian" to explore vitality pieces.',
             matches: ['C'],
+            keywords: ['carnelian'],
         },
         {
             id: 'selenite',
@@ -123,8 +163,30 @@ const GemstoneFinder = () => {
                 'Clears heavy energy, promotes mental clarity, and brings serene, higher awareness to your space.',
             searchHint: 'Type "Selenite" to view cleansing options.',
             matches: ['B', 'D'],
+            keywords: ['selenite'],
         },
     ];
+
+    useEffect(() => {
+        if (results.length === 0 || products.length === 0) {
+            setMatchedProducts([]);
+            return;
+        }
+
+        const keywordSet = new Set(
+            results
+                .flatMap((res) => res.keywords || [res.title])
+                .map((keyword) => keyword.toLowerCase())
+        );
+
+        const matches = products.filter((product) => {
+            const name = (product.name || '').toLowerCase();
+            const tags = (product.tags || []).map((tag) => String(tag).toLowerCase());
+            return Array.from(keywordSet).some((keyword) => name.includes(keyword) || tags.includes(keyword));
+        });
+
+        setMatchedProducts(matches.slice(0, 8));
+    }, [results, products]);
 
     const handleOption = (tag) => {
         const newAnswers = [...answers, tag];
@@ -136,7 +198,7 @@ const GemstoneFinder = () => {
         }
     };
 
-    const fetchResults = (finalAnswers) => {
+    const fetchResults = async (finalAnswers) => {
         setStep(questions.length);
 
         // Tally scores for A-D
@@ -160,12 +222,15 @@ const GemstoneFinder = () => {
 
         // Take the top 4 recommendations
         setResults(scored.slice(0, 4));
+
     };
 
     const reset = () => {
         setStep(0);
         setAnswers([]);
         setResults([]);
+        setMatchedProducts([]);
+        setProductsError(null);
     };
 
     return (
@@ -234,33 +299,33 @@ const GemstoneFinder = () => {
                                     </div>
 
                                     {results.length > 0 ? (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                                            {results.map((res, idx) => (
-                                                <div
-                                                    key={res.id}
-                                                    className="p-6 rounded-3xl border-2 border-auric-blush bg-white shadow-sm hover:shadow-md transition-all duration-300"
-                                                >
-                                                    <div className="flex items-center justify-between mb-3">
-                                                        <span className="text-sm font-semibold text-auric-gold uppercase tracking-widest">
-                                                            {idx === 0 ? 'Top Match' : 'Good Match'}
-                                                        </span>
-                                                        <span className="text-xs text-gray-500">Score {res.score}</span>
-                                                    </div>
-                                                    <h3 className="text-2xl font-serif text-auric-rose font-bold mb-1">{res.title}</h3>
-                                                    <p className="text-auric-gold font-semibold text-sm mb-3">{res.theme}</p>
-                                                    <p className="text-gray-700 leading-relaxed mb-4">{res.summary}</p>
-                                                    <div className="text-sm text-gray-600 bg-auric-blush/30 rounded-2xl px-3 py-2 inline-block">
-                                                        {res.searchHint}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
+                                        <p className="text-sm text-gray-600">
+                                            Spiritual matches: {results.map((res) => res.title).join(', ')}.
+                                        </p>
                                     ) : (
-                                        <div className="py-12 bg-auric-blush rounded-3xl">
-                                            <p className="text-auric-rose font-medium">No direct matches found, but our general collection might still hold what you're looking for.</p>
-                                            <Button variant="outline" className="mt-6" onClick={reset}>Try Again</Button>
-                                        </div>
+                                        <p className="text-sm text-gray-600">
+                                            No direct spiritual matches found, but we can still suggest products for your answers.
+                                        </p>
                                     )}
+
+                                    <div className="space-y-4">
+                                        <h3 className="text-2xl font-serif text-auric-rose font-bold">Recommended Products</h3>
+                                        {productsLoading ? (
+                                            <div className="flex justify-center py-8">
+                                                <div className="animate-spin w-8 h-8 border-4 border-auric-gold border-t-transparent rounded-full"></div>
+                                            </div>
+                                        ) : productsError ? (
+                                            <p className="text-sm text-red-500">{productsError}</p>
+                                        ) : matchedProducts.length > 0 ? (
+                                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                                                {matchedProducts.map((product) => (
+                                                    <ProductCard key={product._id || product.id} product={product} />
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-gray-600">No product suggestions found for your answers yet.</p>
+                                        )}
+                                    </div>
 
                                     <div className="pt-8">
                                         <Button variant="outline" onClick={reset}>Restart Quiz</Button>

@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -21,6 +22,11 @@
 }
 
 @layer utilities {
+  .zodiac-glyph {
+    font-family: "Noto Sans Symbols 2", "Noto Sans Symbols", "Segoe UI Symbol", "Arial Unicode MS", sans-serif;
+    font-variant-emoji: text;
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;

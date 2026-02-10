@@ -38,7 +38,7 @@ const Zodiac = () => {
                             onClick={() => setSelectedSign(sign)}
                             className={`p-8 bg-white rounded-2xl border transition-all duration-300 flex flex-col items-center hover:shadow-xl hover:border-auric-gold group ${selectedSign?.name === sign.name ? 'border-auric-gold shadow-lg shadow-auric-gold/10' : 'border-gray-100'}`}
                         >
-                            <span className={`text-4xl mb-4 transition-transform duration-300 group-hover:scale-110 ${selectedSign?.name === sign.name ? 'text-auric-gold' : 'text-auric-rose'}`}>
+                            <span className={`zodiac-glyph text-4xl mb-4 transition-transform duration-300 group-hover:scale-110 ${selectedSign?.name === sign.name ? 'text-auric-gold' : 'text-auric-rose'}`}>
                                 {sign.symbol}
                             </span>
                             <span className="font-serif text-lg font-bold text-auric-rose">{sign.name}</span>
@@ -52,7 +52,7 @@ const Zodiac = () => {
                     <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-auric-gold/10 max-w-4xl mx-auto transform transition-all animate-in fade-in slide-in-from-bottom-5 duration-700">
                         <div className="grid grid-cols-1 md:grid-cols-3">
                             <div className="bg-auric-rose p-10 text-white flex flex-col items-center justify-center text-center">
-                                <span className="text-6xl mb-6 text-auric-gold">{selectedSign.symbol}</span>
+                                <span className="zodiac-glyph text-6xl mb-6 text-auric-gold">{selectedSign.symbol}</span>
                                 <h3 className="font-serif text-3xl font-bold mb-2">{selectedSign.name}</h3>
                                 <div className="space-y-4 w-full mt-6 pt-6 border-t border-white/10 uppercase tracking-[0.2em] text-[0.7rem] font-bold">
                                     <div className="flex justify-between">
