@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -20,6 +20,7 @@ import { useAuth } from '../context/AuthContext';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
     const { user, logout } = useAuth();
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const menuItems = [
         {
             name: 'Overview',
@@ -222,8 +223,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     {/* Logout Button */}
                     <button
                         onClick={async () => {
-                            await logout();
-                            window.location.href = '/login';
+                            setShowLogoutModal(true);
                         }}
                         className="flex items-center gap-3 px-4 py-3 w-full text-neutral-600 hover:text-auric-crimson hover:bg-red-50 rounded-xl transition-all duration-200 group"
                     >
@@ -232,6 +232,49 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     </button>
                 </div>
             </aside>
+
+            {showLogoutModal && (
+                <div className="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                        <div className="p-6 border-b">
+                            <h3 className="text-xl font-bold text-neutral-900">Confirm Sign Out</h3>
+                            <p className="text-sm text-neutral-500 mt-1">
+                                You will be logged out of the admin panel.
+                            </p>
+                        </div>
+                        <div className="p-6">
+                            <div className="flex items-center gap-3 p-4 rounded-xl bg-auric-purple/5 border border-auric-purple/20">
+                                <div className="w-10 h-10 rounded-xl bg-auric-purple text-white flex items-center justify-center">
+                                    <LogOut size={18} />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-semibold text-neutral-900">Sign out now?</p>
+                                    <p className="text-xs text-neutral-500">Unsaved changes will be lost.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-6 border-t flex gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setShowLogoutModal(false)}
+                                className="btn-secondary flex-1"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={async () => {
+                                    await logout();
+                                    window.location.href = '/login';
+                                }}
+                                className="btn-primary flex-1"
+                            >
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };

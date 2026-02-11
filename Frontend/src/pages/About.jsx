@@ -2,6 +2,8 @@ import React from 'react';
 import SectionHeading from '../components/UI/SectionHeading';
 import logo from '../assets/images/logo2.png';
 import logo1 from '../assets/images/crystal.png';
+import founderImage from '../assets/images/founder.jpeg';
+import coFounderImage from '../assets/images/co-founder.jpeg';
 
 const About = () => {
     return (
@@ -51,10 +53,17 @@ const About = () => {
             </section>
 
             {/* Dr. Krupali Mehta */}
-            <section className="py-20 bg-white">
+            <section className="pt-20 pb-0 bg-white">
                 <div className="container mx-auto px-4 max-w-6xl">
                     <SectionHeading title="Meet Our Founder" subtitle="DR. KRUPALI MEHTA" />
-                    <div className="grid grid-cols-1 lg:grid-cols-1 gap-12 mt-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+                        <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+                            <img
+                                src={founderImage}
+                                alt="Dr. Krupali Mehta"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                         <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-blush/40 via-white to-auric-gold/10">
                             <div className="relative p-10 space-y-6 backdrop-blur-sm">
                                 <h3 className="font-serif text-3xl font-bold text-auric-rose">Dr. Krupali Mehta</h3>
@@ -76,11 +85,41 @@ const About = () => {
                 </div>
             </section>
 
+            {/* Co-Founder */}
+            <section className="pt-20 pb-20 bg-white">
+                <div className="container mx-auto px-4 max-w-6xl">
+                    <SectionHeading title="Meet Our Co-Founder" subtitle="CHIEF FINANCIAL OFFICER (CFO)" />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                        <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-gold/10 via-white to-auric-blush/40 order-2 lg:order-1 lg:h-[620px]">
+                            <div className="relative p-10 space-y-6 backdrop-blur-sm">
+                                <h3 className="font-serif text-3xl font-bold text-auric-rose">Chief Financial Officer (CFO)</h3>
+                                <p className="text-gray-700 leading-relaxed">
+                                    Our Chief Financial Officer plays a pivotal role in shaping the financial strength and long-term vision of Auric Krystals. With extensive experience as a Banker, Financial Advisor, and Strategic CFO, he brings deep expertise in financial planning, capital management, and risk assessment.
+                                </p>
+                                <p className="text-gray-700 leading-relaxed">
+                                    He oversees the company’s financial operations with a sharp focus on transparency, compliance, and sustainable growth. From managing banking relationships and cash flow optimization to guiding strategic investments and financial structuring, his leadership ensures that Auric Krystals operates on a solid and scalable financial foundation.
+                                </p>
+                                <p className="text-gray-700 leading-relaxed">
+                                    As a trusted financial advisor, he works closely with the leadership team to align business decisions with financial discipline, helping the brand grow responsibly while maintaining stability and credibility in the market. His insight and foresight play a key role in transforming Auric Krystals into a financially resilient and future-ready brand.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="relative overflow-hidden rounded-3xl shadow-2xl order-1 lg:order-2 lg:h-[620px]">
+                            <img
+                                src={coFounderImage}
+                                alt="Chief Financial Officer"
+                                className="w-full h-full object-[45%_85%] object-cover"
+                            />
+                        </div>
+                    </div> 
+                </div>
+            </section>
+
             {/* Mission & Vision */}
-            <section className="py-20 bg-white">
+            <section className="pt-0 pb-20 bg-white">
                 <div className="container mx-auto px-4 max-w-6xl">
                     <SectionHeading title="Why We Exist" subtitle="OUR MISSION & VISION" />
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-0">
                         <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-blush/60 via-white to-auric-gold/20">
                             <div className="relative p-10 space-y-6 backdrop-blur-sm">
                                 <h3 className="font-serif text-3xl font-bold text-auric-rose">Our Mission</h3>

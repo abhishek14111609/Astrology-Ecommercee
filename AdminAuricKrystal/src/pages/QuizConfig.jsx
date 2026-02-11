@@ -8,6 +8,8 @@ import {
     AlertCircle,
     X,
     Save,
+    Pencil,
+    Trash2,
     ChevronDown,
     ChevronUp
 } from 'lucide-react';
@@ -22,12 +24,22 @@ const QuizConfig = () => {
     const [isOptionModalOpen, setIsOptionModalOpen] = useState(false);
     const [editingOption, setEditingOption] = useState(null);
     const [currentQuestionId, setCurrentQuestionId] = useState(null);
+    const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
+    const [editingQuestion, setEditingQuestion] = useState(null);
+    const [questionFormData, setQuestionFormData] = useState({
+        question_text: '',
+        step_order: 1
+    });
     const [optionFormData, setOptionFormData] = useState({
         option_text: '',
         option_tag: 'A'
     });
 
     const API_BASE = VITE_API_BASE_URL;
+    const getAuthHeaders = () => {
+        const token = localStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    };
 
     useEffect(() => {
         fetchQuestions();
@@ -36,7 +48,9 @@ const QuizConfig = () => {
     const fetchQuestions = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`${API_BASE}/api/admin/quiz/questions`);
+            const response = await axios.get(`${API_BASE}/api/admin/quiz/questions`, {
+                headers: getAuthHeaders()
+            });
             setQuestions(response.data);
             setError(null);
         } catch (err) {
@@ -60,10 +74,85 @@ const QuizConfig = () => {
         }
     };
 
+    const getNextStepOrder = () => {
+        if (questions.length === 0) return 1;
+        const maxOrder = Math.max(...questions.map((q) => q.step_order || 0));
+        return maxOrder + 1;
+    };
+
+    const openQuestionModal = (question = null) => {
+        if (question) {
+            setEditingQuestion(question);
+            setQuestionFormData({
+                question_text: question.question_text || '',
+                step_order: question.step_order || 1
+            });
+        } else {
+            setEditingQuestion(null);
+            setQuestionFormData({
+                question_text: '',
+                step_order: getNextStepOrder()
+            });
+        }
+        setIsQuestionModalOpen(true);
+    };
+
+    const closeQuestionModal = () => {
+        setIsQuestionModalOpen(false);
+        setEditingQuestion(null);
+        setQuestionFormData({ question_text: '', step_order: getNextStepOrder() });
+    };
+
+    const handleQuestionSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingQuestion) {
+                await axios.put(
+                    `${API_BASE}/api/admin/quiz/questions/${editingQuestion.id}`,
+                    questionFormData,
+                    { headers: getAuthHeaders() }
+                );
+            } else {
+                await axios.post(`${API_BASE}/api/admin/quiz/questions`, questionFormData, {
+                    headers: getAuthHeaders()
+                });
+            }
+            await fetchQuestions();
+            closeQuestionModal();
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to save question');
+        }
+    };
+
+    const handleDeleteQuestion = async (questionId) => {
+        if (!window.confirm('Are you sure you want to delete this question and its options?')) return;
+
+        try {
+            await axios.delete(`${API_BASE}/api/admin/quiz/questions/${questionId}`, {
+                headers: getAuthHeaders()
+            });
+            await fetchQuestions();
+            setExpandedQuestions(prev => {
+                const updated = { ...prev };
+                delete updated[questionId];
+                return updated;
+            });
+            setQuestionOptions(prev => {
+                const updated = { ...prev };
+                delete updated[questionId];
+                return updated;
+            });
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to delete question');
+        }
+    };
+
     const fetchOptions = async (questionId) => {
         try {
             setLoadingOptions(prev => ({ ...prev, [questionId]: true }));
-            const response = await axios.get(`${API_BASE}/api/admin/quiz/questions/${questionId}/options`);
+            const response = await axios.get(`${API_BASE}/api/admin/quiz/questions/${questionId}/options`, {
+                headers: getAuthHeaders()
+            });
             setQuestionOptions(prev => ({
                 ...prev,
                 [questionId]: response.data
@@ -109,12 +198,14 @@ const QuizConfig = () => {
             if (editingOption) {
                 await axios.put(
                     `${API_BASE}/api/admin/quiz/options/${editingOption.id}`,
-                    optionFormData
+                    optionFormData,
+                    { headers: getAuthHeaders() }
                 );
             } else {
                 await axios.post(
                     `${API_BASE}/api/admin/quiz/questions/${currentQuestionId}/options`,
-                    optionFormData
+                    optionFormData,
+                    { headers: getAuthHeaders() }
                 );
             }
             await fetchOptions(currentQuestionId);
@@ -128,7 +219,9 @@ const QuizConfig = () => {
         if (!window.confirm('Are you sure you want to delete this option?')) return;
 
         try {
-            await axios.delete(`${API_BASE}/api/admin/quiz/options/${optionId}`);
+            await axios.delete(`${API_BASE}/api/admin/quiz/options/${optionId}`, {
+                headers: getAuthHeaders()
+            });
             await fetchOptions(questionId);
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to delete option');
@@ -143,6 +236,13 @@ const QuizConfig = () => {
                     <h1 className="text-3xl md:text-4xl font-bold text-neutral-900">Quiz Configuration</h1>
                     <p className="text-neutral-500 mt-1">Manage gemstone finder quiz questions and options</p>
                 </div>
+                <button
+                    onClick={() => openQuestionModal()}
+                    className="btn-primary flex items-center gap-2"
+                >
+                    <Plus size={18} />
+                    Add Question
+                </button>
             </div>
 
             {/* Error Display */}
@@ -208,7 +308,27 @@ const QuizConfig = () => {
                                     </div>
 
                                     {/* Expand Icon */}
-                                    <div className="flex-shrink-0">
+                                    <div className="flex-shrink-0 flex items-center gap-2">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                openQuestionModal(question);
+                                            }}
+                                            className="p-2 text-neutral-500 hover:text-auric-purple hover:bg-auric-purple/10 rounded-lg transition-colors"
+                                            title="Edit question"
+                                        >
+                                            <Pencil size={16} />
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteQuestion(question.id);
+                                            }}
+                                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="Delete question"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
                                         {expandedQuestions[question.id] ? (
                                             <ChevronUp className="text-neutral-400" size={24} />
                                         ) : (
@@ -332,6 +452,68 @@ const QuizConfig = () => {
                                 <button type="submit" className="btn-primary flex-1 flex items-center justify-center gap-2">
                                     <Save size={18} />
                                     {editingOption ? 'Update' : 'Create'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Question Modal */}
+            {isQuestionModalOpen && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+                        <div className="flex items-center justify-between p-6 border-b">
+                            <h2 className="text-2xl font-bold text-neutral-900">
+                                {editingQuestion ? 'Edit Question' : 'Add Question'}
+                            </h2>
+                            <button
+                                onClick={closeQuestionModal}
+                                className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleQuestionSubmit} className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                                    Question Text *
+                                </label>
+                                <textarea
+                                    value={questionFormData.question_text}
+                                    onChange={(e) => setQuestionFormData(prev => ({ ...prev, question_text: e.target.value }))}
+                                    required
+                                    rows={4}
+                                    className="input-ghost w-full resize-none"
+                                    placeholder="e.g., What is your primary intention?"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                                    Step Order *
+                                </label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value={questionFormData.step_order}
+                                    onChange={(e) => setQuestionFormData(prev => ({
+                                        ...prev,
+                                        step_order: Number(e.target.value)
+                                    }))}
+                                    required
+                                    className="input-ghost w-full"
+                                />
+                                <p className="text-xs text-neutral-500 mt-1">
+                                    Controls display order in the quiz flow
+                                </p>
+                            </div>
+                            <div className="flex gap-3 pt-4">
+                                <button type="button" onClick={closeQuestionModal} className="btn-secondary flex-1">
+                                    Cancel
+                                </button>
+                                <button type="submit" className="btn-primary flex-1 flex items-center justify-center gap-2">
+                                    <Save size={18} />
+                                    {editingQuestion ? 'Update' : 'Create'}
                                 </button>
                             </div>
                         </form>

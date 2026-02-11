@@ -26,6 +26,11 @@ const Categories = () => {
         image_url: ''
     });
 
+    const getAuthHeaders = () => {
+        const token = localStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    };
+
     useEffect(() => {
         let isMounted = true;
 
@@ -33,7 +38,7 @@ const Categories = () => {
             try {
                 setLoading(true);
                 const response = await axios.get(`${VITE_API_BASE_URL}/api/admin/categories`, {
-
+                    headers: getAuthHeaders()
                 });
                 if (isMounted) {
                     setCategories(response.data);
@@ -75,7 +80,7 @@ const Categories = () => {
                 await axios.put(
                     `${VITE_API_BASE_URL}/api/admin/categories/${editingCategory.id}`,
                     formData,
-                    {}
+                    { headers: getAuthHeaders() }
                 );
                 setCategories(prev => prev.map(cat =>
                     cat.id === editingCategory.id ? { ...cat, ...formData } : cat
@@ -84,11 +89,11 @@ const Categories = () => {
                 const response = await axios.post(
                     `${VITE_API_BASE_URL}/api/admin/categories`,
                     formData,
-                    {}
+                    { headers: getAuthHeaders() }
                 );
                 // Refetch to get the new category with ID
                 const newCategory = await axios.get(`${VITE_API_BASE_URL}/api/admin/categories`, {
-
+                    headers: getAuthHeaders()
                 });
                 setCategories(newCategory.data);
             }
@@ -103,7 +108,7 @@ const Categories = () => {
 
         try {
             await axios.delete(`${VITE_API_BASE_URL}/api/admin/categories/${id}`, {
-
+                headers: getAuthHeaders()
             });
             setCategories(prev => prev.filter(cat => cat.id !== id));
         } catch (err) {

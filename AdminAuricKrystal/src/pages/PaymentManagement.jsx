@@ -10,6 +10,7 @@ const PaymentManagement = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [historyViewOrder, setHistoryViewOrder] = useState(null);
     const [approvalNotes, setApprovalNotes] = useState('');
     const [rejectionReason, setRejectionReason] = useState('');
     const [processing, setProcessing] = useState(false);
@@ -109,6 +110,10 @@ const PaymentManagement = () => {
         } finally {
             setProcessing(false);
         }
+    };
+
+    const closeHistoryModal = () => {
+        setHistoryViewOrder(null);
     };
 
     if (loading) {
@@ -304,6 +309,7 @@ const PaymentManagement = () => {
                                     <th className="px-4 py-3 text-left text-gray-700">Status</th>
                                     <th className="px-4 py-3 text-left text-gray-700">Amount</th>
                                     <th className="px-4 py-3 text-left text-gray-700">Updated</th>
+                                    <th className="px-4 py-3 text-left text-gray-700">View</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -318,6 +324,15 @@ const PaymentManagement = () => {
                                         </td>
                                         <td className="px-4 py-3 font-semibold">₹{item.total_amount.toLocaleString()}</td>
                                         <td className="px-4 py-3 text-gray-500 text-xs">{new Date(item.updated_at || item.payment_screenshot_uploaded_at || item.created_at).toLocaleString()}</td>
+                                        <td className="px-4 py-3">
+                                            <button
+                                                onClick={() => setHistoryViewOrder(item)}
+                                                className="inline-flex items-center gap-2 px-3 py-1.5 bg-auric-rose text-white rounded-md hover:bg-auric-rose/90 text-xs"
+                                            >
+                                                <Eye size={14} />
+                                                View
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -325,6 +340,93 @@ const PaymentManagement = () => {
                     </div>
                 )}
             </div>
+
+            {historyViewOrder && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl">
+                        <div className="flex items-center justify-between p-6 border-b">
+                            <h2 className="text-xl font-bold text-auric-rose">Payment History Details</h2>
+                            <button
+                                onClick={closeHistoryModal}
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                            >
+                                <XCircle size={18} />
+                            </button>
+                        </div>
+                        <div className="p-6 space-y-5">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p className="text-xs text-gray-500 font-medium">Order</p>
+                                    <p className="text-sm font-semibold text-auric-rose">{historyViewOrder.order_number}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500 font-medium">Status</p>
+                                    <p className="text-sm font-semibold text-gray-800">{historyViewOrder.payment_status}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500 font-medium">Customer</p>
+                                    <p className="text-sm font-semibold text-gray-800">{historyViewOrder.customer_name}</p>
+                                    <p className="text-xs text-gray-500">{historyViewOrder.customer_email}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500 font-medium">Amount</p>
+                                    <p className="text-sm font-semibold text-gray-800">₹{historyViewOrder.total_amount.toLocaleString()}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500 font-medium">Updated</p>
+                                    <p className="text-xs text-gray-600">{new Date(historyViewOrder.updated_at || historyViewOrder.payment_screenshot_uploaded_at || historyViewOrder.created_at).toLocaleString()}</p>
+                                </div>
+                            </div>
+
+                            {historyViewOrder.payment_screenshot ? (
+                                <div>
+                                    <p className="text-xs text-gray-500 font-medium mb-2">Screenshot</p>
+                                    <img
+                                        src={getImageUrl(historyViewOrder.payment_screenshot)}
+                                        alt="Payment Screenshot"
+                                        className="w-full rounded-lg border border-gray-200"
+                                    />
+                                    <a
+                                        href={getImageUrl(historyViewOrder.payment_screenshot)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-auric-rose hover:underline"
+                                    >
+                                        View Full Image
+                                    </a>
+                                </div>
+                            ) : (
+                                <p className="text-xs text-gray-500">No screenshot available.</p>
+                            )}
+
+                            {(historyViewOrder.admin_notes || historyViewOrder.rejection_reason) && (
+                                <div className="space-y-2">
+                                    {historyViewOrder.admin_notes && (
+                                        <div>
+                                            <p className="text-xs text-gray-500 font-medium">Admin Notes</p>
+                                            <p className="text-sm text-gray-700">{historyViewOrder.admin_notes}</p>
+                                        </div>
+                                    )}
+                                    {historyViewOrder.rejection_reason && (
+                                        <div>
+                                            <p className="text-xs text-gray-500 font-medium">Rejection Reason</p>
+                                            <p className="text-sm text-gray-700">{historyViewOrder.rejection_reason}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        <div className="p-6 border-t">
+                            <button
+                                onClick={closeHistoryModal}
+                                className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -37,15 +37,15 @@
   }
 
   .btn-primary {
-    @apply bg-auric-purple text-white hover:bg-auric-purple-dark shadow-lg shadow-auric-purple/20 hover:shadow-xl hover:shadow-auric-purple/30 hover:-translate-y-0.5;
+    @apply px-4 py-2 rounded-xl font-medium transition-all duration-300 inline-flex items-center justify-center gap-2 bg-auric-purple text-white hover:bg-auric-purple-dark shadow-lg shadow-auric-purple/20 hover:shadow-xl hover:shadow-auric-purple/30 hover:-translate-y-0.5;
   }
 
   .btn-secondary {
-    @apply bg-white text-neutral-700 border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50;
+    @apply px-4 py-2 rounded-xl font-medium transition-all duration-300 inline-flex items-center justify-center gap-2 bg-white text-neutral-700 border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50;
   }
 
   .btn-ghost {
-    @apply text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900;
+    @apply px-4 py-2 rounded-xl font-medium transition-all duration-300 inline-flex items-center justify-center gap-2 text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900;
   }
 
   /* Card Styles */
