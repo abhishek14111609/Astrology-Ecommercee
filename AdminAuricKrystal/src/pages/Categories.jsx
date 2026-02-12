@@ -287,11 +287,11 @@ const Categories = () => {
                                     className="input-ghost w-full"
                                     placeholder="gemstones"
                                 />
-                                <p className="text-xs text-neutral-500 mt-1">
+                                {/* <p className="text-xs text-neutral-500 mt-1">
                                     URL-friendly version (auto-generated)
-                                </p>
+                                </p> */}
                             </div>
-                            <div>
+                            {/* <div>
                                 <label className="block text-sm font-medium text-neutral-700 mb-2">
                                     Image URL
                                 </label>
@@ -303,7 +303,7 @@ const Categories = () => {
                                     className="input-ghost w-full"
                                     placeholder="https://example.com/image.jpg"
                                 />
-                            </div>
+                            </div> */}
                             <div className="flex gap-3 pt-4">
                                 <button type="button" onClick={closeModal} className="btn-secondary flex-1">
                                     Cancel
