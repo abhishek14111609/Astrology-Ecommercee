@@ -291,6 +291,7 @@ const Categories = () => {
                                     URL-friendly version (auto-generated)
                                 </p>
                             </div>
+                            {/*
                             <div>
                                 <label className="block text-sm font-medium text-neutral-700 mb-2">
                                     Image URL
@@ -304,6 +305,7 @@ const Categories = () => {
                                     placeholder="https://example.com/image.jpg"
                                 />
                             </div>
+                            */}
                             <div className="flex gap-3 pt-4">
                                 <button type="button" onClick={closeModal} className="btn-secondary flex-1">
                                     Cancel
