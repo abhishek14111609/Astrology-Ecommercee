@@ -15,8 +15,8 @@ import MysticalSlider from '../components/UI/MysticalSlider';
 const Home = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const [bestSellers, setBestSellers] = useState([]);
-    const [zodiacProducts, setZodiacProducts] = useState([]);
+    const [bestSellers, setBestSellers] = useState(allProducts.slice(0, 4));
+    const [zodiacProducts, setZodiacProducts] = useState(allProducts.slice(0, 4));
     const [selectedZodiac, setSelectedZodiac] = useState('Aries');
     const [showBookingModal, setShowBookingModal] = useState(false);
     const [selectedService, setSelectedService] = useState(null);
@@ -31,10 +31,20 @@ const Home = () => {
     React.useEffect(() => {
         const fetchBestsellers = async () => {
             try {
-                const res = await fetch(`${VITE_API_BASE_URL}/api/products?is_bestseller=1`);
+                const res = await fetch(`${VITE_API_BASE_URL}/api/products?is_bestseller=1`)
+                console.log(res)
+                if (!res.ok) {
+                    throw new Error('Failed to fetch bestsellers');
+                }
                 const data = await res.json();
-                setBestSellers(data.length > 0 ? data.slice(0, 4) : allProducts.slice(0, 4));
-            } catch {
+                console.log(data)
+                if (!Array.isArray(data) || data.length === 0) {
+                    setBestSellers(allProducts.slice(0, 4));
+                    return;
+                }
+                setBestSellers(data.slice(0, 4));
+            } catch (error) {
+                console.error(error);
                 setBestSellers(allProducts.slice(0, 4));
             }
         };
@@ -46,10 +56,18 @@ const Home = () => {
         const fetchZodiacProducts = async () => {
             try {
                 const res = await fetch(`${VITE_API_BASE_URL}/api/products?zodiac=${selectedZodiac}`);
+                if (!res.ok) {
+                    throw new Error('Failed to fetch zodiac products');
+                }
                 const data = await res.json();
+                if (!Array.isArray(data) || data.length === 0) {
+                    setZodiacProducts(allProducts.slice(0, 4));
+                    return;
+                }
                 setZodiacProducts(data);
             } catch (err) {
                 console.error(err);
+                setZodiacProducts(allProducts.slice(0, 4));
             }
         };
         fetchZodiacProducts();
