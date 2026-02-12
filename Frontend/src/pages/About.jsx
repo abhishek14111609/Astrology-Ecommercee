@@ -119,7 +119,15 @@ const About = () => {
             <section className="pt-0 pb-20 bg-white">
                 <div className="container mx-auto px-4 max-w-6xl">
                     <SectionHeading title="Why We Exist" subtitle="OUR MISSION & VISION" />
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-0">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-0">
+                        <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-gold/10 via-white to-auric-blush/40">
+                            <div className="relative p-10 space-y-6 backdrop-blur-sm">
+                                <h3 className="font-serif text-3xl font-bold text-auric-rose">Why Choose Us?</h3>
+                                <p className="text-gray-700 leading-relaxed">
+                                    Curated. Conscious. Exclusive. At Auric Krystals, every gemstone is carefully sourced for purity, authenticity, and energetic integrity. We do not recommend crystals casually. Personalized guidance is offered only through private consultation for precise spiritual alignment. Our signature Crystal Alignment Quiz sets us apart — an intuitive and intelligent way to understand your current energy before choosing your crystal. No exaggeration. No fear-based selling. Only refined spiritual wisdom with purpose.
+                                </p>
+                            </div>
+                        </div>
                         <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-auric-blush/60 via-white to-auric-gold/20">
                             <div className="relative p-10 space-y-6 backdrop-blur-sm">
                                 <h3 className="font-serif text-3xl font-bold text-auric-rose">Our Mission</h3>

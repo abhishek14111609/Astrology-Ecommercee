@@ -90,15 +90,18 @@ router.post('/upload-image', authenticateToken, isAdmin, uploadImageMiddleware.s
 // --- Product Management ---
 router.post('/products', authenticateToken, isAdmin, async (req, res) => {
     try {
-        const { name, slug, description, price, category_id, sub_category_id, zodiac_sign, image_url, is_bestseller, tags, stock } = req.body;
+        const { name, slug, description, price, inches, category_id, sub_category_id, zodiac_sign, image_url, is_bestseller, tags, stock } = req.body;
         await connect();
         const id = await getNextSequence('products');
+        const parsedInches = inches === '' || inches === null || inches === undefined ? null : Number(inches);
+        const normalizedInches = Number.isFinite(parsedInches) ? parsedInches : null;
         const created = await Product.create({
             id,
             name,
             slug,
             description,
             price,
+            inches: normalizedInches,
             category_id,
             sub_category_id,
             zodiac_sign,
@@ -115,12 +118,14 @@ router.post('/products', authenticateToken, isAdmin, async (req, res) => {
 
 router.put('/products/:id', authenticateToken, isAdmin, async (req, res) => {
     try {
-        const { name, slug, description, price, category_id, sub_category_id, zodiac_sign, image_url, is_bestseller, tags, stock } = req.body;
+        const { name, slug, description, price, inches, category_id, sub_category_id, zodiac_sign, image_url, is_bestseller, tags, stock } = req.body;
         await connect();
+        const parsedInches = inches === '' || inches === null || inches === undefined ? null : Number(inches);
+        const normalizedInches = Number.isFinite(parsedInches) ? parsedInches : null;
         const updated = await Product.findOneAndUpdate(
             { id: parseInt(req.params.id) },
             {
-                name, slug, description, price, category_id, sub_category_id, zodiac_sign, image_url,
+                name, slug, description, price, inches: normalizedInches, category_id, sub_category_id, zodiac_sign, image_url,
                 is_bestseller: !!is_bestseller,
                 tags: Array.isArray(tags) ? tags : [],
                 stock: stock || 0
@@ -600,6 +605,9 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                     price: 'price',
                     mrp: 'price',
                     amount: 'price',
+                    inches: 'inches',
+                    inch: 'inches',
+                    size_in_inches: 'inches',
                     categories: 'category_name',
                     category: 'category_name',
                     category_name: 'category_name',
@@ -654,6 +662,11 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                     normalizedRow.price = cleanPrice || normalizedRow.price; // Keep original if cleaning removes everything
                 }
 
+                if (typeof normalizedRow.inches === 'string') {
+                    const cleanInches = normalizedRow.inches.replace(/[^0-9.]/g, '').trim();
+                    normalizedRow.inches = cleanInches || '';
+                }
+
                 // Ensure price is a valid number string
                 if (normalizedRow.price !== undefined && normalizedRow.price !== null) {
                     const priceStr = String(normalizedRow.price).trim();
@@ -669,6 +682,14 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                     }
                 } else {
                     normalizedRow.price = ''; // Mark as invalid if undefined
+                }
+
+                let parsedInches = null;
+                if (normalizedRow.inches !== undefined && normalizedRow.inches !== null && String(normalizedRow.inches).trim() !== '') {
+                    const inchesValue = parseFloat(String(normalizedRow.inches).replace(/[^0-9.]/g, '').trim());
+                    if (!isNaN(inchesValue)) {
+                        parsedInches = inchesValue;
+                    }
                 }
 
                 // Skip completely empty rows
@@ -771,6 +792,9 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                             updates.price = parsedPrice;
                         }
                     }
+                    if (parsedInches !== null && parsedInches !== existingProduct.inches) {
+                        updates.inches = parsedInches;
+                    }
                     if (categoryId && categoryId !== existingProduct.category_id) {
                         updates.category_id = categoryId;
                     }
@@ -833,6 +857,7 @@ router.post('/products/upload-excel', authenticateToken, isAdmin, upload.single(
                     slug: slug,
                     description: normalizedRow.description || '',
                     price: parseFloat(normalizedRow.price),
+                    inches: parsedInches,
                     category_id: categoryId,
                     sub_category_id: subCategoryId,
                     zodiac_sign: normalizedRow.zodiac_sign || 'Aries',

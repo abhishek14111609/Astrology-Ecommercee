@@ -29,6 +29,7 @@ const ProductManagement = () => {
         slug: '',
         description: '',
         price: '',
+        inches: '',
         category_id: '',
         sub_category_id: '',
         image_url: '',
@@ -116,6 +117,7 @@ const ProductManagement = () => {
             slug: '',
             description: '',
             price: '',
+            inches: '',
             category_id: '',
             sub_category_id: '',
             image_url: '',
@@ -162,6 +164,7 @@ const ProductManagement = () => {
             slug: product.slug,
             description: product.description || '',
             price: product.price,
+            inches: product.inches ?? '',
             category_id: product.category_id || '',
             sub_category_id: product.sub_category_id || '',
             image_url: product.image_url || product.image || '',
@@ -234,11 +237,11 @@ const ProductManagement = () => {
 
     const downloadTemplate = () => {
         // Create CSV with header and sample rows
-        const csv = `Categories,Products,Price,Tags,Best Seller,Zodiac Signs,Stocks,Descriptions
-Healing Crystals,Amethyst Cluster,2499.00,"Healing, Meditation",TRUE,Pisces,50,Natural amethyst for spiritual healing
-Healing Crystals,Rose Quartz Heart,1299.00,"Love, Healing",TRUE,Taurus,30,Heart-shaped rose quartz for emotional healing
-Protective Stones,Black Tourmaline,1299.00,"Protection, Grounding",FALSE,Capricorn,75,Protective grounding stone
-Energy Stones,Citrine Point,899.00,"Success, Abundance",TRUE,Leo,100,Prosperity and success stone`;
+        const csv = `Categories,Products,Price,Inches,Tags,Best Seller,Zodiac Signs,Stocks,Descriptions
+    Healing Crystals,Amethyst Cluster,2499.00,2.5,"Healing, Meditation",TRUE,Pisces,50,Natural amethyst for spiritual healing
+    Healing Crystals,Rose Quartz Heart,1299.00,1.5,"Love, Healing",TRUE,Taurus,30,Heart-shaped rose quartz for emotional healing
+    Protective Stones,Black Tourmaline,1299.00,3.0,"Protection, Grounding",FALSE,Capricorn,75,Protective grounding stone
+    Energy Stones,Citrine Point,899.00,2.0,"Success, Abundance",TRUE,Leo,100,Prosperity and success stone`;
         
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const url = window.URL.createObjectURL(blob);
@@ -424,7 +427,7 @@ Energy Stones,Citrine Point,899.00,"Success, Abundance",TRUE,Leo,100,Prosperity 
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-3 gap-4">
                                     <div className="space-y-2">
                                         <label className="text-xs font-semibold text-neutral-700">Price (₹)</label>
                                         <input
@@ -437,12 +440,24 @@ Energy Stones,Citrine Point,899.00,"Success, Abundance",TRUE,Leo,100,Prosperity 
                                         />
                                     </div>
                                     <div className="space-y-2">
+                                        <label className="text-xs font-semibold text-neutral-700">Inches</label>
+                                        <input
+                                            placeholder="2.5"
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
+                                            className="input-ghost no-spin"
+                                            value={form.inches}
+                                            onChange={e => setForm({ ...form, inches: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
                                         <label className="text-xs font-semibold text-neutral-700">Stock Quantity</label>
                                         <input
                                             placeholder="50"
                                             type="number"
                                             min="0"
-                                            className="input-ghost"
+                                            className="input-ghost no-spin"
                                             value={form.stock}
                                             onChange={e => setForm({ ...form, stock: e.target.value })}
                                             required
@@ -667,6 +682,11 @@ Energy Stones,Citrine Point,899.00,"Success, Abundance",TRUE,Leo,100,Prosperity 
                                         <div className="flex items-center justify-between pt-4 border-t border-neutral-100">
                                             <div>
                                                 <span className="text-2xl font-bold text-neutral-900">₹{p.price}</span>
+                                                {p.inches !== null && p.inches !== undefined && p.inches !== '' && (
+                                                    <span className="block text-xs text-neutral-500 mt-1">
+                                                        Size: {p.inches} in
+                                                    </span>
+                                                )}
                                                 <span className="block text-xs text-neutral-500 mt-1">
                                                     Stock: {p.stock || 0}
                                                 </span>

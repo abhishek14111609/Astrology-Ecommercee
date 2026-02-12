@@ -167,8 +167,8 @@ const ProductDetail = () => {
                                 <ShieldCheck size={18} className="text-auric-gold" />
                                 <span>100% Authentic & Lab Certified</span>
                             </div>
-                            <div className="pt-4 text-xs text-gray-400">
-                                SKU: {product.sku || 'N/A'}
+                            <div className="text-xs uppercase tracking-widest text-gray-500">
+                                No exchange. No return | No refund.
                             </div>
                         </div>
 

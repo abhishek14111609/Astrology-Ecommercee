@@ -326,6 +326,9 @@ const PaymentPage = () => {
                                             <a href="/terms" className="text-auric-rose hover:underline">Terms & Conditions</a>
                                             {' '}and{' '}
                                             <a href="/privacy" className="text-auric-rose hover:underline">Privacy Policy</a>
+                                            <span className="block mt-2 text-xs uppercase tracking-widest text-gray-500">
+                                                No exchange. No return | No refund.
+                                            </span>
                                         </span>
                                     </label>
                                 </div>

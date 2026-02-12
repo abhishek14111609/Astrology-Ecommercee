@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Youtube, Mail, MapPin, Phone } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Mail, MapPin, Phone } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import logo from '../../assets/images/logo2.png';
 
 const Footer = () => {
@@ -23,19 +24,47 @@ const Footer = () => {
                             Our curated collection of crystals and spiritual artifacts is designed
                             to illuminate your journey towards inner peace and celestial harmony.
                         </p>
-                        <div className="flex space-x-4">
-                            <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300">
+                        <div className="flex flex-wrap gap-3">
+                            <a
+                                href="https://www.facebook.com/share/17C6HbL1gX/?mibextid=wwXIfr"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300"
+                            >
                                 <Facebook size={18} />
                             </a>
-                            <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300">
+                            <a
+                                href="https://www.instagram.com/auric_krystals?igsh=eWJwaW5td3RtN293"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300"
+                            >
                                 <Instagram size={18} />
                             </a>
-                            <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300">
-                                <Twitter size={18} />
-                            </a>
-                            <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300">
+                            <a
+                                href="https://youtube.com/@astrokrupalir?feature=shared"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300"
+                            >
                                 <Youtube size={18} />
                             </a>
+                            <a
+                                href="https://whatsapp.com/channel/0029VbAaYar1NCrVeJhmWu14"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300"
+                            >
+                                <FaWhatsapp size={18} />
+                            </a>
+                            {/* <a
+                                href="https://drive.google.com/drive/folders/1q0dZ03Oamv7TDgwGMbAWkRU_suDiXyvx"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300"
+                            >
+                                <Folder size={18} />
+                            </a> */}
                         </div>
                     </div>
 
@@ -95,11 +124,14 @@ const Footer = () => {
 
                 <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-white/50">
                     <p>&copy; {new Date().getFullYear()} Auric krystals. All rights reserved.</p>
-                    <div className="flex space-x-6 mt-4 md:mt-0">
+                    <div className="flex flex-col md:flex-row md:items-center md:space-x-6 mt-4 md:mt-0">
                         <div className="flex items-center gap-2">
                             <Mail size={14} className="text-auric-gold" />
                             <span>aurickrystalss@gmail.com</span>
                         </div>
+                        <span className="mt-2 md:mt-0 text-xs uppercase tracking-widest text-white/60">
+                            No exchange. No return | No refund.
+                        </span>
                     </div>
                 </div>
             </div>

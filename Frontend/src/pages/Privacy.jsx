@@ -24,6 +24,11 @@ const Privacy = () => {
                         <h3 className="font-serif text-xl font-bold text-auric-rose mb-3">Security</h3>
                         <p>We implement industry-standard security measures to protect your data. All transactions are processed through secure, SSL-encrypted gateways.</p>
                     </section>
+
+                    <section>
+                        <h3 className="font-serif text-xl font-bold text-auric-rose mb-3">Refunds and Returns</h3>
+                        <p>No exchange. No return | No refund.</p>
+                    </section>
                 </div>
             </div>
         </div>
