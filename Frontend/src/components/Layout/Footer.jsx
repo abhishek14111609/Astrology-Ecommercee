@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Youtube, Mail, MapPin, Phone } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Youtube, Mail, MapPin, Phone } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import logo from '../../assets/images/logo2.png';
 
@@ -48,6 +48,14 @@ const Footer = () => {
                                 className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300"
                             >
                                 <Youtube size={18} />
+                            </a>
+                            <a
+                                href="https://www.linkedin.com/in/dr-krupali-r-mehta-32b7043aa?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="bg-white/10 p-2 rounded-full hover:bg-auric-gold hover:text-auric-rose transition-all duration-300"
+                            >
+                                <Linkedin size={18} />
                             </a>
                             <a
                                 href="https://whatsapp.com/channel/0029VbAaYar1NCrVeJhmWu14"
